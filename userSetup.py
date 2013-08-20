@@ -253,8 +253,8 @@ def parentLast():
 	select(target[len(target)-1])
 	
 #~~
-"""
-def instanceFirst(doShaders);
+
+def instanceFirst(doShaders):
 	#1. make an array of all selected objects
 	target = ls(sl=True)
 
@@ -342,7 +342,7 @@ def duplicateFirst(doShaders):
 				
 #~~
 
-"""
+
 def duplicateSpecial():
 	#1. make an array of all selected objects
 	target = ls(sl=True)
