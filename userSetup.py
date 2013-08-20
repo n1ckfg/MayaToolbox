@@ -61,8 +61,10 @@ def getShader():
 	shader = ls(listConnections(shadingGrps),materials=1)
 	return shader[0] 
 
-def quickShader(shaderType,shaderColor,useTexture):
-	shader = createShader(shaderType,shaderColor,useTexture)
+def quickShader(shaderColor):
+	if(len(shaderColor)==3):
+		shaderColor.append(255)
+    shader = createShader("lambert",shaderColor,False)
 	setShader(shader)
 	return shader
 
