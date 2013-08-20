@@ -62,12 +62,12 @@ def getShader():
 	return shader[0] 
 
 def quickShader(shaderColor):
-	if(len(shaderColor)==3):
-		shaderColor.append(255)
+    if(len(shaderColor)==3):
+        shaderColor.append(255)
     shader = createShader("lambert",shaderColor,False)
-	setShader(shader)
-	return shader
-
+    setShader(shader)
+    return shader
+    
 #~~
 
 #set RGBA, RGB, A at shader level
