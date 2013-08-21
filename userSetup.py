@@ -271,7 +271,10 @@ def instanceFirst(doShaders):
 			#4. ...get current selection's position and copy keyframes and shader
 			select(target[i])
 			pos = xform(target[i], q=True, t=True, ws=True)
-			shader = getShader()
+			try:
+				shader = getShader()
+			except:
+				print "Couldn't get shader."
 			try:
 				copyKey()
 			except:
@@ -319,7 +322,10 @@ def duplicateFirst(doShaders):
 				#5. ...get current selection's position and copy keyframes and shader
 				select(target[i])
 				pos = xform(target[i], q=True, t=True, ws=True)
-				shader = getShader()
+				try:
+					shader = getShader()
+				except:
+					print "Couldn't get shader."
 				try:
 					copyKey()
 				except:
