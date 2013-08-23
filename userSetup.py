@@ -161,6 +161,51 @@ def keyAllJoints():
 
 	select(target)
 
+def lockTranslate(target, doLock):
+	setAttr(target + ".translateX",lock=doLock)
+	setAttr(target + ".translateY",lock=doLock)
+	setAttr(target + ".translateZ",lock=doLock)
+
+def lockRotate(target, doLock):
+	setAttr(target + ".rotateX",lock=doLock)
+	setAttr(target + ".rotateY",lock=doLock)
+	setAttr(target + ".rotateZ",lock=doLock)
+
+def lockScale(target, doLock):
+	setAttr(target + ".scaleX",lock=doLock)
+	setAttr(target + ".scaleY",lock=doLock)
+	setAttr(target + ".scaleZ",lock=doLock)
+
+def lockHandler(t, r, s): #bool, bool, bool
+	target = selected()
+	for i in range(0,len(target)):
+		lockTranslate(target[i],t)
+		lockRotate(target[i],r)
+		lockScale(target[i],s)
+
+def lockJoints(t, r, s):
+    target=ls(sl=1)
+
+    for i in range(0,len(target)):
+       select(target[i])
+       lockHandler(t,r,s)
+
+       try:
+          kids = listRelatives(ls(selection=True), children=True, type="joint", allDescendents=True)
+          for k in kids:
+             select(k)
+             lockHandler(t,r,s)
+       except:
+          print "No child joints."
+
+    select(target)
+
+def lockAll():
+	lockJoints(True,True,True)
+
+def lockNone():
+	lockJoints(False,False,False)
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MODELING
 
