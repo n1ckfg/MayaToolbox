@@ -217,7 +217,10 @@ def eyeRig(scaler): #try 4
 def parentConstraintAll():
 	target = selected()
 	for i in range(0,len(target)):
-		parentConstraint()
+		if(i<len(target)-1):
+			select(target[i])
+	        parentConstraint(target[len(target)-1])
+	select(target)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MODELING
