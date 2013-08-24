@@ -206,10 +206,13 @@ def lockAll():
 def lockNone():
 	lockJoints(False,False,False)
 
-def eyeRig():
+def eyeRig(scaler): #try 4
     target = selected()
-    expression(s=target[0]+".rotateX = " + target[1] + ".translateY * -4")
-    expression(s=target[0]+".rotateY = " + target[1] + ".translateX * 4")
+    delete(e=True)
+    for i in range(0,len(target)):
+    	if(i<len(target)-1):
+    		expression(s=target[i]+".rotateX = " + target[len(target)-1] + ".translateY * -1 * scaler")
+    		expression(s=target[i]+".rotateY = " + target[len(target)-1] + ".translateX * scaler")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MODELING
