@@ -214,6 +214,11 @@ def eyeRig(scaler): #try 4
     		expression(s=target[i]+".rotateX = " + target[len(target)-1] + ".translateY * -1 * " + str(scaler))
     		expression(s=target[i]+".rotateY = " + target[len(target)-1] + ".translateX * " + str(scaler))
 
+def parentConstraintAll():
+	target = selected()
+	for i in range(0,len(target)):
+		parentConstraint()
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MODELING
 
