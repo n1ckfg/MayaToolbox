@@ -218,8 +218,8 @@ def parentConstraintAll():
 	target = selected()
 	for i in range(0,len(target)):
 		if(i<len(target)-1):
-			select(target[i])
-	        parentConstraint(target[len(target)-1])
+			select(target[len(target)-1],target[i])
+	        parentConstraint()
 	select(target)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
