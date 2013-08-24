@@ -207,7 +207,7 @@ def lockNone():
 	lockJoints(False,False,False)
 
 def eyeRig():
-	target = selected()
+    target = selected()
     expression(s=target[0]+".rotateX = " + target[1] + ".translateY * -4")
     expression(s=target[0]+".rotateY = " + target[1] + ".translateX * 4")
 
