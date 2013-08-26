@@ -10,6 +10,12 @@ import os
 def t(_t):
 	currentTime(_t)
 
+def d():
+	delete()
+
+def k():
+	setKeyframe()
+
 def rm():
     select(all=True)
     delete()
