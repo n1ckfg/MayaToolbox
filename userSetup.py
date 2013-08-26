@@ -186,7 +186,7 @@ def lockHandler(t, r, s): #bool, bool, bool
 		lockRotate(target[i],r)
 		lockScale(target[i],s)
 
-def lockJoints(t, r, s):
+def lockChildren(jointsOnly, t, r, s):
     target=ls(sl=1)
 
     for i in range(0,len(target)):
@@ -194,7 +194,10 @@ def lockJoints(t, r, s):
        lockHandler(t,r,s)
 
        try:
-          kids = listRelatives(ls(selection=True), children=True, type="joint", allDescendents=True)
+          if(jointsOnly==True):
+             kids = listRelatives(ls(selection=True), children=True, type="joint", allDescendents=True)
+          else:
+             kids = listRelatives(ls(selection=True), children=True, allDescendents=True)
           for k in kids:
              select(k)
              lockHandler(t,r,s)
@@ -204,10 +207,10 @@ def lockJoints(t, r, s):
     select(target)
 
 def lockAll():
-	lockJoints(True,True,True)
+	lockChildren(False,True,True,True)
 
 def lockNone():
-	lockJoints(False,False,False)
+	lockChildren(False,False,False,False)
 
 def eyeRig(scaler): #try 4
     target = selected()
