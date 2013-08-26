@@ -1,4 +1,5 @@
 from pymel.core import *
+from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
 import os
@@ -8,6 +9,10 @@ import os
 
 def t(_t):
 	currentTime(_t)
+
+def rm():
+    select(all=True)
+    delete()
 
 def getPos():
 	target = ls(sl=1)
