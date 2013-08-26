@@ -56,4 +56,6 @@ def createController(controlType="cube", size=1.0, name="controller"):
     except:
         print "Couldn't apply controller to selection."
 
+    return ctlCst
+    
 cc=createController
