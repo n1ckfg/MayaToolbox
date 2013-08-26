@@ -223,7 +223,7 @@ def parentConstraintAll():
 	        parentConstraint()
 	select(target)
 
-def toggleSelectable()
+def toggleSelectable():
     target = selected()
     for i in range(0,len(target)):
     	disabled = getAttr(target[i] + ".overrideDisplayType")
