@@ -144,22 +144,25 @@ def keyAlpha(c):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # JOINTS
 
-def keyAllJoints():
-	target=ls(sl=1)
+def keyAllChildren(jointsOnly):
+    target=ls(sl=1)
 
-	for i in range(0,len(target)):
-		select(target[i])
-		setKeyframe()
+    for i in range(0,len(target)):
+       select(target[i])
+       setKeyframe()
 
-		try:
-			kids = listRelatives(ls(selection=True), children=True, type="joint", allDescendents=True)
-			for k in kids:
-				select(k)
-				setKeyframe()
-		except:
-			print "No child joints."
+       try:
+          if(jointsOnly==True):
+             kids = listRelatives(ls(selection=True), children=True, type="joint", allDescendents=True)
+          else:
+             kids = listRelatives(ls(selection=True), children=True, allDescendents=True)
+          for k in kids:
+             select(k)
+             setKeyframe()
+       except:
+          print "No child joints."
 
-	select(target)
+    select(target)
 
 def lockTranslate(target, doLock):
 	setAttr(target + ".translateX",lock=doLock)
