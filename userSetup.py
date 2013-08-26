@@ -232,7 +232,6 @@ def toggleSelectable():
         else:
             setAttr(target[i] + ".overrideEnabled",1)
             setAttr(target[i] + ".overrideDisplayType",2)
-    	    select(none=True)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MODELING
