@@ -214,6 +214,7 @@ def eyeRig(scaler): #try 4
     		expression(s=target[i]+".rotateX = " + target[len(target)-1] + ".translateY * -1 * " + str(scaler))
     		expression(s=target[i]+".rotateY = " + target[len(target)-1] + ".translateX * " + str(scaler))
 
+#broken
 def parentConstraintAll():
 	target = selected()
 	for i in range(0,len(target)):
@@ -221,6 +222,17 @@ def parentConstraintAll():
 			select(target[len(target)-1],target[i])
 	        parentConstraint()
 	select(target)
+
+def toggleSelectable()
+    target = selected()
+    for i in range(0,len(target)):
+    	disabled = getAttr(target[i] + ".overrideDisplayType")
+    	if(disabled==2):
+            setAttr(target[i] + ".overrideDisplayType",0)
+        else:
+            setAttr(target[i] + ".overrideEnabled",1)
+            setAttr(target[i] + ".overrideDisplayType",2)
+    	    select(none=True)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # MODELING
