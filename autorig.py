@@ -44,7 +44,7 @@ def createController(controlType="cube", size=1.0, name="controller"):
         except:
             print "Couldn't apply controller to a selection."
 
-    return name
+    return (name,listRelatives(name))
 
 #~~
 
