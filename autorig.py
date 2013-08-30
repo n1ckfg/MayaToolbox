@@ -58,13 +58,19 @@ def ikCreateController(controlType="cube", size=1.0, name="controller"):
         ctlCst = py.selected()
         #~~
         parent(handle[0],ctlGrp[0])
-        ikControllerConstraints(ctl,handle[0],ctl2,joints[2])      
+        middleJoint = 0;
+        jointCount = countChain(target[i])
+        if(jointCount%2==0): #even joints
+            middleJoint = int(jointCount/2)-1
+        else: #odd joints
+            middleJoint = int(jointCount/2)
+        ikControllerConstraints(ctl,handle[0],ctl2,joints[middleJoint])      
 
         #4. Try to apply controller to original selection
         py.parent(ctlCst[0],name)
         py.parent(ctl2,name)
         
-    return (name,py.listRelatives(name, ad=True))
+    return (name,ctlCst,ctlGrp,ctl,ctl2)
 
 #~~
 
@@ -80,6 +86,13 @@ def ikControllerConstraints(constraint, target, constraint2, target2):
     #cst1 = py.parentConstraint(mo=1)
     #py.select(constraint,handle)
     #cst2 = py.poleVectorConstraint()    
+
+def countChain(target):
+    returnCount = 0
+    chain = py.listRelatives(target, ad=True)
+    returnCount = len(chain)
+    print returnCount
+    return(returnCount)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -117,7 +130,7 @@ def fkCreateController(controlType="cube", size=1.0, name="controller"):
         except:
             print "Couldn't apply controller to a selection."
 
-    return (name,py.listRelatives(name, ad=True))
+    return (name,ctlCst,ctlGrp,ctl)
 
 #~~
 
