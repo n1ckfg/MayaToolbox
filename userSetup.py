@@ -217,6 +217,29 @@ def lockChildren(jointsOnly, t, r, s):
 
     select(target)
 
+def lockPuppet(jointsOnly=False):
+    target=ls(sl=1)
+    
+    for i in range(0,len(target)):
+        select(target[i])
+        lockHandler(False,False,False) #root joint is unlocked
+        
+        try:
+            if(jointsOnly==True):
+                kids = listRelatives(ls(selection=True), children=True, type="joint", allDescendents=True)
+            else:
+                kids = listRelatives(ls(selection=True), children=True, allDescendents=True)
+            for k in kids:
+                select(k)
+                lockHandler(True,True,True) #lock all...
+                setAttr(k + ".rotateX",lock=True) 
+                setAttr(k + ".rotateZ",lock=True) 
+                setAttr(k + ".rotateY",lock=False) #...except Y rotation.
+        except:
+            print "No child joints."   
+            
+    select(target) 
+
 def lockAll():
 	lockChildren(False,True,True,True)
 
@@ -270,7 +293,7 @@ def booleanLoop():
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # LOCATORS
 
-def addLocator():
+def addLocator(alsoParent=False):
 	#1. make an array of all selected objects
 	target = ls(sl=True)
 
@@ -290,6 +313,9 @@ def addLocator():
 					locPos = xform(k, q=True, t=True, ws=True)
 					loc = spaceLocator(n=locName)
 					move(locPos[0],locPos[1],locPos[2])
+					if(alsoParent==True):
+						parent(k,loc)
+						#parentConstraint(loc,k)
 			except:
 				print "No child joints."
 
@@ -302,6 +328,9 @@ def addLocator():
 			#7. create a new locator with that name at that position
 			loc = spaceLocator(n=locName)
 			move(locPos[0],locPos[1],locPos[2])
+			if(alsoParent==True):
+				parent(target[i],loc)
+				#parentConstraint(loc,target[i])
 #~~
 
 def moveToSelected():
