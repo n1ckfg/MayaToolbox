@@ -14,7 +14,7 @@ import os
 #   3.3. snap controller_constraint to end joint
 #   3.4. parent ikHandle to control curve
 #   3.5. create pole vector controller (see constrain menu)
-#   3.6. snap pole vector to middle joint *
+#   3.6. snap pole vector controller to middle joint *
 #   3.7. create pole vector constraint to ikHandle
 #   3.8. clean up all created objects into separate group
 # 4. def createIKControls(startJoint, endJoint)
@@ -26,56 +26,60 @@ import os
 
 def ikCreateController(controlType="cube", size=1.0, name="controller"):
     #1. Store current selection
-    try:
-        target = py.selected()
-        joints = listRelatives(target)
-        print joints
-        finalGroup = py.group(em=True, name=name)
-    except:
-        print "Nothing selected; only creating controller."
+    target = py.selected()
+    finalGroup = py.group(em=True, name=name)
 
     appendCtl = "_control"
     appendCst = "_constraint"
     appendGrp = "_group"
+    appendPole = "_pole"
 
     numReps = len(target)
     if(numReps<1):
         numReps=1
     for i in range(0,numReps):
-        #2. Create controller
+        #2. Create IK handle
+        select(target[i])
+        joints = py.listRelatives(ad=True)
+        joints.append(target[i])
+        py.select(joints[len(joints)-1],joints[0])
+        handle = py.ikHandle(solver="ikRPsolver")
+        
+        #3. Create controller
         ctl = controllerGeometry(controlType,size,name,appendCtl)
-
+        ctl2 = controllerGeometry(controlType,size,name+appendPole,appendCtl)
+        select(ctl,joints[0])
+        snapToPos()
+        #~~
+        select(ctl)
         py.group(n=name + appendGrp)
         ctlGrp = py.selected()
         py.group(n=name + appendCst)
         ctlCst = py.selected()
+        #~~
+        parent(handle[0],ctlGrp[0])
+        ikControllerConstraints(ctl,handle[0],ctl2,joints[2])      
 
-        #3. Try to apply controller to original selection
-        try:
-            py.parent(ctlCst[0],name)
-            ikControllerConstraints(target[i],ctlCst[0],ctl)      
-        except:
-            print "Couldn't apply controller to a selection."
-
-    return (name,listRelatives(name))
+        #4. Try to apply controller to original selection
+        py.parent(ctlCst[0],name)
+        py.parent(ctl2,name)
+        
+    return (name,py.listRelatives(name, ad=True))
 
 #~~
 
-def ikControllerConstraints(target,constraint,controller):
-    py.select(target,constraint)
-    #3a. snap controller to target joint location
-    cst0 = py.parentConstraint(mo=0)
-    py.delete(cst0)
+def ikControllerConstraints(constraint, target, constraint2, target2):
     #3b. select parent of target joint
-    mom = py.listRelatives(target,parent=True)
-    if(len(mom)<1):
-        print "Selection should have a parent."
-        return
-    py.select(mom[0],constraint)
-    cst1 = py.parentConstraint(mo=1)
-
-    py.select(controller,target)
-    cst2 = py.parentConstraint(mo=0)    
+    py.select(constraint, target)
+    py.parentConstraint(mo=1)
+    py.select(constraint2, target2)
+    snapToPos()
+    py.select(constraint2,target)
+    py.poleVectorConstraint()
+    #py.select(controller,handle)
+    #cst1 = py.parentConstraint(mo=1)
+    #py.select(constraint,handle)
+    #cst2 = py.poleVectorConstraint()    
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -87,11 +91,8 @@ def ikControllerConstraints(target,constraint,controller):
 
 def fkCreateController(controlType="cube", size=1.0, name="controller"):
     #1. Store current selection
-    try:
-        target = py.selected()
-        finalGroup = py.group(em=True, name=name)
-    except:
-        print "Nothing selected; only creating controller."
+    target = py.selected()
+    finalGroup = py.group(em=True, name=name)
 
     appendCtl = "_control"
     appendCst = "_constraint"
@@ -116,15 +117,14 @@ def fkCreateController(controlType="cube", size=1.0, name="controller"):
         except:
             print "Couldn't apply controller to a selection."
 
-    return (name,listRelatives(name))
+    return (name,py.listRelatives(name, ad=True))
 
 #~~
 
 def fkControllerConstraints(target,constraint,controller):
-    py.select(target,constraint)
     #3a. snap controller to target joint location
-    cst0 = py.parentConstraint(mo=0)
-    py.delete(cst0)
+    select(constraint,target)
+    snapToPos()
     #3b. select parent of target joint
     mom = py.listRelatives(target,parent=True)
     if(len(mom)<1):
@@ -154,6 +154,16 @@ def controllerGeometry(controlType,size,name,appendCtl):
     return ctl    
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def snapToPos():
+    s = selected()
+    for i in range(0,len(s)-1):
+        py.select(s[len(s)-1],s[i])
+        cst0 = py.parentConstraint(mo=0)
+        py.delete(cst0)    
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 cc=fkCreateController
 ccfk=fkCreateController
