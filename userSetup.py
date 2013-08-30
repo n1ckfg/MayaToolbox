@@ -3,6 +3,8 @@ from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
 import os
+#~~
+from autorig import *
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # GENERAL

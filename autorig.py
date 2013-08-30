@@ -39,7 +39,7 @@ def ikCreateController(controlType="cube", size=1.0, name="controller"):
         numReps=1
     for i in range(0,numReps):
         #2. Create IK handle
-        select(target[i])
+        py.select(target[i])
         joints = py.listRelatives(ad=True)
         joints.append(target[i])
         py.select(joints[len(joints)-1],joints[0])
@@ -48,16 +48,16 @@ def ikCreateController(controlType="cube", size=1.0, name="controller"):
         #3. Create controller
         ctl = controllerGeometry(controlType,size,name,appendCtl)
         ctl2 = controllerGeometry(controlType,size,name+appendPole,appendCtl)
-        select(ctl,joints[0])
+        py.select(ctl,joints[0])
         snapToPos()
         #~~
-        select(ctl)
+        py.select(ctl)
         py.group(n=name + appendGrp)
         ctlGrp = py.selected()
         py.group(n=name + appendCst)
         ctlCst = py.selected()
         #~~
-        parent(handle[0],ctlGrp[0])
+        py.parent(handle[0],ctlGrp[0])
         middleJoint = 0;
         jointCount = countChain(target[i])
         if(jointCount%2==0): #even joints
@@ -169,7 +169,7 @@ def controllerGeometry(controlType,size,name,appendCtl):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def snapToPos():
-    s = selected()
+    s = py.selected()
     for i in range(0,len(s)-1):
         py.select(s[len(s)-1],s[i])
         cst0 = py.parentConstraint(mo=0)
