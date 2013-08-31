@@ -1,4 +1,4 @@
-To install, drop the userSetup.py file into your Maya startup scripts directory.  
+To install, drop the .py files into your Maya startup scripts directory.  
 
 By default, this is:
 
@@ -8,4 +8,4 @@ Mac:
 Windows:
 C:\Users\YOUR USERNAME\Documents\maya\YOUR MAYA VERSION\scripts\
 
-After restarting Maya, you can use the script's functions in your own scripts and shelf buttons.
+After restarting Maya, you can use the scripts' functions in your own scripts and shelf buttons.
