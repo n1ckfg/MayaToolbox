@@ -1,4 +1,7 @@
+#AUTORIG
+
 import pymel.core as py
+import maya.cmds as mc
 from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
