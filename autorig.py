@@ -27,7 +27,7 @@ import os
 # just pick the lowest of the 2 half joints. (ie: 3 joints, pole on 2nd, 4 joints - pole vector on 2nd. 
 # 5 joints - pole vector on 3rd, 6 joints - pole on 3rd, etc.)
 
-def ikCreateController(controlType="cube", size=1.0, name="controller"):
+def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=1.0, name="controller"):
     #1. Store current selection
     target = py.selected()
     finalGroup = py.group(em=True, name=name)
@@ -45,13 +45,18 @@ def ikCreateController(controlType="cube", size=1.0, name="controller"):
         py.select(target[i])
         joints = py.listRelatives(ad=True)
         joints.append(target[i])
-        py.select(joints[len(joints)-1],joints[0])
+
+        if not startJoint or not endJoint:
+            startJoint = joints[len(joints)-1]
+            endJoint = joints[0]
+
+        py.select(startJoint,endJoint)
         handle = py.ikHandle(solver="ikRPsolver")
         
         #3. Create controller
         ctl = controllerGeometry(controlType,size,name,appendCtl)
-        ctl2 = controllerGeometry(controlType,size,name+appendPole,appendCtl)
-        py.select(ctl,joints[0])
+        ctl2 = controllerGeometry("sphere",size,name+appendPole,appendCtl)
+        py.select(ctl,endJoint)
         snapToPos()
         #~~
         py.select(ctl)
@@ -62,7 +67,13 @@ def ikCreateController(controlType="cube", size=1.0, name="controller"):
         #~~
         py.parent(handle[0],ctlGrp[0])
         middleJoint = 0;
-        jointCount = countChain(target[i])
+        jointCount = 0;
+
+        if not startJoint or not endJoint:
+            jointCount = countChain(target[i])
+        else:
+            jointCount = countChain(startJoint) - countChain(endJoint)
+
         if(jointCount%2==0): #even joints
             middleJoint = int(jointCount/2)-1
         else: #odd joints
