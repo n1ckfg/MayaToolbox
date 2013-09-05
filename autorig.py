@@ -83,7 +83,11 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
             middleJoint = int(jointCount/2)-1
         else: #odd joints
             middleJoint = int(jointCount/2)
-        ikControllerConstraints(ctl,handle[0],ctl2,joints[middleJoint])      
+        
+        if not startJoint or not endJoint:
+            ikControllerConstraints(ctl,handle[0],ctl2,joints[middleJoint])      
+        else:
+            ikControllerConstraints(ctl,handle[0],ctl2,joints[middleJoint-countChain(endJoint)])      
 
         #4. Try to apply controller to original selection
         py.parent(ctlCst[0],name)
