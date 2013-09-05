@@ -7,7 +7,7 @@ from xml.dom.minidom import *
 from random import uniform as rnd
 import os
 #~~
-from userSetup import *
+from general import *
 
 # Write a function that will automatically create an IK setup, given a list of joints
 # 

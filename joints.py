@@ -7,19 +7,19 @@ from xml.dom.minidom import *
 from random import uniform as rnd
 import os
 #~~
-from userSetup import *
+from general import *
 
 def testJoints(numChains = 2, numJoints = 5):
     rm()
     makeChains(numChains,numJoints)    
 
 def makeChains(numChains = 2, numJoints = 5):
-    select(d=True)
+    py.select(d=True)
     for i in range(0,numChains):
         joints = makeJoints(numJoints)
-        select(joints[0])
-        move(numJoints*i,0,0)
-        select(d=True)
+        py.select(joints[0])
+        py.move(numJoints*i,0,0)
+        py.select(d=True)
 
 def makeJoints(reps=3):
     joints = []

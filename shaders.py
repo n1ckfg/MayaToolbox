@@ -7,7 +7,7 @@ from xml.dom.minidom import *
 from random import uniform as rnd
 import os
 #~~
-from userSetup import *
+from general import *
 
 def revealYaxis():
     target = py.ls(sl=1)
