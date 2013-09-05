@@ -41,22 +41,30 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
     if(numReps<1):
         numReps=1
     for i in range(0,numReps):
+        joints = []
         #2. Create IK handle
-        py.select(target[i])
-        joints = py.listRelatives(ad=True)
-        joints.append(target[i])
-
         if not startJoint or not endJoint:
-            startJoint = joints[len(joints)-1]
-            endJoint = joints[0]
+            py.select(target[i])
+            joints = py.listRelatives(ad=True)
+            joints.append(target[i])
+            py.select(joints[len(joints)-1],joints[0])
+        else:
+            py.select(startJoint)
+            joints = py.listRelatives(ad=True)
+            joints.append(startJoint)
+            py.select(startJoint,endJoint)
 
-        py.select(startJoint,endJoint)
         handle = py.ikHandle(solver="ikRPsolver")
         
         #3. Create controller
         ctl = controllerGeometry(controlType,size,name,appendCtl)
         ctl2 = controllerGeometry("sphere",size,name+appendPole,appendCtl)
-        py.select(ctl,endJoint)
+        
+        if not startJoint or not endJoint:
+            py.select(ctl,joints[0])
+        else:
+            py.select(ctl,endJoint)
+
         snapToPos()
         #~~
         py.select(ctl)
@@ -67,13 +75,10 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
         #~~
         py.parent(handle[0],ctlGrp[0])
         middleJoint = 0;
-        jointCount = 0;
-
         if not startJoint or not endJoint:
             jointCount = countChain(target[i])
         else:
             jointCount = countChain(startJoint) - countChain(endJoint)
-
         if(jointCount%2==0): #even joints
             middleJoint = int(jointCount/2)-1
         else: #odd joints

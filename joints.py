@@ -7,6 +7,45 @@ from xml.dom.minidom import *
 from random import uniform as rnd
 import os
 
+def testJoints(numChains = 2, numJoints = 5):
+    rm()
+    makeChains(numChains,numJoints)    
+
+def makeChains(numChains = 2, numJoints = 5):
+    select(d=True)
+    for i in range(0,numChains):
+        joints = makeJoints(numJoints)
+        select(joints[0])
+        move(numJoints*i,0,0)
+        select(d=True)
+
+def makeJoints(reps=3):
+    joints = []
+    offset = 0
+    offsetDelta = 2
+    middleJoint=0
+    startPos = [0,0,0]
+    target = py.selected()
+    if(len(target)>=1):
+        startPos = py.xform(target[0], q=True, t=True, ws=True)
+        startPos[0] += offsetDelta
+        startPos[2] += offsetDelta
+    
+    if(reps%2==0): #even joints
+        middleJoint = int(reps/2)-1
+    else: #odd joints
+        middleJoint = int(reps/2)
+        
+    for i in range(0,reps):
+        if(i<=middleJoint):
+            offset += offsetDelta
+        else:
+            offset -= offsetDelta
+            
+        newJoint = py.joint(position=[startPos[0] + offset,startPos[1],startPos[2] + (i*4)])
+        joints.append(newJoint)
+    return joints
+
 def keyAllChildren(jointsOnly):
     target=py.ls(sl=1)
 
