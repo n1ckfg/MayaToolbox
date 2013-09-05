@@ -202,7 +202,5 @@ def snapToPos():
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-cc=fkCreateController
 ccfk=fkCreateController
 ccik=ikCreateController
