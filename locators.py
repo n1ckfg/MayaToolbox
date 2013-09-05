@@ -7,6 +7,7 @@ from xml.dom.minidom import *
 from random import uniform as rnd
 import os
 #~~
+from userSetup import *
 from shaders import *
 
 def addLocator(alsoParent=False):

@@ -6,6 +6,8 @@ from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
 import os
+#~~
+from userSetup import *
 
 def booleanLoop():
     #1. Make an array of all selections

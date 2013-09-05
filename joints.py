@@ -6,6 +6,8 @@ from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
 import os
+#~~
+from userSetup import *
 
 def testJoints(numChains = 2, numJoints = 5):
     rm()
