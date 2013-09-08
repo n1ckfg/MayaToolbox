@@ -50,24 +50,11 @@ def makeJoints(reps=3):
     return joints
 
 def keyAllChildren(jointsOnly=False):
-    target=mc.ls(sl=1)
-
-    for i in range(0,len(target)):
-       mc.select(target[i])
-       mc.setKeyframe()
-
-       try:
-          if(jointsOnly==True):
-             kids = mc.listRelatives(target[i], children=True, type="joint", allDescendents=True)
-          else:
-             kids = mc.listRelatives(target[i], children=True, allDescendents=True)
-          for k in kids:
-             mc.select(k)
-             mc.setKeyframe()
-       except:
-          print "Joint " + str(target[i]) + "has no child joints."
-
-    mc.select(target)
+   selectedObjects = mc.ls(sl=True)
+   targetObjects = mc.listRelatives( selectedObjects, ad=True ) + selectedObjects
+   if(jointsOnly):
+      targetObjects = mc.ls(targetObjects, type='joint')
+   mc.setKeyframe( targetObjects )
 
 def lockTranslate(target, doLock):
     mc.setAttr(target + ".translateX",lock=doLock)

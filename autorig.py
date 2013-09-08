@@ -130,50 +130,73 @@ def countChain(target):
 
 def fkCreateController(controlType="cube", size=1.0, name="controller"):
     #1. Store current selection
-    target = mc.ls(sl=1)
+    targets = mc.ls(sl=1) # changed the name of this variable because we're expecting an array
     finalGroup = mc.group(em=True, name=name)
 
     appendCtl = "_control"
     appendCst = "_constraint"
     appendGrp = "_group"
 
-    numReps = len(target)
-    if(numReps<1):
-        numReps=1
-    for i in range(0,numReps):
-        #2. Create controller
-        ctl = controllerGeometry(controlType,size,name,appendCtl)
 
-        mc.group(n=name + appendGrp)
-        ctlGrp = mc.ls(sl=1)
-        mc.group(n=name + appendCst)
-        ctlCst = mc.ls(sl=1)
+    # shortened this a little and got rid of clamping the numReps to 1
+    # it shouldn't run if there are no targets
+
+    #numReps = len(target)
+    #if(numReps<1):
+    #    numReps=1
+    
+    # creating a return array
+    returns = []
+
+    for i in range( 0, len(targets) ):
+        #2. Create controller
+
+        # I'm appending the i to the controller name to create unique
+        # names for the multiple fk controls. Otherwise it will try
+        # to create something with the same name and fail.
+        ctl = controllerGeometry(controlType,size,name+str(i),appendCtl)
+
+        ctlGrp = mc.group(ctl, n=name + appendGrp + str(i)) # putting the grp right into a variable
+        # also explicitly specifying what should be grouped, just in case we don't know
+        # what's selected at that moment
+
+        #ctlGrp = mc.ls(sl=1)
+        
+        ctlCst = mc.group(ctlGrp, n=name + appendCst + str(i)) # putting the grp right into a variable
+        #ctlCst = mc.ls(sl=1)
 
         #3. Try to apply controller to original selection
-        try:
-            mc.parent(ctlCst[0],name)
-            fkControllerConstraints(target[i],ctlCst[0],ctl)      
-        except:
-            print "Couldn't apply controller to a selection."
+        # let's get rid of the try, except so we know where the error is
+        mc.parent(ctlCst,name) # ctlCst isn't an array since the grp command returns a string
+        fkControllerConstraints(targets[i],ctlCst,ctl)
 
-    return (name,ctlCst,ctlGrp,ctl)
+        returns.append([ctlCst,ctlGrp,ctl])
+
+    return (name, returns)
 
 #~~
 
 def fkControllerConstraints(target,constraint,controller):
     #3a. snap controller to target joint location
-    select(constraint,target)
+    # was missing a .py here
+    py.select(constraint,target)
     snapToPos()
+
     #3b. select parent of target joint
     mom = mc.listRelatives(target,parent=True)
-    if(len(mom)<1):
-        print "Selection should have a parent."
-        return
-    mc.select(mom[0],constraint)
-    cst1 = mc.parentConstraint(mo=1)
 
-    mc.select(controller,target)
-    cst2 = mc.parentConstraint(mo=0)    
+    # changed this chunk of code so that it will apply the constraint to the fk controller
+    # if there is a parent, but if not it will just continue on and apply the constraint
+    # for the joint. Otherwise it will create the controller
+    # but not do anything with it.
+    if mom: #changed this to not look at mom's length, but just to check if mom has anything in it.
+        # removed selection as you could apply constraint directly
+        cst1 = mc.parentConstraint(mom[0],constraint, mo=1)
+    else:
+        print "No parent detected, not parentConstraining FK controller."
+
+    # removed selection as you could apply constraint directly
+    cst2 = mc.parentConstraint(controller,target, mo=0)    
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
@@ -194,8 +217,9 @@ def controllerGeometry(controlType,size,name,appendCtl):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-def snapToPos():
-    s = mc.ls(sl=1)
+def snapToPos(s=None):
+    if not s:
+        s = mc.ls(sl=1)
     for i in range(0,len(s)-1):
         mc.select(s[len(s)-1],s[i])
         cst0 = mc.parentConstraint(mo=0)

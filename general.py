@@ -9,16 +9,21 @@ from random import uniform as rnd
 import os
 #~~
 
-def s(_t=None):
-    if not _t:
-        try:
-            mc.select(mc.ls(sl=1))
-        except:
-            print("Nothing selected.")
-        return(mc.ls(sl=1))
+def s(_t=None,d=False,all=False):
+    if(d==True):
+        py.select(d=True)
+    elif(all==True):
+        py.select(all=True)
     else:
-        py.select(_t)
-        return _t
+        if not _t:
+            try:
+                py.select(py.ls(sl=1))
+            except:
+                print("Nothing selected.")
+            return(py.ls(sl=1))
+        else:
+            py.select(_t)
+            return _t
 
 def t(_t=None):
     try:
@@ -36,9 +41,6 @@ def d(_t=None, all=False):
 
 def rm():
     d(all=True)
-
-def ds():
-    mc.select(d=True)
 
 def m(p, _t=None):
     if not _t:
