@@ -113,10 +113,19 @@ def ikControllerConstraints(constraint, target, constraint2, target2):
     #mc.select(constraint,handle)
     #cst2 = mc.poleVectorConstraint()    
 
-def countChain(target):
-    returnCount = 0
-    chain = mc.listRelatives(target, ad=True)
-    returnCount = len(chain)
+def countChain(target=None):
+    if not target:
+        try:
+            target = s()
+        except:
+            print "Nothing selected or specified."
+            return
+
+    try:
+        chain = py.listRelatives(target, ad=True)
+        returnCount = len(chain)
+    except:
+        returnCount = 0
     print returnCount
     return(returnCount)
 
