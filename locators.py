@@ -2,6 +2,7 @@
 
 import pymel.core as py
 import maya.cmds as mc
+import maya.mel as mel
 from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
@@ -24,7 +25,7 @@ def addLocator(alsoParent=False):
         
             #4. ...if there are child joints, give them locators too
             try:
-                kids = mc.listRelatives(ls(selection=True), children=True, type="joint", allDescendents=True)
+                kids = mc.listRelatives(target[i], children=True, type="joint", allDescendents=True)
                 for k in kids:
                     locName = k + "_loc"
                     locPos = mc.xform(k, q=True, t=True, ws=True)
@@ -65,7 +66,7 @@ def parentLast():
     
 #~~
 
-def instanceFirst(doShaders):
+def instanceFirst(doShaders=False):
     #1. make an array of all selected objects
     target = mc.ls(sl=1)
 
@@ -107,14 +108,14 @@ def instanceFirst(doShaders):
 
 #~~
 
-def duplicateFirst(doShaders):
+def duplicateFirst(doShaders=False):
     #1. make an array of all selected objects
     target = mc.ls(sl=1)
 
     #2. if only one selection, just make a new duplicate at the same coordinates...
     if(len(target)==1):
         #call through mel because python has no rc option!
-        mc.mel.eval("duplicate -un -ic -rc")
+        mel.eval("duplicate -un -ic -rc")
 
     else:
         try:
@@ -143,7 +144,7 @@ def duplicateFirst(doShaders):
                 #6. duplicate the first selection
                 mc.select(target[0])
                 #call through mel because python has no rc option!
-                mc.mel.eval("duplicate -un -ic -rc")
+                mel.eval("duplicate -un -ic -rc")
             
                 #7. move first selection to position and paste keyframes and shader
                 mc.move(pos[0],pos[1],pos[2])
@@ -169,5 +170,5 @@ def duplicateSpecial():
         #3. ...select and duplicated with bones and keyframes
         mc.select(target[i])
         #call through mel because python has no rc option!
-        mc.mel.eval("duplicate -un -ic -rc")
+        mel.eval("duplicate -un -ic -rc")
 

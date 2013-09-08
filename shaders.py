@@ -2,6 +2,7 @@
 
 import pymel.core as py
 import maya.cmds as mc
+import maya.mel as mel
 from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
@@ -27,7 +28,7 @@ def revealYaxis():
         t(delay+10)
         keyAlpha(a)
 
-def createShader(shaderType,shaderColor,useTexture):
+def createShader(shaderType="lambert",shaderColor=[127,127,127,255],useTexture=False):
     #1. get selection
     target = py.ls(sl=1)
     #2. initialize shader
@@ -61,7 +62,7 @@ def getShader():
     shader = py.ls(py.listConnections(shadingGrps),materials=1)
     return shader[0] 
 
-def quickShader(shaderColor):
+def quickShader(shaderColor=[255,0,0]):
     if(len(shaderColor)==3):
         shaderColor.append(255)
     shader = createShader("lambert",shaderColor,False)

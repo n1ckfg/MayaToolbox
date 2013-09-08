@@ -2,6 +2,7 @@
 
 import pymel.core as py
 import maya.cmds as mc
+import maya.mel as mel
 from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
