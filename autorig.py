@@ -113,7 +113,9 @@ def ikControllerConstraints(constraint, target, constraint2, target2):
     #mc.select(constraint,handle)
     #cst2 = mc.poleVectorConstraint()    
 
-def countChain(target):
+def countChain(target=None):
+    if not target:
+        target = mc.select(ls(sl=1))
     returnCount = 0
     chain = mc.listRelatives(target, ad=True)
     returnCount = len(chain)
