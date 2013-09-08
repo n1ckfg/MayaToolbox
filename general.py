@@ -11,10 +11,13 @@ import os
 
 def s(_t=None):
     if not _t:
-        mc.select(mc.ls(sl=1))
+        try:
+            mc.select(mc.ls(sl=1))
+        except:
+            print("Nothing selected.")
         return(mc.ls(sl=1))
     else:
-        mc.select(_t)
+        py.select(_t)
         return _t
 
 def t(_t=None):
@@ -34,10 +37,36 @@ def d(_t=None, all=False):
 def rm():
     d(all=True)
 
+def ds():
+    mc.select(d=True)
+
+def m(p, _t=None):
+    if not _t:
+        _t = mc.ls(sl=1)
+
+    for i in range (0,len(_t)):
+        mc.select(_t[i])
+        mc.move(p[0],p[1],p[2])
+
 def k(_t=None):
     if(_t):
         mc.select(_t)
     mc.setKeyframe()
+
+def cubes(num=100,spread=5):
+    val = []
+    for i in range(0, num):
+        obj = mc.polyCube()
+        val.append(obj)
+        rndMove(spread)
+    return val
+
+def rnd3d(spread=5):
+    return rnd(-spread,spread),rnd(-spread,spread),rnd(-spread,spread)
+
+def rndMove(spread=5):
+    val = rnd3d(spread)
+    mc.move(val[0],val[1],val[2])
 
 def getPos(target=None):
     if not target:
