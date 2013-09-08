@@ -9,51 +9,51 @@ import os
 #~~
 
 def t(_t):
-	py.currentTime(_t)
+	mc.currentTime(_t)
 
 def d():
-	py.delete()
+	mc.delete()
 
 def k():
-	py.setKeyframe()
+	mc.setKeyframe()
 
 def rm():
-    py.select(all=True)
-    py.delete()
+    mc.select(all=True)
+    mc.delete()
 
 def getPos():
-	target = py.ls(sl=1)
-	p = py.xform(target[0], q=True, t=True, ws=True)
+	target = mc.ls(sl=1)
+	p = mc.xform(target[0], q=True, t=True, ws=True)
 	return p
 
-def moveToSelected():
+def moveTols(sl=1):
     #1. make an array of all selected objects
-    target = py.ls(sl=True)
+    target = mc.ls(sl=1)
 
     #2. get the position of the last selected object
-    pos = py.xform(target[len(target)-1], q=True, t=True, ws=True)
+    pos = mc.xform(target[len(target)-1], q=True, t=True, ws=True)
 
     #3. move the other objects to the last selected object
     for i in range(0,len(target)-1):
-        py.select(target[i])
-        py.move(pos[0],pos[1],pos[2])
+        mc.select(target[i])
+        mc.move(pos[0],pos[1],pos[2])
 
 def showHide():
-	target = py.ls(sl=1)
+	target = mc.ls(sl=1)
 
 	for i in range(0,len(target)):
-	    visible = py.getAttr(target[i] + ".v")
+	    visible = mc.getAttr(target[i] + ".v")
 	    if(visible==False):
-	       py.setAttr(target[i] + ".v",1)
+	       mc.setAttr(target[i] + ".v",1)
 	    if(visible==True):
-	       py.setAttr(target[i] + ".v",0) 
+	       mc.setAttr(target[i] + ".v",0) 
 
 def toggleSelectable():
-    target = py.selected()
+    target = mc.ls(sl=1)
     for i in range(0,len(target)):
-        disabled = py.getAttr(target[i] + ".overrideDisplayType")
+        disabled = mc.getAttr(target[i] + ".overrideDisplayType")
         if(disabled==2):
-            py.setAttr(target[i] + ".overrideDisplayType",0)
+            mc.setAttr(target[i] + ".overrideDisplayType",0)
         else:
-            py.setAttr(target[i] + ".overrideEnabled",1)
-            py.setAttr(target[i] + ".overrideDisplayType",2)
+            mc.setAttr(target[i] + ".overrideEnabled",1)
+            mc.setAttr(target[i] + ".overrideDisplayType",2)

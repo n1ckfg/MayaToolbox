@@ -29,7 +29,7 @@ def revealYaxis():
 
 def createShader(shaderType,shaderColor,useTexture):
     #1. get selection
-    target = py.ls(sl=True)
+    target = py.ls(sl=1)
     #2. initialize shader
     shader=py.shadingNode(shaderType,asShader=True)
     #3. create a file texture node

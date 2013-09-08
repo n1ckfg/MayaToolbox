@@ -31,8 +31,8 @@ from general import *
 
 def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=1.0, name="controller"):
     #1. Store current selection
-    target = py.selected()
-    finalGroup = py.group(em=True, name=name)
+    target = mc.ls(sl=1)
+    finalGroup = mc.group(em=True, name=name)
 
     appendCtl = "_control"
     appendCst = "_constraint"
@@ -46,36 +46,36 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
         joints = []
         #2. Create IK handle
         if not startJoint or not endJoint:
-            py.select(target[i])
-            joints = py.listRelatives(ad=True)
+            mc.select(target[i])
+            joints = mc.listRelatives(ad=True)
             joints.append(target[i])
-            py.select(joints[len(joints)-1],joints[0])
+            mc.select(joints[len(joints)-1],joints[0])
         else:
-            py.select(startJoint)
-            joints = py.listRelatives(ad=True)
+            mc.select(startJoint)
+            joints = mc.listRelatives(ad=True)
             joints.append(startJoint)
-            py.select(startJoint,endJoint)
+            mc.select(startJoint,endJoint)
 
-        handle = py.ikHandle(solver="ikRPsolver")
+        handle = mc.ikHandle(solver="ikRPsolver")
         
         #3. Create controller
         ctl = controllerGeometry(controlType,size,name,appendCtl)
         ctl2 = controllerGeometry("sphere",size,name+appendPole,appendCtl)
         
         if not startJoint or not endJoint:
-            py.select(ctl,joints[0])
+            mc.select(ctl,joints[0])
         else:
-            py.select(ctl,endJoint)
+            mc.select(ctl,endJoint)
 
         snapToPos()
         #~~
-        py.select(ctl)
-        py.group(n=name + appendGrp)
-        ctlGrp = py.selected()
-        py.group(n=name + appendCst)
-        ctlCst = py.selected()
+        mc.select(ctl)
+        mc.group(n=name + appendGrp)
+        ctlGrp = mc.ls(sl=1)
+        mc.group(n=name + appendCst)
+        ctlCst = mc.ls(sl=1)
         #~~
-        py.parent(handle[0],ctlGrp[0])
+        mc.parent(handle[0],ctlGrp[0])
         middleJoint = 0;
         if not startJoint or not endJoint:
             jointCount = countChain(target[i])
@@ -92,8 +92,8 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
             ikControllerConstraints(ctl,handle[0],ctl2,joints[middleJoint-countChain(endJoint)])      
 
         #4. Try to apply controller to original selection
-        py.parent(ctlCst[0],name)
-        py.parent(ctl2,name)
+        mc.parent(ctlCst[0],name)
+        mc.parent(ctl2,name)
         
     return (name,ctlCst,ctlGrp,ctl,ctl2)
 
@@ -101,20 +101,20 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
 
 def ikControllerConstraints(constraint, target, constraint2, target2):
     #3b. select parent of target joint
-    py.select(constraint, target)
-    py.parentConstraint(mo=1)
-    py.select(constraint2, target2)
+    mc.select(constraint, target)
+    mc.parentConstraint(mo=1)
+    mc.select(constraint2, target2)
     snapToPos()
-    py.select(constraint2,target)
-    py.poleVectorConstraint()
-    #py.select(controller,handle)
-    #cst1 = py.parentConstraint(mo=1)
-    #py.select(constraint,handle)
-    #cst2 = py.poleVectorConstraint()    
+    mc.select(constraint2,target)
+    mc.poleVectorConstraint()
+    #mc.select(controller,handle)
+    #cst1 = mc.parentConstraint(mo=1)
+    #mc.select(constraint,handle)
+    #cst2 = mc.poleVectorConstraint()    
 
 def countChain(target):
     returnCount = 0
-    chain = py.listRelatives(target, ad=True)
+    chain = mc.listRelatives(target, ad=True)
     returnCount = len(chain)
     print returnCount
     return(returnCount)
@@ -129,8 +129,8 @@ def countChain(target):
 
 def fkCreateController(controlType="cube", size=1.0, name="controller"):
     #1. Store current selection
-    target = py.selected()
-    finalGroup = py.group(em=True, name=name)
+    target = mc.ls(sl=1)
+    finalGroup = mc.group(em=True, name=name)
 
     appendCtl = "_control"
     appendCst = "_constraint"
@@ -143,14 +143,14 @@ def fkCreateController(controlType="cube", size=1.0, name="controller"):
         #2. Create controller
         ctl = controllerGeometry(controlType,size,name,appendCtl)
 
-        py.group(n=name + appendGrp)
-        ctlGrp = py.selected()
-        py.group(n=name + appendCst)
-        ctlCst = py.selected()
+        mc.group(n=name + appendGrp)
+        ctlGrp = mc.ls(sl=1)
+        mc.group(n=name + appendCst)
+        ctlCst = mc.ls(sl=1)
 
         #3. Try to apply controller to original selection
         try:
-            py.parent(ctlCst[0],name)
+            mc.parent(ctlCst[0],name)
             fkControllerConstraints(target[i],ctlCst[0],ctl)      
         except:
             print "Couldn't apply controller to a selection."
@@ -164,28 +164,28 @@ def fkControllerConstraints(target,constraint,controller):
     select(constraint,target)
     snapToPos()
     #3b. select parent of target joint
-    mom = py.listRelatives(target,parent=True)
+    mom = mc.listRelatives(target,parent=True)
     if(len(mom)<1):
         print "Selection should have a parent."
         return
-    py.select(mom[0],constraint)
-    cst1 = py.parentConstraint(mo=1)
+    mc.select(mom[0],constraint)
+    cst1 = mc.parentConstraint(mo=1)
 
-    py.select(controller,target)
-    cst2 = py.parentConstraint(mo=0)    
+    mc.select(controller,target)
+    cst2 = mc.parentConstraint(mo=0)    
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
 def controllerGeometry(controlType,size,name,appendCtl):
     if(controlType=="circle"):
-        ctl = py.circle(r=size/2.0, n=name + appendCtl)
-        #setAttr(selected()[0] + ".rotateX",90)
+        ctl = mc.circle(r=size/2.0, n=name + appendCtl)
+        #setAttr(ls(sl=1)[0] + ".rotateX",90)
     elif(controlType=="sphere"):
-        ctl = py.curve(n=name + appendCtl, d=1, p=((0*(size/2.0),1*(size/2.0),0*(size/2.0)),(0*(size/2.0),0.809017*(size/2.0),-0.587785*(size/2.0)),(0*(size/2.0),0.309017*(size/2.0),-0.951057*(size/2.0)),(0*(size/2.0),-0.309017*(size/2.0),-0.951057*(size/2.0)),(0*(size/2.0),-0.809017*(size/2.0),-0.587785*(size/2.0)),(0*(size/2.0),-1*(size/2.0),5.96046e-08*(size/2.0)),(0*(size/2.0),-0.809017*(size/2.0),0.587785*(size/2.0)),(0*(size/2.0),-0.309017*(size/2.0),0.951057*(size/2.0)),(0*(size/2.0),0.309017*(size/2.0),0.951057*(size/2.0)),(0*(size/2.0),0.809017*(size/2.0),0.587785*(size/2.0)),(0*(size/2.0),1*(size/2.0),0*(size/2.0)),(0.309017*(size/2.0),0.951057*(size/2.0),0*(size/2.0)),(0.809017*(size/2.0),0.587785*(size/2.0),0*(size/2.0)),(1*(size/2.0),0*(size/2.0),0*(size/2.0)),(0.809017*(size/2.0),-0.587785*(size/2.0),0*(size/2.0)),(0.309017*(size/2.0),-0.951057*(size/2.0),0*(size/2.0)),(0*(size/2.0),-1*(size/2.0),5.96046e-08*(size/2.0)),(-0.309017*(size/2.0),-0.951057*(size/2.0),0*(size/2.0)),(-0.809017*(size/2.0),-0.587785*(size/2.0),0*(size/2.0)),(-1*(size/2.0),-5.96046e-08*(size/2.0),0*(size/2.0)),(-0.809017*(size/2.0),0.587785*(size/2.0),0*(size/2.0)),(-0.309017*(size/2.0),0.951057*(size/2.0),0*(size/2.0)),(0*(size/2.0),1*(size/2.0),0*(size/2.0)),(-0.309017*(size/2.0),0.951057*(size/2.0),0*(size/2.0)),(-0.809017*(size/2.0),0.587785*(size/2.0),0*(size/2.0)),(-1*(size/2.0),-5.96046e-08*(size/2.0),0*(size/2.0)),(-0.809017*(size/2.0),0*(size/2.0),-0.587785*(size/2.0)),(-0.309017*(size/2.0),0*(size/2.0),-0.951057*(size/2.0)),(-0.309017*(size/2.0),0*(size/2.0),-0.951057*(size/2.0)),(-0.309017*(size/2.0),0*(size/2.0),-0.951057*(size/2.0)),(0.309017*(size/2.0),0*(size/2.0),-0.951057*(size/2.0)),(0.809017*(size/2.0),0*(size/2.0),-0.587785*(size/2.0)),(1*(size/2.0),0*(size/2.0),0*(size/2.0)),(0.809017*(size/2.0),0*(size/2.0),0.587785*(size/2.0)),(0.309017*(size/2.0),0*(size/2.0),0.951057*(size/2.0)),(-0.309017*(size/2.0),0*(size/2.0),0.951057*(size/2.0)),(-0.809017*(size/2.0),0*(size/2.0),0.587785*(size/2.0)),(-1*(size/2.0),-5.96046e-08*(size/2.0),0)), k=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37))
+        ctl = mc.curve(n=name + appendCtl, d=1, p=((0*(size/2.0),1*(size/2.0),0*(size/2.0)),(0*(size/2.0),0.809017*(size/2.0),-0.587785*(size/2.0)),(0*(size/2.0),0.309017*(size/2.0),-0.951057*(size/2.0)),(0*(size/2.0),-0.309017*(size/2.0),-0.951057*(size/2.0)),(0*(size/2.0),-0.809017*(size/2.0),-0.587785*(size/2.0)),(0*(size/2.0),-1*(size/2.0),5.96046e-08*(size/2.0)),(0*(size/2.0),-0.809017*(size/2.0),0.587785*(size/2.0)),(0*(size/2.0),-0.309017*(size/2.0),0.951057*(size/2.0)),(0*(size/2.0),0.309017*(size/2.0),0.951057*(size/2.0)),(0*(size/2.0),0.809017*(size/2.0),0.587785*(size/2.0)),(0*(size/2.0),1*(size/2.0),0*(size/2.0)),(0.309017*(size/2.0),0.951057*(size/2.0),0*(size/2.0)),(0.809017*(size/2.0),0.587785*(size/2.0),0*(size/2.0)),(1*(size/2.0),0*(size/2.0),0*(size/2.0)),(0.809017*(size/2.0),-0.587785*(size/2.0),0*(size/2.0)),(0.309017*(size/2.0),-0.951057*(size/2.0),0*(size/2.0)),(0*(size/2.0),-1*(size/2.0),5.96046e-08*(size/2.0)),(-0.309017*(size/2.0),-0.951057*(size/2.0),0*(size/2.0)),(-0.809017*(size/2.0),-0.587785*(size/2.0),0*(size/2.0)),(-1*(size/2.0),-5.96046e-08*(size/2.0),0*(size/2.0)),(-0.809017*(size/2.0),0.587785*(size/2.0),0*(size/2.0)),(-0.309017*(size/2.0),0.951057*(size/2.0),0*(size/2.0)),(0*(size/2.0),1*(size/2.0),0*(size/2.0)),(-0.309017*(size/2.0),0.951057*(size/2.0),0*(size/2.0)),(-0.809017*(size/2.0),0.587785*(size/2.0),0*(size/2.0)),(-1*(size/2.0),-5.96046e-08*(size/2.0),0*(size/2.0)),(-0.809017*(size/2.0),0*(size/2.0),-0.587785*(size/2.0)),(-0.309017*(size/2.0),0*(size/2.0),-0.951057*(size/2.0)),(-0.309017*(size/2.0),0*(size/2.0),-0.951057*(size/2.0)),(-0.309017*(size/2.0),0*(size/2.0),-0.951057*(size/2.0)),(0.309017*(size/2.0),0*(size/2.0),-0.951057*(size/2.0)),(0.809017*(size/2.0),0*(size/2.0),-0.587785*(size/2.0)),(1*(size/2.0),0*(size/2.0),0*(size/2.0)),(0.809017*(size/2.0),0*(size/2.0),0.587785*(size/2.0)),(0.309017*(size/2.0),0*(size/2.0),0.951057*(size/2.0)),(-0.309017*(size/2.0),0*(size/2.0),0.951057*(size/2.0)),(-0.809017*(size/2.0),0*(size/2.0),0.587785*(size/2.0)),(-1*(size/2.0),-5.96046e-08*(size/2.0),0)), k=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37))
     elif(controlType=="star"):
-        ctl = py.curve(n=name + appendCtl, d=1, p=((-0.849836*(size/2.0),0*(size/2.0),-0.849836*(size/2.0)),(-0.79687*(size/2.0),0*(size/2.0),-0.330074*(size/2.0)),(-1.20185*(size/2.0),0*(size/2.0),0*(size/2.0)),(-0.79687*(size/2.0),0*(size/2.0),0.330074*(size/2.0)),(-0.849836*(size/2.0),0*(size/2.0),0.849836*(size/2.0)),(-0.330074*(size/2.0),0*(size/2.0),0.79687*(size/2.0)),(0*(size/2.0),0*(size/2.0),1.20185*(size/2.0)),(0.330074*(size/2.0),0*(size/2.0),0.79687*(size/2.0)),(0.849836*(size/2.0),0*(size/2.0),0.849836*(size/2.0)),(0.801233*(size/2.0),0*(size/2.0),0.326518*(size/2.0)),(1.20185*(size/2.0),0*(size/2.0),0*(size/2.0)),(0.801233*(size/2.0),0*(size/2.0),-0.326518*(size/2.0)),(0.849836*(size/2.0),0*(size/2.0),-0.849836*(size/2.0)),(0.326518*(size/2.0),0*(size/2.0),-0.801233*(size/2.0)),(0*(size/2.0),0*(size/2.0),-1.20185*(size/2.0)),(-0.333798*(size/2.0),0*(size/2.0),-0.801604*(size/2.0)),(-0.857352*(size/2.0),0*(size/2.0),-0.865126*(size/2.0))), k=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16))
+        ctl = mc.curve(n=name + appendCtl, d=1, p=((-0.849836*(size/2.0),0*(size/2.0),-0.849836*(size/2.0)),(-0.79687*(size/2.0),0*(size/2.0),-0.330074*(size/2.0)),(-1.20185*(size/2.0),0*(size/2.0),0*(size/2.0)),(-0.79687*(size/2.0),0*(size/2.0),0.330074*(size/2.0)),(-0.849836*(size/2.0),0*(size/2.0),0.849836*(size/2.0)),(-0.330074*(size/2.0),0*(size/2.0),0.79687*(size/2.0)),(0*(size/2.0),0*(size/2.0),1.20185*(size/2.0)),(0.330074*(size/2.0),0*(size/2.0),0.79687*(size/2.0)),(0.849836*(size/2.0),0*(size/2.0),0.849836*(size/2.0)),(0.801233*(size/2.0),0*(size/2.0),0.326518*(size/2.0)),(1.20185*(size/2.0),0*(size/2.0),0*(size/2.0)),(0.801233*(size/2.0),0*(size/2.0),-0.326518*(size/2.0)),(0.849836*(size/2.0),0*(size/2.0),-0.849836*(size/2.0)),(0.326518*(size/2.0),0*(size/2.0),-0.801233*(size/2.0)),(0*(size/2.0),0*(size/2.0),-1.20185*(size/2.0)),(-0.333798*(size/2.0),0*(size/2.0),-0.801604*(size/2.0)),(-0.857352*(size/2.0),0*(size/2.0),-0.865126*(size/2.0))), k=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16))
     elif(controlType=="cube"):
-        ctl = py.curve(n=name + appendCtl, d=1, p=((-(size/2.0),(size/2.0),(size/2.0)),(-(size/2.0),-(size/2.0),(size/2.0)),((size/2.0),-(size/2.0),(size/2.0)),((size/2.0),(size/2.0),(size/2.0)),(-(size/2.0),(size/2.0),(size/2.0)),(-(size/2.0),(size/2.0),-(size/2.0)),((size/2.0),(size/2.0),-(size/2.0)),((size/2.0),(size/2.0),(size/2.0)),((size/2.0),-(size/2.0),(size/2.0)),((size/2.0),-(size/2.0),-(size/2.0)),((size/2.0),(size/2.0),-(size/2.0)),((size/2.0),(size/2.0),(size/2.0)),((size/2.0),-(size/2.0),(size/2.0)),(-(size/2.0),-(size/2.0),(size/2.0)),(-(size/2.0),-(size/2.0),-(size/2.0)),((size/2.0),-(size/2.0),-(size/2.0)),(-(size/2.0),-(size/2.0),-(size/2.0)),(-(size/2.0),(size/2.0),-(size/2.0)),(-(size/2.0),(size/2.0),(size/2.0)),(-(size/2.0),-(size/2.0),(size/2.0))), k=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19))
+        ctl = mc.curve(n=name + appendCtl, d=1, p=((-(size/2.0),(size/2.0),(size/2.0)),(-(size/2.0),-(size/2.0),(size/2.0)),((size/2.0),-(size/2.0),(size/2.0)),((size/2.0),(size/2.0),(size/2.0)),(-(size/2.0),(size/2.0),(size/2.0)),(-(size/2.0),(size/2.0),-(size/2.0)),((size/2.0),(size/2.0),-(size/2.0)),((size/2.0),(size/2.0),(size/2.0)),((size/2.0),-(size/2.0),(size/2.0)),((size/2.0),-(size/2.0),-(size/2.0)),((size/2.0),(size/2.0),-(size/2.0)),((size/2.0),(size/2.0),(size/2.0)),((size/2.0),-(size/2.0),(size/2.0)),(-(size/2.0),-(size/2.0),(size/2.0)),(-(size/2.0),-(size/2.0),-(size/2.0)),((size/2.0),-(size/2.0),-(size/2.0)),(-(size/2.0),-(size/2.0),-(size/2.0)),(-(size/2.0),(size/2.0),-(size/2.0)),(-(size/2.0),(size/2.0),(size/2.0)),(-(size/2.0),-(size/2.0),(size/2.0))), k=(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19))
     else:
         print 'Nothing created; valid types are "circle", "sphere", "star", and "cube".'
         return
@@ -194,11 +194,11 @@ def controllerGeometry(controlType,size,name,appendCtl):
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def snapToPos():
-    s = py.selected()
+    s = mc.ls(sl=1)
     for i in range(0,len(s)-1):
-        py.select(s[len(s)-1],s[i])
-        cst0 = py.parentConstraint(mo=0)
-        py.delete(cst0)    
+        mc.select(s[len(s)-1],s[i])
+        cst0 = mc.parentConstraint(mo=0)
+        mc.delete(cst0)    
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

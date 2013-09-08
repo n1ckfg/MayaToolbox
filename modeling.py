@@ -11,14 +11,14 @@ from general import *
 
 def booleanLoop():
     #1. Make an array of all selections
-    target = py.ls(sl=True)
+    target = mc.ls(sl=1)
 
     #2. Boolean union each item in the array to the next
     for i in range(0,len(target)-1,2):
-        py.polyBoolOp(target[i],target[i+1])
+        mc.polyBoolOp(target[i],target[i+1])
         
         #3. Delete construction history
-        py.delete(ch=True)
+        mc.delete(ch=True)
 
         #4. Recenter the pivot
-        py.xform(cp=True)
+        mc.xform(cp=True)
