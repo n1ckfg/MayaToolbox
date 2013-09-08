@@ -10,6 +10,42 @@ import os
 #~~
 from general import *
 
+
+# Write a function that will build an IK/FK rig programmatically, given 3 joints as the input
+# 1. Function should assume joints are oriented correctly
+# 2. Process:
+#   2.1. Duplicates the given joint heirarchy
+#   2.2. Renames duplicate to have “_IK” suffix
+#   2.3. Runs chain through IK setup function as written previously
+#   2.4. Duplicates original chain
+#   2.5. Renames duplicate to have “_FK” suffix
+#   2.6. Runs chain through FK setup function as written previously
+#   2.7. Create “Settings” curve and constrains it to the last skin joint
+#   2.8. Add attribute to Settings curve for FK/IK switch
+#   2.9. Constrains original joints to the FK/IK joints using parentConstraints
+#   2.10. Link constraints up to FK/IK attribute on Settings controller
+#   2.11. Cleans up nodes into a single grouped hierarchy, leaving the original chain intact.
+# 3. return group
+
+def fkikCreateController(target=None):
+    if not target:
+        target = s()
+
+    for i in range(0,len(target)):
+        if(countChain(target[i])!=2):
+            print "Needs to be exactly three joints."
+            return
+        else:
+            s(target[i])
+            ikTarget = mc.duplicate(name=target[i]+"_IK")
+            ccik(ikTarget)
+            #ikTargetList = mc.listRelatives(ad=True)
+            fkTarget = mc.duplicate(name=target[i]+"_FK")
+            #fkTargetList = mc.listRelatives(ad=True)
+            #print ikTargetList
+            #print fkTargetList
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # Write a function that will automatically create an IK setup, given a list of joints
 # 
 # 1. Assume joints are oriented correctly
@@ -40,10 +76,9 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
     appendGrp = "_group"
     appendPole = "_pole"
 
-    numReps = len(target)
-    if(numReps<1):
-        numReps=1
-    for i in range(0,numReps):
+    returns = []
+
+    for i in range(0,len(target)):
         joints = []
         #2. Create IK handle
         if not startJoint or not endJoint:
@@ -60,8 +95,8 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
         handle = mc.ikHandle(solver="ikRPsolver")
         
         #3. Create controller
-        ctl = controllerGeometry(controlType,size,name,appendCtl)
-        ctl2 = controllerGeometry("sphere",size,name+appendPole,appendCtl)
+        ctl = controllerGeometry(controlType,size,name + str(i),appendCtl)
+        ctl2 = controllerGeometry("sphere",size,name+appendPole + str(i),appendCtl)
         
         if not startJoint or not endJoint:
             mc.select(ctl,joints[0])
@@ -71,9 +106,9 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
         snapToPos()
         #~~
         mc.select(ctl)
-        mc.group(n=name + appendGrp)
+        mc.group(n=name + appendGrp + str(i))
         ctlGrp = mc.ls(sl=1)
-        mc.group(n=name + appendCst)
+        mc.group(n=name + appendCst + str(i))
         ctlCst = mc.ls(sl=1)
         #~~
         mc.parent(handle[0],ctlGrp[0])
@@ -95,8 +130,9 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
         #4. Try to apply controller to original selection
         mc.parent(ctlCst[0],name)
         mc.parent(ctl2,name)
-        
-    return (name,ctlCst,ctlGrp,ctl,ctl2)
+        returns.append([ctlCst,ctlGrp,ctl,ctl2])
+
+    return (name,returns)
 
 #~~
 
@@ -238,3 +274,4 @@ def snapToPos(s=None):
 
 ccfk=fkCreateController
 ccik=ikCreateController
+ccfkik = fkikCreateController
