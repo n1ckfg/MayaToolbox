@@ -242,3 +242,30 @@ def duplicateSpecial(target = None, name = None):
         returns.append(val)
 
     return returns
+
+# by David Bokser davidbokser.com
+def getUniqueName(name):
+    # if the name is already unique, return it
+    if not mc.ls(name):
+        return name
+    else:
+        # find the trailing digit in the name
+        trailingDigit = re.sub('.*?([0-9]*)$',r'\1',name)
+        
+        # create default variables for newDigit and shortname
+        # in case there is no trailing digit (ie: "pSphere")
+        newDigit = 1
+        shortname = name
+        
+        if(trailingDigit):
+            # increment the last digit and find the shortname using the length
+            # of the trailing digit as a reference for how much to trim
+            newDigit = int(trailingDigit)+1
+            shortname = name[:-len(trailingDigit)]
+        
+        # create the new name
+        newName = shortname+str(newDigit)
+
+        # recursively run through the function until a unique name is reached and returned
+        return getUniqueName(newName)
+

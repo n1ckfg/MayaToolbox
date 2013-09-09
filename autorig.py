@@ -27,7 +27,7 @@ from general import *
 #   2.11. Cleans up nodes into a single grouped hierarchy, leaving the original chain intact.
 # 3. return group
 
-def fkikCreateController(target=None, name="controller"):
+def fkikCreateController(target=None, n="controller"):
     if not target:
         target = s()
 
@@ -37,10 +37,16 @@ def fkikCreateController(target=None, name="controller"):
             return
         else:
             s(target[i])
-            ikTarget = duplicateSpecial(name=target[i]+"_IK")
-            fkTarget = duplicateSpecial(name=target[i]+"_FK")
-            ccik(ikTarget, name=name)
-            ccfk(fkTarget, name=name)
+            name1 = getUniqueName(target[i]+"_IK")
+            ikTarget = duplicateSpecial(name=name1)
+            name2 = getUniqueName(target[i]+"_FK")
+            fkTarget = duplicateSpecial(name=name2)
+
+            name3 = getUniqueName(n)
+            ccik(ikTarget, name=name3)
+            name4 = getUniqueName(n)
+            ccfk(fkTarget, name=name4)
+
             #ikTargetList = mc.listRelatives(ad=True)
             #fkTargetList = mc.listRelatives(ad=True)
             #print ikTargetList
