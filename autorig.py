@@ -28,7 +28,7 @@ from general import *
 #   2.11. Cleans up nodes into a single grouped hierarchy, leaving the original chain intact.
 # 3. return group
 
-def fkikCreateController(target=None, n="controller"):
+def fkikCreateController(target=None, name="controller"):
     if not target:
         target = s()
 
@@ -38,20 +38,19 @@ def fkikCreateController(target=None, n="controller"):
             return
         else:
             s(target[i])
+            
             name1 = getUniqueName(target[i]+"_IK")
             ikTarget = duplicateSpecial(name=name1)
+            
             name2 = getUniqueName(target[i]+"_FK")
             fkTarget = duplicateSpecial(name=name2)
 
-            name3 = getUniqueName(n)
-            ccik(ikTarget, name=name3)
-            name4 = getUniqueName(n)
-            ccfk(fkTarget, name=name4)
+            name3 = getUniqueName(name)
+            ccik(ikTarget[0], name=name3)
+            
+            name4 = getUniqueName(name)
+            ccfk(fkTarget[0], name=name4)
 
-            #ikTargetList = mc.listRelatives(ad=True)
-            #fkTargetList = mc.listRelatives(ad=True)
-            #print ikTargetList
-            #print fkTargetList
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Write a function that will automatically create an IK setup, given a list of joints
@@ -75,6 +74,7 @@ def fkikCreateController(target=None, n="controller"):
 # 5 joints - pole vector on 3rd, 6 joints - pole on 3rd, etc.)
 
 def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=1.0, name="controller"):
+    name = getUniqueName(name)
     #1. Store current selection
     target = mc.ls(sl=1)
     finalGroup = mc.group(em=True, name=name)
@@ -103,8 +103,8 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
         handle = mc.ikHandle(solver="ikRPsolver")
         
         #3. Create controller
-        ctl = controllerGeometry(controlType,size,name + str(i),appendCtl)
-        ctl2 = controllerGeometry("sphere",size,name+appendPole + str(i),appendCtl)
+        ctl = controllerGeometry(controlType,size,name + str(i+1),appendCtl)
+        ctl2 = controllerGeometry("sphere",size,name+appendPole + str(i+1),appendCtl)
         
         if not startJoint or not endJoint:
             mc.select(ctl,joints[0])
@@ -114,9 +114,9 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
         snapToPos()
         #~~
         mc.select(ctl)
-        mc.group(n=name + appendGrp + str(i))
+        mc.group(n=name + appendGrp + str(i+1))
         ctlGrp = mc.ls(sl=1)
-        mc.group(n=name + appendCst + str(i))
+        mc.group(n=name + appendCst + str(i+1))
         ctlCst = mc.ls(sl=1)
         #~~
         mc.parent(handle[0],ctlGrp[0])
@@ -181,9 +181,12 @@ def countChain(target=None):
 # creates the control curve and groups it and names the objects <name>_constraint, <name>_grp, <name>_control
 # returns the names of the objects it's created  
 
-def fkCreateController(controlType="cube", size=1.0, name="controller"):
+def fkCreateController(targets=None, controlType="cube", size=1.0, name="controller"):
+    name = getUniqueName(name)
+
     #1. Store current selection
-    targets = mc.ls(sl=1) # changed the name of this variable because we're expecting an array
+    if not targets:
+        targets = mc.ls(sl=1) # changed the name of this variable because we're expecting an array
     finalGroup = mc.group(em=True, name=name)
 
     appendCtl = "_control"
@@ -207,15 +210,15 @@ def fkCreateController(controlType="cube", size=1.0, name="controller"):
         # I'm appending the i to the controller name to create unique
         # names for the multiple fk controls. Otherwise it will try
         # to create something with the same name and fail.
-        ctl = controllerGeometry(controlType,size,name+str(i),appendCtl)
+        ctl = controllerGeometry(controlType,size,name+str(i+1),appendCtl)
 
-        ctlGrp = mc.group(ctl, n=name + appendGrp + str(i)) # putting the grp right into a variable
+        ctlGrp = mc.group(ctl, n=name + appendGrp + str(i+1)) # putting the grp right into a variable
         # also explicitly specifying what should be grouped, just in case we don't know
         # what's selected at that moment
 
         #ctlGrp = mc.ls(sl=1)
         
-        ctlCst = mc.group(ctlGrp, n=name + appendCst + str(i)) # putting the grp right into a variable
+        ctlCst = mc.group(ctlGrp, n=name + appendCst + str(i+1)) # putting the grp right into a variable
         #ctlCst = mc.ls(sl=1)
 
         #3. Try to apply controller to original selection
