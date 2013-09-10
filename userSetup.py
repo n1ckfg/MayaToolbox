@@ -13,3 +13,4 @@ from locators import *
 from joints import *
 from modeling import *
 from autorig import *
+from paint import *

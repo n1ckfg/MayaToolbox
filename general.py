@@ -35,10 +35,10 @@ def t(_t=None):
 
 def d(_t=None, all=False):
     if _t:
-        mc.select(_t)
+        s(_t)
     if all:
-        mc.select(all=True)
-    mc.delete()
+        s(all=True)
+    py.delete()
 
 def rm():
     d(all=True)
@@ -56,14 +56,6 @@ def k(_t=None):
         mc.select(_t)
     mc.setKeyframe()
 
-def cubes(num=100,spread=5):
-    val = []
-    for i in range(0, num):
-        obj = mc.polyCube()
-        val.append(obj)
-        rndMove(spread)
-    return val
-
 def rnd3d(spread=5):
     return rnd(-spread,spread),rnd(-spread,spread),rnd(-spread,spread)
 
@@ -72,10 +64,14 @@ def rndMove(spread=5):
     mc.move(val[0],val[1],val[2])
 
 def getPos(target=None):
+    returns = []
     if not target:
-        target = mc.ls(sl=1)
-    p = mc.xform(target[0], q=True, t=True, ws=True)
-    return p
+        target = s()
+    
+    for i in range(0,len(target)):
+        p = py.xform(target[i], q=True, t=True, ws=True)
+        returns.append(p)
+    return returns
 
 def moveTo(target=None):
     #1. make an array of all selected objects
@@ -270,3 +266,26 @@ def getUniqueName(name):
         # recursively run through the function until a unique name is reached and returned
         return getUniqueName(newName)
 
+def lookAt(target=None):
+    if not target:
+        target = mc.ls(sl=1)
+
+    angleBtwnNode = angleBetween(v1=(1, 0, 0), v2=(1, 0, 0), ch=True)
+
+    mc.connectAttr( target[len(target)-1]+'.translateX', angleBtwnNode+'.vector2X' )
+    mc.connectAttr( target[len(target)-1]+'.translateY', angleBtwnNode+'.vector2Y' )
+    mc.connectAttr( target[len(target)-1]+'.translateZ', angleBtwnNode+'.vector2Z' )
+
+    for i in range(0,len(target)-1):
+
+        convertX = mc.createNode( 'unitConversion' )
+        mc.connectAttr( angleBtwnNode+'.eulerX', convertX+'.input' )
+        mc.connectAttr( convertX+'.output', target[i]+'.rotateX' )
+
+        convertY = mc.createNode( 'unitConversion' )
+        mc.connectAttr( angleBtwnNode+'.eulerY', convertY+'.input' )
+        mc.connectAttr( convertY+'.output', target[i]+'.rotateY' )
+
+        convertZ = mc.createNode( 'unitConversion' )
+        mc.connectAttr( angleBtwnNode+'.eulerZ', convertZ+'.input' )
+        mc.connectAttr( convertZ+'.output', target[i]+'.rotateZ' )

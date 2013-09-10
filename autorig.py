@@ -75,7 +75,11 @@ def fkikCreateController(target=None, name="controller"):
 def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=1.0, name="controller"):
     name = getUniqueName(name)
     #1. Store current selection
-    target = mc.ls(sl=1)
+    if(startJoint):
+        target = [startJoint]
+    else:
+        target = mc.ls(sl=True)
+
     finalGroup = mc.group(em=True, name=name)
 
     appendCtl = "_control"
