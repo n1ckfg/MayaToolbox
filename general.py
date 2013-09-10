@@ -7,6 +7,7 @@ from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
 import os
+import re
 #~~
 
 def s(_t=None,d=False,all=False):
