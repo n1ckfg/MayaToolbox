@@ -39,6 +39,7 @@ def fkikCreateController(target=None, name="controller"):
         else:
             s(target[i])
             
+            """
             name1 = getUniqueName(target[i]+"_IK")
             ikTarget = duplicateSpecial(name=name1)
             
@@ -50,7 +51,7 @@ def fkikCreateController(target=None, name="controller"):
             
             name4 = getUniqueName(name)
             ccfk(fkTarget[0], name=name4)
-
+            """
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Write a function that will automatically create an IK setup, given a list of joints
