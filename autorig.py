@@ -11,17 +11,16 @@ import re
 #~~
 from general import *
 
-
 # Write a function that will build an IK/FK rig programmatically, given 3 joints as the input
 # 1. Function should assume joints are oriented correctly
 # 2. Process:
 #   2.1. Duplicates the given joint heirarchy
-#   2.2. Renames duplicate to have “_IK” suffix
+#   2.2. Renames duplicate to have "_IK" suffix
 #   2.3. Runs chain through IK setup function as written previously
 #   2.4. Duplicates original chain
-#   2.5. Renames duplicate to have “_FK” suffix
+#   2.5. Renames duplicate to have "_FK" suffix
 #   2.6. Runs chain through FK setup function as written previously
-#   2.7. Create “Settings” curve and constrains it to the last skin joint
+#   2.7. Create "Settings" curve and constrains it to the last skin joint
 #   2.8. Add attribute to Settings curve for FK/IK switch
 #   2.9. Constrains original joints to the FK/IK joints using parentConstraints
 #   2.10. Link constraints up to FK/IK attribute on Settings controller
@@ -39,7 +38,6 @@ def fkikCreateController(target=None, name="controller"):
         else:
             s(target[i])
             
-            """
             name1 = getUniqueName(target[i]+"_IK")
             ikTarget = duplicateSpecial(name=name1)
             
@@ -51,7 +49,7 @@ def fkikCreateController(target=None, name="controller"):
             
             name4 = getUniqueName(name)
             ccfk(fkTarget[0], name=name4)
-            """
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Write a function that will automatically create an IK setup, given a list of joints

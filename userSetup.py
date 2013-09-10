@@ -8,8 +8,8 @@ import os
 import re
 #~~
 from general import *
-from locators import *
 from shaders import *
+from locators import *
 from joints import *
 from modeling import *
 from autorig import *
