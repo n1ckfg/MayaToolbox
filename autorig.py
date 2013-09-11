@@ -129,7 +129,7 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
         else:
             jointCount = countChain(startJoint) - countChain(endJoint)
         if(jointCount%2==0): #even joints
-            middleJoint = int(jointCount/2)-1
+            middleJoint = int(jointCount/2) #-1
         else: #odd joints
             middleJoint = int(jointCount/2)
         
