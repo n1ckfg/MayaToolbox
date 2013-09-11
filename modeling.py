@@ -11,6 +11,36 @@ import re
 #~~
 from general import *
 
+def iteratePolyToSubdiv(target=None,polys=1000,reps=1000,delete=False):
+    
+    counter = 0
+    initPolyCount = polys
+    currentPolyCount = initPolyCount
+    finished = False
+    
+    if not target:
+        target = mc.ls(sl=1)
+
+    for i in range(0,len(target)):
+            while(finished==False and counter < reps):
+                try:
+                    finished=True
+                    mc.polyToSubdiv(target[i], maxPolyCount=currentPolyCount)
+
+                except:
+                    finished=False
+                    counter+=1
+                    currentPolyCount += initPolyCount
+                    print "Failed using " + str(currentPolyCount - initPolyCount) + " polys; trying " + str(currentPolyCount) + " polys."
+            if(finished==True):
+                if(delete==True):
+                    mc.delete(constructionHistory=True) # prevents deletion of polys from wrecking subdivs
+                    mc.delete(target[i])
+                print "Successfully converted " + str(target[i]) + " using < " + str(currentPolyCount) + " polys in " + str(counter+1) + " tries."
+            else:
+                print "Failed to convert " + str(target[i]) + " using < " + str(currentPolyCount) + " polys in " + str(counter+1) + " tries."
+
+
 def booleanLoop():
     #1. Make an array of all selections
     target = mc.ls(sl=1)
