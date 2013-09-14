@@ -238,7 +238,7 @@ def duplicateSpecial(target = None, name = None):
             val = mel.eval("duplicate -un -ic -rc -name \"" + name + "\"")
         returns.append(val)
 
-    return returns
+    return returns[0] #why is returns an array inside an array?
 
 # by David Bokser davidbokser.com
 def getUniqueName(name):

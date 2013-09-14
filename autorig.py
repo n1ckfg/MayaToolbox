@@ -40,15 +40,17 @@ def fkikCreateController(target=None, name="controller"):
             
             name1 = getUniqueName(target[i]+"_IK")
             ikTarget = duplicateSpecial(name=name1)
-            
+            print "ikTarget: " + str(ikTarget)
+
             name2 = getUniqueName(target[i]+"_FK")
             fkTarget = duplicateSpecial(name=name2)
+            print "fkTarget: " + str(fkTarget)
 
             name3 = getUniqueName(name)
-            ikCreateController(ikTarget[0], name=name3)
+            ikCreateControllerAlt(startJoint=ikTarget[0], endJoint=ikTarget[2], name=name3)
             
             name4 = getUniqueName(name)
-            fkCreateController(fkTarget[0], name=name4)
+            fkCreateController(fkTarget, name=name4)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -120,7 +122,9 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
     '''
 
     # directly inputting the start joint and end effector
-    handle = mc.ikHandle(sj=startJoint, ee=endJoint, solver="ikRPsolver")
+    print startJoint[0]
+    print endJoint
+    handle = py.ikHandle(sj=startJoint[0], ee=endJoint, solver="ikRPsolver")
     
     #3. Create controller
     ctl = controllerGeometry(controlType,size, getUniqueName(name), appendCtl) # getting unique name now
@@ -132,7 +136,7 @@ def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=
         snapToPos([ctl,joints[0]])
     else:
     '''
-    snapToPos([ctl,endJoint])
+    snapToPos([ctl,endJoint[0]])
     
     #~~
     # got rid of selection, directly inputting what to group
