@@ -45,10 +45,10 @@ def fkikCreateController(target=None, name="controller"):
             fkTarget = duplicateSpecial(name=name2)
 
             name3 = getUniqueName(name)
-            ccik(ikTarget[0], name=name3)
+            ikCreateController(ikTarget[0], name=name3)
             
             name4 = getUniqueName(name)
-            ccfk(fkTarget[0], name=name4)
+            fkCreateController(fkTarget[0], name=name4)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -230,7 +230,7 @@ def countChain(target=None):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # IK Controller Alt Version (without David's improvements)
-# Generally less reliable but can succeed with very long chains where normal function breaks.
+# Generally less reliable but can succeed when used as shelf button, where normal function breaks.
 
 def ikCreateControllerAlt(startJoint=None, endJoint=None, controlType="cube", size=1.0, name="controller"):
     name = getUniqueName(name)
@@ -443,6 +443,42 @@ def snapToPos(s=None):
     for i in range(0,len(s)-1):
         cst0 = mc.parentConstraint(s[len(s)-1],s[i],mo=0)
         mc.delete(cst0)    
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+def addAttrVector(target=None, name="tempVector"):
+    if not target:
+        target = mc.ls(sl=1)
+    for i in range(0,len(target)):
+        mel.eval("addAttr -ln \"" + name + "\"  -at double3  "+target[i]+";")
+        mel.eval("addAttr -ln \""+name+"X\"  -at double -p "+name+"  "+target[i]+";")
+        mel.eval("addAttr -ln \""+name+"Y\"  -at double -p "+name+"  "+target[i]+";")
+        mel.eval("addAttr -ln \""+name+"Z\"  -at double -p "+name+"  "+target[i]+";")
+        mel.eval("setAttr -e-keyable true "+target[i]+"." + name + ";")
+        mel.eval("setAttr -e-keyable true "+target[i]+"." + name + "X;")
+        mel.eval("setAttr -e-keyable true "+target[i]+"." + name + "Y;")
+        mel.eval("setAttr -e-keyable true "+target[i]+"." + name + "Z;")
+
+def addAttrFloat(target=None, name="tempFloat"):
+    if not target:
+        target = mc.ls(sl=1)
+    for i in range(0,len(target)):
+        mel.eval("addAttr -ln \"" + name + "\"  -at double  "+target[i]+";")
+        mel.eval("setAttr -e-keyable true "+target[i]+"." + name + ";")
+
+def addAttrString(target=None, name="tempString"):
+    if not target:
+        target = mc.ls(sl=1)
+    for i in range(0,len(target)):
+        mel.eval("addAttr -ln \"" + name + "\"  -dt \"string\"  "+target[i]+";")
+        #mel.eval("setAttr -e-keyable true "+target[i]+"." + name + ";")
+
+def addAttrBoolean(target=None, name="tempBoolean"):
+    if not target:
+        target = mc.ls(sl=1)
+    for i in range(0,len(target)):
+        mel.eval("addAttr -ln \"" + name + "\"  -at bool  "+target[i]+";")
+        mel.eval("setAttr -e-keyable true "+target[i]+"." + name + ";")
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
