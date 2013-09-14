@@ -289,3 +289,12 @@ def lookAt(target=None):
         convertZ = mc.createNode( 'unitConversion' )
         mc.connectAttr( angleBtwnNode+'.eulerZ', convertZ+'.input' )
         mc.connectAttr( convertZ+'.output', target[i]+'.rotateZ' )
+
+def addVector(target=None, name="temp"):
+    if not target:
+        target = mc.ls(sl=1)
+    for i in range(0,len(target)):
+        mel.eval("addAttr -ln \"" + name + "\"  -at double3  "+target[i]+";")
+        mel.eval("addAttr -ln \""+name+"X\"  -at double -p "+name+"  "+target[i]+";")
+        mel.eval("addAttr -ln \""+name+"Y\"  -at double -p "+name+"  "+target[i]+";")
+        mel.eval("addAttr -ln \""+name+"Z\"  -at double -p "+name+"  "+target[i]+";")

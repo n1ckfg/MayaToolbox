@@ -51,6 +51,7 @@ def fkikCreateController(target=None, name="controller"):
             ccfk(fkTarget[0], name=name4)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Write a function that will automatically create an IK setup, given a list of joints
 # 
@@ -73,144 +74,143 @@ def fkikCreateController(target=None, name="controller"):
 # 5 joints - pole vector on 3rd, 6 joints - pole on 3rd, etc.)
 
 def ikCreateController(startJoint=None, endJoint=None, controlType="cube", size=1.0, name="controller"):
-    name = getUniqueName(name)
- 
-    #1. Store current selection
-    # getting rid of multiple targets
-    if not startJoint:
-        startJoint = mc.ls(sl=True)[0]
- 
-    joints = mc.listRelatives( startJoint, ad=True )
-     
-    # let's find our end joint
-    if not endJoint:
-        endJoint = joints[0]
- 
- 
-    finalGroup = mc.group(em=True, name=name)
- 
-    appendCtl = "_control"
-    appendCst = "_constraint"
-    appendGrp = "_group"
-    appendPole = "_pole"
- 
-    returns = []
- 
-    # getting rid of loop, since the only time this loop will run
-    # is if you want to select multiple start joints and have multiple
-    # ik controls being made with a single command. It's better to keep
-    # the scope of this function limited at this point and if you want
-    # to create multiple ik controllers, create another function that
-    # will call this one based off multiple selection
- 
-    #for i in range(0,len(target)):
- 
-    '''
-    #2. Create IK handle
-    if not startJoint or not endJoint:
-        mc.select(target[i])
-        joints = mc.listRelatives(ad=True)
-        joints.append(target[i])
-        mc.select(joints[len(joints)-1],joints[0])
-    else:
-        mc.select(startJoint)
-        joints = mc.listRelatives(ad=True)
-        joints.append(startJoint)
-        mc.select(startJoint,endJoint)
-    '''
- 
-    # directly inputting the start joint and end effector
-    handle = mc.ikHandle(sj=startJoint, ee=endJoint, solver="ikRPsolver")
-     
-    #3. Create controller
-    ctl = controllerGeometry(controlType,size, getUniqueName(name), appendCtl) # getting unique name now
-    ctl2 = controllerGeometry("sphere",size, getUniqueName(name+appendPole), appendCtl) # getting unique name now
-     
-    # got rid of conditional
-    '''
-    if not startJoint or not endJoint:
-        snapToPos([ctl,joints[0]])
-    else:
-    '''
-    snapToPos([ctl,endJoint])
-     
-    #~~
-    # got rid of selection, directly inputting what to group
-    ctlGrp = [mc.group(ctl, n= getUniqueName(name + appendGrp))]
-    ctlCst = [mc.group(ctlGrp, n= getUniqueName(name + appendCst))]
- 
-    #~~
-    mc.parent(handle[0],ctlGrp[0])
-    middleJoint = 0;
-     
-    # at this point startJoint and endJoint are definitely going to be there.
-    # we don't want to create too many similar conditionals and reuse code.
-    # It's better to just create a function that tries to fill in the information,
-    # for instance in this case, the function needs a start joint and an end joint,
-    # so you should use selection in the beginning to get your start and end joint
-    # instead of creating a number of conditionals to do different things at different
-    # times. These branches could lead to bugs.
-    '''
-    if not startJoint or not endJoint:
-        jointCount = countChain(target[i])
-    else:
-    '''
-    jointCount = countChain(startJoint) - countChain(endJoint)
-     
-    '''
-    if(jointCount%2==0): #even joints
-        middleJoint = int(jointCount/2) #-1
-    else: #odd joints
-        middleJoint = int(jointCount/2)
-    '''
- 
-    # in order to find the middle joint, we need a list
-    # of all of the joints between the start joint and the end joint
-    # One way to do this is to get the long name of the end joint,
-    # since we assume we're dealing with the same chain, the start
-    # joint will be in the long name so we split the string by the short
-    # name. This will give us a string that looks like this:
-    # "joint2|joint3|joint4" We then split that again by "|" and now
-    # have an array that looks like this: ["joint2", "joint3", "joint4"]
-    # and we could now just find the halfway point within that array
-    # and get our mid point.
-    # As a warning, though, this method will break if the start, end or
-    # middle joint don't have a unique name
-    activeJoints = mc.ls(endJoint, l=True)[0].split(startJoint)[-1].split('|')
- 
-    middleJoint = activeJoints[int(floor(jointCount/2.0))]
- 
-    # at this point startJoint and endJoint are definitely going to be there.
-    '''
-    if not startJoint or not endJoint:
-        ikControllerConstraints(ctl,handle[0],ctl2,joints[middleJoint])
-    else:
-    '''
-    ikControllerConstraints(ctl,handle[0],ctl2,middleJoint)      
- 
-    #4. Try to apply controller to original selection
-    mc.parent(ctlCst[0],name)
-    mc.parent(ctl2,name)
-    returns.append([ctlCst,ctlGrp,ctl,ctl2])
- 
-    return (name,returns)
- 
+    name = getUniqueName(name)
+
+    #getting rid of multiple targets
+    if not startJoint:
+        startJoint = mc.ls(sl=True)[0]
+
+    joints = mc.listRelatives( startJoint, ad=True )
+    
+    # let's find our end joint
+    if not endJoint:
+        endJoint = joints[0]
+
+
+    finalGroup = mc.group(em=True, name=name)
+
+    appendCtl = "_control"
+    appendCst = "_constraint"
+    appendGrp = "_group"
+    appendPole = "_pole"
+
+    returns = []
+
+    # getting rid of loop, since the only time this loop will run
+    # is if you want to select multiple start joints and have multiple
+    # ik controls being made with a single command. It's better to keep
+    # the scope of this function limited at this point and if you want
+    # to create multiple ik controllers, create another function that
+    # will call this one based off multiple selection
+
+    #for i in range(0,len(target)):
+
+    '''
+    #2. Create IK handle
+    if not startJoint or not endJoint:
+        mc.select(target[i])
+        joints = mc.listRelatives(ad=True)
+        joints.append(target[i])
+        mc.select(joints[len(joints)-1],joints[0])
+    else:
+        mc.select(startJoint)
+        joints = mc.listRelatives(ad=True)
+        joints.append(startJoint)
+        mc.select(startJoint,endJoint)
+    '''
+
+    # directly inputting the start joint and end effector
+    handle = mc.ikHandle(sj=startJoint, ee=endJoint, solver="ikRPsolver")
+    
+    #3. Create controller
+    ctl = controllerGeometry(controlType,size, getUniqueName(name), appendCtl) # getting unique name now
+    ctl2 = controllerGeometry("sphere",size, getUniqueName(name+appendPole), appendCtl) # getting unique name now
+    
+    # got rid of conditional
+    '''
+    if not startJoint or not endJoint:
+        snapToPos([ctl,joints[0]])
+    else:
+    '''
+    snapToPos([ctl,endJoint])
+    
+    #~~
+    # got rid of selection, directly inputting what to group
+    ctlGrp = [mc.group(ctl, n= getUniqueName(name + appendGrp))]
+    ctlCst = [mc.group(ctlGrp, n= getUniqueName(name + appendCst))]
+
+    #~~
+    mc.parent(handle[0],ctlGrp[0])
+    middleJoint = 0;
+    
+    # at this point startJoint and endJoint are definitely going to be there.
+    # we don't want to create too many similar conditionals and reuse code.
+    # It's better to just create a function that tries to fill in the information,
+    # for instance in this case, the function needs a start joint and an end joint,
+    # so you should use selection in the beginning to get your start and end joint
+    # instead of creating a number of conditionals to do different things at different
+    # times. These branches could lead to bugs.
+    '''
+    if not startJoint or not endJoint:
+        jointCount = countChain(target[i])
+    else:
+    '''
+    jointCount = countChain(startJoint) - countChain(endJoint)
+    
+    '''
+    if(jointCount%2==0): #even joints
+        middleJoint = int(jointCount/2) #-1
+    else: #odd joints
+        middleJoint = int(jointCount/2)
+    '''
+
+    # in order to find the middle joint, we need a list
+    # of all of the joints between the start joint and the end joint
+    # One way to do this is to get the long name of the end joint,
+    # since we assume we're dealing with the same chain, the start
+    # joint will be in the long name so we split the string by the short
+    # name. This will give us a string that looks like this:
+    # "joint2|joint3|joint4" We then split that again by "|" and now
+    # have an array that looks like this: ["joint2", "joint3", "joint4"]
+    # and we could now just find the halfway point within that array
+    # and get our mid point.
+    # As a warning, though, this method will break if the start, end or
+    # middle joint don't have a unique name
+    activeJoints = mc.ls(endJoint, l=True)[0].split(startJoint)[-1].split('|')
+
+    middleJoint = activeJoints[int(floor(jointCount/2.0))]
+
+    # at this point startJoint and endJoint are definitely going to be there.
+    '''
+    if not startJoint or not endJoint:
+        ikControllerConstraints(ctl,handle[0],ctl2,joints[middleJoint])
+    else:
+    '''
+    ikControllerConstraints(ctl,handle[0],ctl2,middleJoint)     
+
+    #4. Try to apply controller to original selection
+    mc.parent(ctlCst[0],name)
+    mc.parent(ctl2,name)
+    returns.append([ctlCst,ctlGrp,ctl,ctl2])
+
+    return (name,returns)
+
 #~~
- 
+
 def ikControllerConstraints(constraint, target, constraint2, target2):
-    #3b. select parent of target joint
- 
-    # got rid of selection
-    #mc.select(constraint, target)
-    mc.parentConstraint(constraint, target, mo=1)
-    #mc.select(constraint2, target2)
-    snapToPos([constraint2, target2])
-    #mc.select(constraint2,target)
-    mc.poleVectorConstraint(constraint2, target)
-    #mc.select(controller,handle)
-    #cst1 = mc.parentConstraint(mo=1)
-    #mc.select(constraint,handle)
-    #cst2 = mc.poleVectorConstraint()
+    #3b. select parent of target joint
+
+    # got rid of selection
+    #mc.select(constraint, target)
+    mc.parentConstraint(constraint, target, mo=1)
+    #mc.select(constraint2, target2)
+    snapToPos([constraint2, target2])
+    #mc.select(constraint2,target)
+    mc.poleVectorConstraint(constraint2, target)
+    #mc.select(controller,handle)
+    #cst1 = mc.parentConstraint(mo=1)
+    #mc.select(constraint,handle)
+    #cst2 = mc.poleVectorConstraint()
 
 def countChain(target=None):
     if not target:
@@ -228,6 +228,115 @@ def countChain(target=None):
     print returnCount
     return(returnCount)
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# IK Controller Alt Version (without David's improvements)
+# Generally less reliable but can succeed with very long chains where normal function breaks.
+
+def ikCreateControllerAlt(startJoint=None, endJoint=None, controlType="cube", size=1.0, name="controller"):
+    name = getUniqueName(name)
+    #1. Store current selection
+    if(startJoint):
+        target = [startJoint]
+    else:
+        target = mc.ls(sl=True)
+
+    finalGroup = mc.group(em=True, name=name)
+
+    appendCtl = "_control"
+    appendCst = "_constraint"
+    appendGrp = "_group"
+    appendPole = "_pole"
+
+    returns = []
+
+    for i in range(0,len(target)):
+        joints = []
+        #2. Create IK handle
+        if not startJoint or not endJoint:
+            mc.select(target[i])
+            joints = mc.listRelatives(ad=True)
+            joints.append(target[i])
+            mc.select(joints[len(joints)-1],joints[0])
+        else:
+            mc.select(startJoint)
+            joints = mc.listRelatives(ad=True)
+            joints.append(startJoint)
+            mc.select(startJoint,endJoint)
+
+        handle = mc.ikHandle(solver="ikRPsolver")
+        
+        #3. Create controller
+        ctl = controllerGeometry(controlType,size,name + str(i+1),appendCtl)
+        ctl2 = controllerGeometry("sphere",size,name+appendPole + str(i+1),appendCtl)
+        
+        if not startJoint or not endJoint:
+            mc.select(ctl,joints[0])
+        else:
+            mc.select(ctl,endJoint)
+
+        snapToPos()
+        #~~
+        mc.select(ctl)
+        mc.group(n=name + appendGrp + str(i+1))
+        ctlGrp = mc.ls(sl=1)
+        mc.group(n=name + appendCst + str(i+1))
+        ctlCst = mc.ls(sl=1)
+        #~~
+        mc.parent(handle[0],ctlGrp[0])
+        middleJoint = 0;
+        if not startJoint or not endJoint:
+            jointCount = countChainAlt(target[i])
+        else:
+            jointCount = countChainAlt(startJoint) - countChainAlt(endJoint)
+        if(jointCount%2==0): #even joints
+            middleJoint = int(jointCount/2) #-1
+        else: #odd joints
+            middleJoint = int(jointCount/2)
+        
+        if not startJoint or not endJoint:
+            ikControllerConstraintsAlt(ctl,handle[0],ctl2,joints[middleJoint])      
+        else:
+            ikControllerConstraintsAlt(ctl,handle[0],ctl2,joints[middleJoint-countChainAlt(endJoint)])      
+
+        #4. Try to apply controller to original selection
+        mc.parent(ctlCst[0],name)
+        mc.parent(ctl2,name)
+        returns.append([ctlCst,ctlGrp,ctl,ctl2])
+
+    return (name,returns)
+
+#~~
+
+def ikControllerConstraintsAlt(constraint, target, constraint2, target2):
+    #3b. select parent of target joint
+    mc.select(constraint, target)
+    mc.parentConstraint(mo=1)
+    mc.select(constraint2, target2)
+    snapToPos()
+    mc.select(constraint2,target)
+    mc.poleVectorConstraint()
+    #mc.select(controller,handle)
+    #cst1 = mc.parentConstraint(mo=1)
+    #mc.select(constraint,handle)
+    #cst2 = mc.poleVectorConstraint()    
+
+def countChainAlt(target=None):
+    if not target:
+        try:
+            target = s()
+        except:
+            print "Nothing selected or specified."
+            return
+
+    try:
+        chain = py.listRelatives(target, ad=True)
+        returnCount = len(chain)
+    except:
+        returnCount = 0
+    print returnCount
+    return(returnCount)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Function to create an fk controller.

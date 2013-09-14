@@ -11,6 +11,22 @@ import re
 #~~
 from general import *
 
+def puppetMesh(target=None):
+    returns = []
+    
+    if not target:
+        target = mc.ls(sl=1)
+    
+    for i in range(0,len(target)):    
+        obj = mel.eval("planarSrf -ch 1 -d 3 -ko 0 -tol 0 -rn 0 -po 1 \""+target[i]+"\";")
+        #delete history, recenter the pivot
+        mc.delete(ch=True)
+        mc.xform(cp=True)
+ 
+        returns.append(obj)
+        
+    return returns
+
 def iteratePolyToSubdiv(target=None,polys=1000,reps=1000,delete=False):
     
     counter = 0

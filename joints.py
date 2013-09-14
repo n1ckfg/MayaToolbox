@@ -103,22 +103,28 @@ def lockPuppet(jointsOnly=False):
     target=mc.ls(sl=1)
     
     for i in range(0,len(target)):
-        mc.select(target[i])
-        lockHandler(False,False,False) #root joint is unlocked
-        
-        try:
-            if(jointsOnly==True):
-                kids = mc.listRelatives(ls(selection=True), children=True, type="joint", allDescendents=True)
-            else:
-                kids = mc.listRelatives(ls(selection=True), children=True, allDescendents=True)
-            for k in kids:
-                mc.select(k)
-                lockHandler(True,True,True) #lock all...
-                mc.setAttr(k + ".rotateX",lock=True) 
-                mc.setAttr(k + ".rotateZ",lock=True) 
-                mc.setAttr(k + ".rotateY",lock=False) #...except Y rotation.
+        try: #works, but generates a strange error
+            py.select(target[i])
+            lockHandler(False,False,False) #root joint is unlocked
+            
+            try:
+                if(jointsOnly==True):
+                    kids = mc.listRelatives(ls(selection=True), children=True, type="joint", allDescendents=True)
+                else:
+                    kids = mc.listRelatives(ls(selection=True), children=True, allDescendents=True)
+                for k in kids:
+                    py.select(k)
+                    lockHandler(True,True,True) #lock all...
+                    mc.setAttr(k + ".rotateX",lock=True) 
+                    mc.setAttr(k + ".rotateZ",lock=False) 
+                    mc.setAttr(k + ".rotateY",lock=True) #...except Z rotation.
+                    mc.setAttr(k + ".translateX",lock=False) 
+                    mc.setAttr(k + ".translateZ",lock=True) 
+                    mc.setAttr(k + ".translateY",lock=False)
+            except:
+                print "No child joints."   
         except:
-            print "No child joints."   
+            print "Error."
             
     mc.select(target) 
 
@@ -136,11 +142,11 @@ def eyeRig(scaler): #try 4
             mc.expression(s=target[i]+".rotateX = " + target[len(target)-1] + ".translateY * -1 * " + str(scaler))
             mc.expression(s=target[i]+".rotateY = " + target[len(target)-1] + ".translateX * " + str(scaler))
 
-#broken
-def parentConstraintAll():
-    target = mc.ls(sl=1)
+def parentConstraintAll(target=None):
+    if not target:
+        target = mc.ls(sl=1)
+    
     for i in range(0,len(target)):
         if(i<len(target)-1):
-            mc.select(target[len(target)-1],target[i])
-            mc.parentConstraint()
+            mc.parentConstraint(target[len(target)-1],target[i],mo=1)
     mc.select(target)

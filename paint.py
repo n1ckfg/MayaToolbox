@@ -12,6 +12,15 @@ import re
 from general import *
 from modeling import *
 
+def lightningStar(target=None):
+    if not target:
+        target = mc.ls(sl=1)
+    
+    for i in range(0,len(target)-1):
+        mc.select(target[i],target[len(target)-1])
+        mel.eval("lightning \"\" 0 1 20 0.1 1 0 1 0.3;")
+        
+
 def paintSurface(target=None, brush="fire"):
     returns = []
     if not target:
