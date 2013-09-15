@@ -65,15 +65,32 @@ def fkikCreateController(target=None, name="controller"):
             #freezeTransformations(settings)
             pos = getPos([target[i]])
             mc.move(pos[0][0],pos[0][1],pos[0][2])
-            py.parentConstraint(settings,target[i],mo=1)
-            fkik = addAttrBoolean([settings],name="FKIK_switch")
-            fkikVal = getAttr(settings + ".FKIK_switch")
+            # do later!
+            #py.parentConstraint(settings,target[i],mo=1)
+            fkikName = "FKIK_switch"
+            fkik = addAttrFloat([settings],name=fkikName)
+            fkikVal = mc.getAttr(settings + "." + fkikName)
             print fkikVal
 
-            for j in range(0,countChain(target[i])):
-                py.parentConstraint(fkTarget[j],origTarget[j])
-                py.parentConstraint(ikTarget[j],origTarget[j])
+            for j in range(0,countChain(target[i])+1):
+                pcfk = py.parentConstraint(fkTarget[j],origTarget[j])
+                expr1 = "expressionEditor EE \""+pcfk+"\" \""+fkTarget[j]+"W0\";"
+                print "expr1: " + expr1
+                #expr2 = "expression -s \""+str(pcfk)+"."+str(fkTarget[j])+"W0 = "+str(settings)+"."+str(fkikName)+"\"  -o "+str(settings)+" -ae 1 -uc all ;"
+                expr2 = "expression -s \""+pcfk+"."+fkTarget[j]+"W0 = abs(1-"+settings+"."+fkikName+")\"  -o "+settings+" -ae 1 -uc all ;"
+                print "expr2: " + expr2
+                mel.eval(expr1)
+                mel.eval(expr2)
+                #~~
+                pcik = py.parentConstraint(ikTarget[j],origTarget[j])
+                expr3 = "expressionEditor EE \""+pcik+"\" \""+ikTarget[j]+"W1\";"
+                print "expr1: " + expr3
+                expr4 = "expression -s \""+pcik+"."+ikTarget[j]+"W1 = "+settings+"."+fkikName+"\"  -o "+settings+" -ae 1 -uc all ;"
+                print "expr2: " + expr4
+                mel.eval(expr3)
+                mel.eval(expr4)
 
+            py.parentConstraint(settings,target[i],mo=1)
             name5 = getUniqueName(name)
             mc.group(settings,name1,name2,name3,name4,name=name5)
 
