@@ -1,0 +1,438 @@
+global proc shelf_Nick () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Start faceshift" 
+        -enableBackground 0
+        -align "center" 
+        -label "Faceshift" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.25 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/faceshift.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/faceshift.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "load_faceshiftPlugin;\nFS_startWidget;" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "GoZ" 
+        -enableBackground 0
+        -align "center" 
+        -label "GoZ" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/Shared/Pixologic/GoZApps/Maya/GoZBrush.xpm" 
+        -image1 "/Users/Shared/Pixologic/GoZApps/Maya/GoZBrush.xpm" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "source \"/Users/Shared/Pixologic/GoZApps/Maya/GoZBrushFromMaya.mel\"\n" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Send to Photoshop" 
+        -enableBackground 0
+        -align "center" 
+        -label "Send to Photoshop" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/GoP.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/GoP.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "GoP;" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Send to AE" 
+        -enableBackground 0
+        -align "center" 
+        -label "Send to AE" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/GoAE.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/GoAE.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "## This script requires pymel\n\n## This script offers a way of exporting\n## a scene nicely to Adobe After Effects\n## To do this, it has to scale everything\n## so the values are easier to use in AE,\n## and bake the animation to 1 frame intervals\n## so AE can read them\n\n## Import pymel and the random module\nfrom pymel.core import *\n\n## ---- VARIABLES ---- ##\noriginalCamerasList = []\noriginalCameras = []\noriginalObjectsList = []\noriginalObjects = []\nexportList = []\n\n## ---- FUNCTIONS ---- ##\ndef getOriginalCameras(*Args):\n    ## Gets the selection\n    originalCamerasListSelected = ls(selection=True)\n    ## For each object in selection\n    for selected in originalCamerasListSelected:\n        ## Try to get it's shape node, if it has one and it's a camera\n        try:\n            if selected.getShape().nodeType() == \"camera\":\n                ## Add it to our camera list\n                originalCamerasList.append(selected)\n        ## If that errored, it doesn't have a shape node\n        except:\n            print \"Camera: \"+selected+\" has no shape node or is a shape node.\"\n    ## Sort the list and then make a readable string for the bar\n    originalCamerasList.sort()\n    # But first, add it to a separate list that gets overwritten each time\n    global originalCameras\n    originalCameras = originalCamerasList[:]\n    originalCamerasString = ', '.join( [str(x) for x in originalCamerasList] )\n    ## Get rid of the camera selection list so we don't keep adding to it each time\n    del originalCamerasList[:]\n    ## Set the bar with the readable list\n    originalCamerasLabel.setText(originalCamerasString)\n\ndef getOriginalObjects(*Args):\n    ## Gets the selection\n    originalObjectsListSelected = ls(selection=True)\n    ## For each object in selection\n    for selected in originalObjectsListSelected:\n        ## Try to get it's shape node, if it has one and it's not a camera\n        try:\n            if selected.getShape().nodeType() != \"camera\":\n                ## Add it to our object list\n                originalObjectsList.append(selected)\n        ## If that errored, it doesn't have a shape node\n        except:\n            print \"Object: \"+selected+\" has no shape node or is a shape node\"\n    ## Sort the list and then make a readable string for the bar\n    originalObjectsList.sort()\n    ## But first, add it to a separate list that gets overwritten each time\n    global originalObjects\n    originalObjects = list(originalObjectsList)\n    originalObjectsString = ', '.join( [str(x) for x in originalObjectsList] )\n    ## Get rid of the object selection list so we don't keep adding to it each time\n    del originalObjectsList[:]\n    ## Set the bar with the readable list\n    originalObjectsLabel.setText(originalObjectsString)\n\ndef scaleEverything(*Args):\n    ## Make an array for the scale value\n    exportScaleValue = [exportScale.getValue(), exportScale.getValue(), exportScale.getValue()]\n    ## Empty the selection\n    select(clear=True)\n    ## Select the cameras\n    for cam in originalCameras:\n        select(cam, add=True)\n    ## Select the objects\n    for obj in originalObjects:\n        select(obj, add=True)\n    ## Group the selected objects\n    exportScaleGroup = group(name=\"exportScale\")\n    ## Scale the group by the amount given\n    exportScaleGroup.setScale(exportScaleValue)\n\ndef bakeCameras(*Args):\n    for cam in originalCameras:\n        print \"Baking Camera: \"+str(cam)\n        ## Gets the name of the old camera\n        newCamName = str(cam.name())+\"__AE\"\n        ## Create a new camera\n        newCam = createNode('camera')\n        ## Name the new camera the new name\n        rename(newCam.getParent(), newCamName)\n        ## Get all the old camera settings and apply to new cam\n        newCam.setFocalLength(cam.getFocalLength())\n        newCam.setFStop(cam.getFStop())\n        newCam.setShutterAngle(cam.getShutterAngle())\n        newCam.setFocusDistance(cam.getFocusDistance())\n        ## Constrain the new camera to the old camera so we get the\n        ## Locally scaled values in world space for baking\n        pC = parentConstraint(cam, newCam.getParent())\n        sC = scaleConstraint(cam, newCam.getParent())\n        ## Format the in/out time range\n        timeRange = (inFrame.getValue(), outFrame.getValue())\n        ## Bake the animation of the new camera\n        bakeResults(newCam.getParent(), sampleBy=exportKeysAmount.getValue(), time=timeRange, simulation=True)\n        ## Remove the constraints\n        delete(pC, sC)\n        ## Add object to export list\n        global exportList\n        exportList.append(newCam.getParent())\n\ndef bakeObjects(*Args):\n    for obj in originalObjects:\n        print \"Baking Object: \"+str(obj)\n        ## Gets the name of the old object\n        newLocName = str(obj.name())+\"__AE__NULL\"\n        ## Create a new locator\n        newLoc = spaceLocator()\n        ## Name the new locator the new name\n        rename(newLoc.getParent(), newLocName)\n        ## Constrain the new locator to the old object so we\n        ## get the locally scaled values in world space for baking\n        pC = parentConstraint(obj, newLoc)\n        sC = scaleConstraint(obj, newLoc)\n        ## Format the in/out time range\n        timeRange = (inFrame.getValue(), outFrame.getValue())\n        ## Bake the animation of the new locator\n        bakeResults(newLoc, sampleBy=exportKeysAmount.getValue(), time=timeRange, simulation=True)\n        ## Remove the constraints\n        delete(pC, sC)\n        ## Add object to export list\n        global exportList\n        exportList.append(newLoc)\n        \ndef export(*Args):\n    ## Clear selection\n    select(clear=True)\n    ## Loop through the exported list generated from our baking\n    global exportList\n    for each in exportList:\n        ## Select each object\n        select(each, add=True)\n    informBox(\"DONE!\", \"All objects prepared for exporting have been selected, you may now: File > Export Selected and save as a Maya Ascii for After Effects\", ok=\"Sweet!\")\n\n## ---- GUI SECTION ---- ##\n## Makes a flow layout to arrange two columns side by side\ngui = window(title=\"After Effects Exporter\", width=190, height=240, sizeable=False)\nmainLayout = formLayout()\ntabs = tabLayout(height=230, width=190)\nformLayout(mainLayout, edit=True, attachForm=((tabs, 'top', 0), (tabs, 'left', 0), (tabs, 'bottom', 0), (tabs, 'right', 0)))\n\nstepOne = rowColumnLayout(numberOfColumns=1, columnWidth=(1, 190), parent=tabs)\ntext(parent=stepOne, label=\"Select the cameras you want sent to After Effects:\", height=40, wordWrap=True, align=\"left\")\noriginalCamerasLabel = textField(parent=stepOne, editable=False, text=\"NONE\", width=125)\nbutton(parent=stepOne, command=getOriginalCameras, label=\"GET CAMERAS\")\nseparator(height=10, parent=stepOne)\ntext(parent=stepOne, label=\"Select the objects you want sent to After Effects:\", height=40, wordWrap=True, align=\"left\")\noriginalObjectsLabel = textField(parent=stepOne, editable=False, text=\"NONE\", width=125)\nbutton(parent=stepOne, command=getOriginalObjects, label=\"GET OBJECTS\")\n\nstepTwo = rowColumnLayout(numberOfColumns=1, columnWidth=(1, 190), parent=tabs)\ntext(parent=stepTwo, label=\"Set the scale for everything. Keep in mind, one unit in Maya is one pixel in After Effects.\", height=70, wordWrap=True, align=\"left\")\nexportScale = intField(width=60, value=1000, parent=stepTwo)\nseparator(height=10, parent=stepTwo)\ntext(parent=stepTwo, label=\"Set the keyframe bake amount. This will make keyframes every X frames.\", height=70, wordWrap=True, align=\"left\")\nexportKeysAmount = intField(width=60, value=1, parent=stepTwo)\n\nstepThree = rowColumnLayout(numberOfColumns=1, columnWidth=(1, 190), parent=tabs)\ntext(parent=stepThree, label=\"Set the time range to bake and export:\", height=40, wordWrap=True, align=\"left\")\ninFrame = intField(width=60, value=1, parent=stepThree)\noutFrame = intField(width=60, value=48, parent=stepThree)\nseparator(height=40, parent=stepThree)\nbutton(parent=stepThree, label=\"Scale Everything\", command=scaleEverything)\nbutton(parent=stepThree, label=\"Bake Cameras\", command=bakeCameras)\nbutton(parent=stepThree, label=\"Bake Objects\", command=bakeObjects)\nbutton(parent=stepThree, label=\"Export\", command=export)\n\ntabLayout(tabs, edit=True, tabLabel=((stepOne, \"Step 1\"), (stepTwo, \"Step 2\"), (stepThree, \"Step3\")))\n\ngui.show()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "NI mate receiver" 
+        -enableBackground 0
+        -align "center" 
+        -label "NI mate receiver" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/NImateReceiverForMaya.ico" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/NImateReceiverForMaya.ico" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import NImateReceiverForMaya\nNImateReceiverForMaya.toggleReceiver()" 
+        -sourceType "python" 
+        -doubleClickCommand "import NImateReceiverForMaya\nNImateReceiverForMaya.showPreferences()" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Import/Export OBJ Sequence" 
+        -enableBackground 0
+        -align "center" 
+        -label "OBJ Sequence" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/objseq.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/objseq.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "/*\n'OBJ Sequence Import/Export' MEL script\n\nAuthor: Carlos Rico Adega - carlos.rico.3d@gmail.com\nDate: May 3, 2013\n\nCopyright (c) 2013 Carlos Rico Adega\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,k\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n\nSCRIPT NAME:\n\n\tcraOBJSequences.mel\n\t\n\tMain procedure:\n\t    craOBJSequences;\n\n\t    \nDESCRIPTION:\n\t\n\t- This script helps to import and export OBJ sequences. \n\t- It uses choice nodes to handle the animation of imported sequences.\n\t- Allows to export seleted objects as one sequence (combining objects) \n\t  or one sequence per object.\n\t\nLAUNCH SCRIPT :\n\n       craOBJSequences;\n\n\nTESTED ON:\n\n    Windows 7 x64\n        - Maya 2013 x64\n\n    Fedora 14 x64 ( Virtualbox Virtual Machine )\n        - Maya 2012 x64     \n\t\t\n\t\t\nCHANGE LOG:\n\n\tVersion: 1.1.0\n\tDate: May 8, 2013\n\t\t- Import/Export are now interruptable processes.\n\t\t- Fixed a bug that caused the script to stop working when a file fails to import.\n\t\t\n\tVersion: 1.0.0\n\tDate: May 3, 2013\n\t\t- First Release.\n\n*/\n\nglobal proc craOBJSequences()\n{\n\tif(!`pluginInfo -q -l \"objExport\"`)\n\t\tloadPlugin -quiet \"objExport\";\n\t\n\tif (`window -exists craOBJSequencesWin`)\n\t\tdeleteUI craOBJSequencesWin;\n\t\n\twindow -t \"  OBJ Sequence Import/Export\" -tlb 1 -s 0 craOBJSequencesWin;\n\t\n\tframeLayout -mw 4 -mh 4 -lv 0 -bs \"etchedOut\" craImportExportOBJsMainFL;\n\t\tcolumnLayout -adj 1 craImportExportOBJsMainCL;\n\t\t\tframeLayout -mw 4 -mh 4 -lv 0 -bs \"etchedOut\";\n\t\t\t\trowLayout -nc 2 -adj 2;\n\t\t\t\t\ttext -l \"  \";\n\t\t\t\t\tcheckBox -v 1 -l \"  Import under one transform\" craOBJSeqOutputCB;\n\t\t\t\tsetParent ..;\n\t\t\t\tbutton -bgc .5 .7 .5 -l \"Import OBJ Sequence\" -c (\"craImportOBJs\") -ann \"Select all sequence files\";\n\t\t\tsetParent ..;\n\t\t\tseparator -h 5 -st \"none\";\n\t\t\t\n\t\t\tframeLayout -mw 5 -mh 4 -lv 0 -bs \"etchedOut\";\n\t\t\t\tcolumnLayout -adj 1 ;\n\t\t\t\trowLayout -nc 6 -adj 1;\n\t\t\t\t\ttext -w 40 -l \"start\" -ann \"Start frame\";\n\t\t\t\t\tintField -w 35 -ann \"Start frame\" -v `playbackOptions -q -min` craStartFrameIF;\n\t\t\t\t\ttext -w 30 -l \" end\" -ann \"End frame\";\n\t\t\t\t\tintField -w 35 -ann \"End frame\" -v `playbackOptions -q -max` craEndFrameIF;\n\t\t\t\t\ttext -w 10 -l \"\";\n\t\t\t\t\tnodeIconButton -bgc .4 .4 .4 -h 18 -w 18 -i \"pickOtherObj.png\" -ann \"About\" -c \"craAboutOBJScript\";\n\t\t\t\tsetParent ..;\n\t\t\t\tseparator -h 5 -st \"none\";\n\t\t\t\t\n\t\t\t\tbutton -bgc .7 .5 .2 -l \"Export OBJ Sequence\" -c (\"craExportOBJs\");\n\t\t\t\tsetParent ..;\n\t\t\tsetParent ..;\n\tsetParent ..;\n\t\n\tshowWindow craOBJSequencesWin;\n}\n\nglobal proc craExportOBJs( )\n{\n\tstring $mySel[] = `ls -sl`;\n\tint $multiple = 0;\n\tint $craCancelled;\n\tif(!size($mySel))\n\t\terror \"Select one object at least.\\n\";\n\tstring $craName;\n\tstring $craResult = `promptDialog\n\t\t\t\t-title \"OBJ Sequence\"\n\t\t\t\t-message \"Enter sequence name:\"\n\t\t\t\t-button \"OK\" -button \"Cancel\"\n\t\t\t\t-defaultButton \"OK\" -cancelButton \"Cancel\"\n\t\t\t\t-dismissString \"Cancel\"`\n\t\t\t;\n\tif ($craResult == \"OK\") \n\t{\n\t\tif(size($mySel) > 1)\n\t\t{\n\t\t\tstring $answer = `confirmDialog -title \"Question\" -message \"                     Multiple objects selected. What do you want to do?\"\n\t\t\t\t-button \" One OBJ sequence for all objects \" -button \" One OBJ sequence per object \" -button \"Cancel\" -defaultButton \"One OBJ sequence for all objects\"\n\t\t\t\t-cancelButton \"Cancel\" -dismissString \"Cancel\"`;\n\t\t\tif($answer == \" One OBJ sequence per object \") \n\t\t\t    $multiple = 1;\n\t\t    \n\t\t\telse if($answer == \"Cancel\")  \n\t\t\t    return;\n\t\t}\n\t\t\n\t\t$craName = `promptDialog -query -text`;\n\t\t\n\t\tstring $exportDir[] = `fileDialog2 -caption \"Select Export Folder\" -okCaption \"Export\" -fileMode 3 -dialogStyle 2`;\n\t\t\n\t\t$startTime = `timerX`;\n\t\t\n\t\tif(size($exportDir))\n\t\t{\n\t\t\tint $start = `intField -q -v craStartFrameIF`;\n\t\t\tint $end = `intField -q -v craEndFrameIF`;\n\t\t\t\n\t\t\tint $maxValue = $end - $start;\n\t\t\tprogressWindow  -status \"Exporting OBJ Sequence...\" -maxValue $maxValue -title \"Exporting\" -isInterruptable true;\n\t\t\t\n\t\t\tcurrentTime -e $start;\n\t\t\tdgeval $mySel[0];\n\t\n\t\t\tfor( $i=$start; $i<=$end; $i++ )\n\t\t\t{\n\t\t\t\tif ( `progressWindow -query -isCancelled` )\n\t\t\t\t{\n\t\t\t\t\t$craCancelled = 1;\n\t\t\t\t\tbreak;\n\t\t\t\t}\n\t\t\t\tprogressWindow -e -step 1 ;\n\t\t\t\t\n\t\t\t\tif($multiple)\n\t\t\t\t{\n\t\t\t\t\tfor($j in $mySel)\n\t\t\t\t\t{\n\t\t\t\t\t\tselect -r $j;\n\t\t\t\t\t\tdgeval $j;\n\t\t\t\t\t\tduplicate;\n\t\t\t\t\t\tcraOBJsChannelControlProc {\"tx\", \"ty\",\"tz\",\"rx\",\"ry\",\"rz\",\"sx\",\"sy\",\"sz\",\"v\"} 0 1;\n\t\t\t\t\t\tcatchQuiet(`parent -w`);\n\t\t\t\t\t\tsysFile -md ($exportDir[0] + \"/\" + $craName + \"_OBJ_Seq/\" + $j) ;;\n\t\t\t\t\t\tfile -force -options \"groups=1;ptgroups=1;materials=0;smoothing=1;normals=1\" -typ \"OBJexport\" -pr -es ($exportDir[0] + \"/\" + $craName + \"_OBJ_Seq/\" + $j + \"/\" + $j + \".\" + cra_numberPadding (string($i), 4, \"0\") + \".obj\");\n\t\t\t\t\t\tdelete;\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t{\n\t\t\t\t\tselect -r $mySel;\n\t\t\t\t\tduplicate;\n\t\t\t\t\tif(size($mySel) > 1)\n\t\t\t\t\t\tpolyUnite -ch 0;\n\t\t\t\t\telse\n\t\t\t\t\t\tcatchQuiet(`parent -w`);\n\t\t\t\t\tcraOBJsChannelControlProc {\"tx\", \"ty\",\"tz\",\"rx\",\"ry\",\"rz\",\"sx\",\"sy\",\"sz\",\"v\"} 0 1;\n\t\t\t\t\tsysFile -md ($exportDir[0] + \"/\" + $craName + \"_OBJ_Seq\"); \n\t\t\t\t\tfile -force -options \"groups=1;ptgroups=1;materials=0;smoothing=1;normals=1\" -typ \"OBJexport\" -pr -es ($exportDir[0] + \"/\" + $craName + \"_OBJ_Seq/\" + $craName + \".\" + cra_numberPadding (string($i), 4, \"0\") + \".obj\");\n\t\t\t\t\tdelete;\n\t\t\t\t}\n\t\t\t\t\n\t\t\t\tcurrentTime -e ($i+1);\n\t\t\t}\n\t\t\t\n\t\t}\n\t\t\n\t\tselect -r $mySel;\n\t\t\n\t\tprogressWindow -endProgress;\n\t\t\n\t\t$totalTime = `timerX -startTime $startTime`;\n\t\t\n\t\tif($craCancelled)\n\t\t\twarning \"Exporting OBJ sequence cancelled.\\n\";\n\t\telse\n\t\t\tprint (\"All done! \" + $craName + \" exported successfully in \" + $totalTime + \" seconds.\\n\");\n\t}\n}\n\nglobal proc craImportOBJs()\n{\n\tint $mode = `checkBox -q -v craOBJSeqOutputCB`;\n\t\n\tstring $OBJfiles[] = `fileDialog2 \n\t\t\t\t-caption \"Select All Sequence files\"\n\t\t\t\t-okCaption \"Import\"\n\t\t\t\t-fileMode 4\n\t\t\t\t-fileFilter \"Wavefront Object (*.obj) (*.obj)\"\n\t\t\t\t-sff \"Wavefront Object (*.obj) (*.obj)\"\n\t\t\t\t-dialogStyle 2`;\n\tif(size($OBJfiles))\n\t\tcraImportOBJsCmd($OBJfiles, $mode);\n\telse\n\t\tprint \"No files selected.\\n\";\n}\n\nglobal proc craImportOBJsCmd( string $OBJfiles[], int $mode )\n{\n\t$startTime = `timerX`;\n\tstring $craErrors[];\n\tint $craCancelled;\n\t\n\tstring $origMeshNodes[] = `ls -l -type \"mesh\"`;\n\tstring $craOrigObjectSetNodes[] = `ls -type \"objectSet\"`;\n\tstring $currentMeshNodes[] = `ls -l -type \"mesh\"`;\n\tif(!$mode)\n\t\tif(!`objExists \"OBJ_Sequences_grp\"`)\n\t\tgroup -em -n \"OBJ_Sequences_grp\";\n\t\n\tstring $filename = basenameEx(\"\\\"\" + $OBJfiles[0] + \"\\\"\");\n\tstring $groupName[];\n\ttokenize $filename \".\" $groupName;\n\ttokenize $groupName[0] \"_\" $groupName;\n\t\n\tselect -cl;\n\tint $status = `scriptEditorInfo -q -sr`;\n\tscriptEditorInfo -sr 1;\n\tint $count = 1;\n\tint $maxValue = size($OBJfiles);\n\t\n\tprogressWindow  -status \"Importing OBJ Sequence...\" -maxValue $maxValue -title \"Importing\" -isInterruptable true;\n\t\n\tfor($file in $OBJfiles)\n\t{\n\t\tif ( `progressWindow -query -isCancelled` )\n\t\t{\n\t\t\t$craCancelled = 1;\n\t\t\tbreak;\n\t\t}\n\t\tprogressWindow -e -step 1 ;\n\t\t\n\t\tif(catchQuiet(`file -force -import -type \"OBJ\" -options \"mo=0\" $file`))\n\t\t{\n\t\t\t$craErrors[size($craErrors)] = $file;\n\t\t\tcontinue;\n\t\t}\n\t\t\t\n\t\tselect -r `ls -l -type \"mesh\"`;\n\t\tselect -deselect $currentMeshNodes;\n\t\tif(!$mode)\n\t\t\tpickWalkUp;\n\t\tstring $newMesh[] = `ls -sl`;\n\t\tif(size($newMesh))\n\t\t\trename $newMesh[0] ( $groupName[0] + \"_\" + cra_numberPadding(string($count), 4, 0) + \"_mesh\" );\n\t\telse\n\t\t\t$craErrors[size($craErrors)] = $file;\n\t\tif(!$mode)\n\t\t{\n\t\t\tselect -add \"OBJ_Sequences_grp\"; \n\t\t\tparent;\n\t\t}\n\t\t\n\t\thide;\n\t\t\n\t\t$currentMeshNodes = `ls -l -type \"mesh\"`;\n\t\t$count++;\n\t}\n\t\n\tselect -r `ls -l -type \"mesh\"`;\n\tselect -deselect $origMeshNodes;\n\t\n\tif(!$mode)\n\t{\n\t\tpickWalkUp;\n\t\t$newGroup = `group -n ($groupName[0] + \"_OBJ_seq\")`;\n\t\tselect -r `listRelatives -f -c $newGroup`;\n\t}\n\t\n\tcraConnectToChoice $groupName[0] $mode;\n\t\n\tscriptEditorInfo -sr $status;\n\t\n\t// remove imported sets\n\tstring $craCurrentSets[] = `ls -type \"objectSet\"`;\n\tstring $craRemoveSets[] = `stringArrayRemove $craOrigObjectSetNodes $craCurrentSets`;\n\tdelete $craRemoveSets;\n\t\n\t$totalTime = `timerX -startTime $startTime`;\n\tif(size($craErrors))\n\t{\n\t\tfor($i in $craErrors)\n\t\t\tprint ($i + \" failed to import.\\n\");\n\t\twarning (\"There were errors importing \" + size($craErrors) + \" files. See Script Editor for details.\\n\");\n\t}\n\telse\n\t{\n\t\tif($craCancelled)\n\t\t\twarning \"Importing OBJ sequence cancelled.\\n\";\n\t\telse\n\t\t\tprint (\"All done! \" + $groupName[0] + \" imported successfully in \" + $totalTime + \" seconds.\\n\");\n\t}\n\tprogressWindow -endProgress;\n}       \n\n//cra_numberPadding (\"20\", 4, \"0\")\nglobal proc string cra_numberPadding(string $str,int $pad,string $chr)\n{\n\tstring $return;\n\t\n\tfor ($i=0;$i<$pad;$i++) {\n\t\tif (size($str)<=$i)\n\t\t\t$return += $chr;\n\t}\n\treturn ($return + $str);\n}\n\n\n// Usage:\n//    Select your objects and run. It creates a new choice node, and a new target mesh.\n//    Connects every shape node to the choice node. No error checking so select only meshes.\n\nglobal proc craConnectToChoice( string $craName , int $mode)\n{\n\t// get selection\n\tstring $mySel[] = `ls -sl`;\n\t\n\t// create choice node with name\n\tstring $choice = `createNode -n ($craName + \"_OBJ_Seq_choice\") choice`;\n\t\n\t// create new mesh to hold the animation\n\tstring $newMesh[] = `polyCube -ch 0 -n ($craName + \"_OBJ_Seq_Mesh\")`;\n\t\n\t// connect choice output to new mesh inMesh attr\n\tstring $meshShape[] = `listRelatives -s $newMesh[0]`;\n\tconnectAttr -f ($choice + \".output\") ($meshShape[0] + \".inMesh\");\n\t\n\t// connect time to choice selector attr\n\tconnectAttr -f time1.outTime ($choice + \".selector\");\n\t\n\t// connect obj outMesh to choice input attr\n\tfor( $i=0; $i<size($mySel) ;$i++ )\n\t{\n\t\tif(!$mode)\n\t\t{\n\t\t\tstring $shapes[] = `listRelatives -s -f $mySel[$i]`;\n\t\t\tconnectAttr -f ($shapes[0] + \".outMesh\") ($choice + \".input[\" + ($i+1) + \"]\");\n\t\t}\n\t\telse\n\t\t{\n\t\t\tconnectAttr -f ($mySel[$i] + \".outMesh\") ($choice + \".input[\" + ($i+1) + \"]\");\n\t\t\tsetAttr ($mySel[$i] + \".intermediateObject\") 1;\n\t\t\tsetAttr ($mySel[$i] + \".visibility\") 1;\n\t\t\tparent -s -add $mySel[$i] $newMesh[0];\n\t\t}\n\t}\n\tif($mode)\n\t\tdelete `listRelatives -f -p $mySel`;\n}\n\nglobal proc craAboutOBJScript()\n{\n\tif (`window -exists craChannelControlAboutWin`)\n\t\tdeleteUI craChannelControlAboutWin;\n\t\n\twindow -t  \" About\" -s 0 -tlb 1 craChannelControlAboutWin;\n\tframeLayout -mw 5-mh 5 -lv 0;\n\tframeLayout -mw 5-mh 5 -lv 0;\n\t\tcolumnLayout -adj 1;\n\t\t\ttext -l \"HELP:\" -al \"left\";\n\t\t\ttext -l \"===========================\";\n\t\t\ttext -l \"\";\n\t\t\ttext -l \"Import under one trasnform:\" -al \"left\";\n\t\t\ttext -l \"  - If checked all imported meshes will be\\n     parented under one transform. If\\n      unchechek groups will be created in\\n    the scene holding the imported meshes.\" -al \"left\";\n\t\t\ttext -l \"\";\n\t\t\ttext -l \"Import OBJ Sequence:\" -al \"left\";\n\t\t\ttext -l \"  - It asks for selecting all the sequence files.\" -al \"left\";\n\t\t\ttext -l \"\";\n\t\t\ttext -l \"Export OBJ Sequence:\" -al \"left\";\n\t\t\ttext -l \"  - If multiple objects are selected a dialog\\n    shows up to choose whether to make\\n    one OBJ sequence for all objects or\\n    one OBJ sequence for each object.\" -al \"left\";\n\t\t\ttext -l \"\";\n\t\t\ttext -l \"===========================\";\n\t\t\ttext -l \"\";\n\t\t\ttext -l  \"Carlos Rico Adega 2013\";\n\t\t\ttext -l \"\";\n\t\t\ttextField -ed 0 -text \"              carlos.rico.3d@gmail.com\";\n\t\t\ttext -l \"\";\n\t\t\tbutton -w 150 -l \"Linked[In] Profile\" -c \"showHelp -absolute \\\"http://www.linkedin.com/pub/carlos-rico/6/58/325\\\"\";\n\t\t\tseparator -h 5 -st \"none\";\n\t\t\tbutton -w 150 -l \"Free Downloads\" -ann \"Free downloads from CreativeCrash.com\" -c \"showHelp -absolute \\\"http://www.creativecrash.com/users/charliewales/contributions?tab=free_downloads\\\"\";    \n\t\tsetParent ..;\n\t\t\n\tshowWindow craChannelControlAboutWin;\n}\n\nglobal proc craOBJsChannelControlProc( string $attrs[], int $lock , int $keyable)\n{\n\tstring $listedObjects[] = `ls -sl -l`;\n\t\n\tfor($attr in $attrs)\n\t{\n\t\tfor ($object in $listedObjects) \n\t\t{\n\t\t\tif(`attributeExists $attr $object`)\n\t\t\t{\n\t\t\t\tsetAttr -l $lock -k $keyable ($object + \".\" + $attr);\t\n\t\t\t}\n\t\t}\n\t}\n}\n\ncraOBJSequences();\n\n" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+        -mi "SVG import" ( "from other_svgimport import * as svg\n\nsvg.main_CurvefromSVG(3)" )
+        -mip 0
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "BVH Importer" 
+        -enableBackground 0
+        -align "center" 
+        -label "BVH Importer" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/bvh_importer.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/bvh_importer.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "# \n# BVH Importer script for Maya.\n# \n# Importer for .bvh files (BioVision Hierachy files).\n# BVH is a common ascii motion capture data format containing skeletal and motion data.\n# \n# <license>\n# BVH Importer script for Maya.\n# Copyright (C) 2012  Jeroen Hoolmans\n# \n# This program is free software: you can redistribute it and/or modify\n# it under the terms of the GNU General Public License as published by\n# the Free Software Foundation, either version 3 of the License, or\n# (at your option) any later version.\n# \n# This program is distributed in the hope that it will be useful,\n# but WITHOUT ANY WARRANTY; without even the implied warranty of\n# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n# GNU General Public License for more details.\n# \n# You should have received a copy of the GNU General Public License\n# along with this program.  If not, see <http://www.gnu.org/licenses/>.\n# </license>\n\n__author__ \t\t= \"Jeroen Hoolmans\"\n__copyright__ \t= \"Copyright 2012, Jeroen Hoolmans\"\n__credits__ \t= [\"Jeroen Hoolmans\"]\n__license__ \t= \"GPL\"\n__version__ \t= \"1.0.1\"\n__maintainer__ \t= \"Jeroen Hoolmans\"\n__email__ \t\t= \"jhoolmans@gmail.com\"\n__status__ \t\t= \"Production\"\n\nimport pymel.core as pm\nimport maya.cmds as mc\nimport os\n\n# This maps the BVH naming convention to Maya\ntranslationDict = {\n\t\"Xposition\" : \"translateX\",\n\t\"Yposition\" : \"translateY\",\n\t\"Zposition\" : \"translateZ\",\n\t\"Xrotation\" : \"rotateX\",\n\t\"Yrotation\" : \"rotateY\",\n\t\"Zrotation\" : \"rotateZ\"\n}\n\n\nclass TinyDAG(object):\n\t#\n\t# Small helper class to keep track of parents\n\t#\n\t\n\tdef __init__(self, obj, pObj = None):\n\t\tself.obj = obj\n\t\tself.pObj = pObj\n\t\t\n\tdef __str__(self):\n\t\t# returns object name\n\t\treturn str(self.obj)\n\t\t\n\tdef _fullPath(self):\n\t\t# returns full object path \n\t\tif self.pObj is not None:\n\t\t\treturn \"%s|%s\" % (self.pObj._fullPath(), self.__str__())\n\t\treturn str(self.obj)\n\t\t\nclass BVHImporterDialog(object):\n\t#\n\t# Dialog class..\n\t#\n\t\n\tdef __init__(self, debug=False):\n\t\t# Don't use debug when importing more than 10 frames.. Otherwise it gets messy\n\t\tself._name = \"bvhImportDialog\"\n\t\tself._title = \"BVH Importer %s\" % __version__\n\t\t\n\t\t# UI related\n\t\tself._textfield = \"\"\n\t\tself._scaleField = \"\"\n\t\tself._frameField = \"\"\n\t\tself._rotationOrder = \"\"\n\t\tself._reload = \"\"\n\t\t\n\t\t# Other\n\t\tself._rootNode = None # Used for targeting\n\t\tself._debug = debug\n\t\t\n\t\t# BVH specific stuff\n\t\tself._filename = \"\"\n\t\tself._channels = []\n\t\t\n\t\tself.setup_ui()\n\t\n\tdef setup_ui(self):\n\t\t# Creates the great dialog\n\t\twin = self._name\n\t\tif mc.window(win, ex=True):\n\t\t\tmc.deleteUI(win)\n\t\t\n\t\t# Non sizeable dialog\n\t\twin = mc.window(self._name, title=self._title, w=200, rtf=True, sizeable=False)\n\t\t\n\t\tmc.columnLayout(adj=1, rs=5)\n\t\tmc.separator()\n\t\tmc.text(\"Options\")\n\t\tmc.separator()\n\t\t\n\t\tmc.rowColumnLayout( numberOfColumns=2, \n\t\t\tcolumnWidth=[(1, 80), (2, 150)], \n\t\t\tcal=[(1, \"right\"), (2, \"center\")],\n\t\t\tcs=[(1,5), (2,5)],\n\t\t\trs=[(1,5), (2,5)])\n\t\t\n\t\tmc.text(\"Rig scale\")\n\t\tself._scaleField = mc.floatField(minValue=0.01, maxValue=2, value=1)\n\t\tmc.text(\"Frame offset\")\n\t\tself._frameField = mc.intField(minValue=0)\n\t\tmc.text(\"Rotation Order\")\n\t\tself._rotationOrder = mc.optionMenu()\n\t\tmc.menuItem( label='XYZ' )\n\t\tmc.menuItem( label='YZX' )\n\t\tmc.menuItem( label='ZXY' )\n\t\tmc.menuItem( label='XZY' )\n\t\tmc.menuItem( label='YXZ' )\n\t\tmc.menuItem( label='ZYX' )\n\t\t\n\t\tmc.setParent(\"..\")\n\t\tmc.separator()\n\t\t\n\t\t# Targeting UI\n\t\tmc.text(\"Skeleton Targeting\")\n\t\tmc.text(\"(Select the hips)\")\n\t\tmc.separator()\n\t\t\n\t\tmc.rowColumnLayout( numberOfColumns=2, \n\t\tcolumnWidth=[(1, 150), (2, 80)],\n\t\t\tcs=[(1,5), (2,5)],\n\t\t\trs=[(1,5), (2,5)])\n\t\t\n\t\tself._textfield = mc.textField(editable=False)\n\t\tmc.button(\"Select/Clear\", c=self._on_select_root)\n\t\t\n\t\tmc.setParent(\"..\")\n\t\tmc.separator()\n\t\tmc.button(\"Import..\", c=self._on_select_file)\n\t\tself._reload = mc.button(\"Reload\", enable=False, c=self._read_bvh)\n\t\t\n\t\t# Sorry :)\n\t\tmc.text(\"Created by Jeroen Hoolmans\")\n\t\t\n\t\tmc.window(win, e=True, rtf=True, sizeable=False)\n\t\tmc.showWindow(win)\n\t\t\n\tdef _on_select_file(self, e):\n\t\t# Without All Files it didn't work for some reason..\n\t\tfilter = \"All Files (*.*);;Motion Capture (*.bvh)\"\n\t\tdialog = mc.fileDialog2(fileFilter=filter, dialogStyle=1, fm=1)\n\t\t\n\t\tif dialog is None:\n\t\t\treturn\n\t\tif not len(dialog):\n\t\t\treturn\n\t\t\n\t\tself._filename = dialog[0]\n\t\t\n\t\tmc.button(self._reload, e=True, enable=True)\n\t\t\n\t\t# Action!\n\t\tself._read_bvh()\n\t\t\n\tdef _read_bvh(self, e=False):\n\t\t# Safe close is needed for End Site part to keep from setting new parent.\n\t\tsafeClose = False\n\t\t# Once motion is active, animate.\n\t\tmotion = False\n\t\t# Clear channels before appending\n\t\tself._channels = []\n\t\t\n\t\t# Scale the entire rig and animation\n\t\trigScale = mc.floatField(self._scaleField, q=True, value=True)\n\t\tframe = mc.intField(self._frameField, q=True, value=True)\n\t\trotOrder = mc.optionMenu(self._rotationOrder, q=True, select=True) - 1\n\t\t\n\t\twith open(self._filename) as f:\n\t\t\t# Check to see if the file is valid (sort of)\n\t\t\tif not f.next().startswith(\"HIERARCHY\"):\n\t\t\t\tmc.error(\"No valid .bvh file selected.\")\n\t\t\t\treturn False\n\t\t\t\n\t\t\tif self._rootNode is None:\n\t\t\t\t# Create a group for the rig, easier to scale. (Freeze transform when ungrouping please..)\n\t\t\t\tmocapName = os.path.basename(self._filename)\n\t\t\t\tgrp = pm.group(em=True,name=\"_mocap_%s_grp\" % mocapName)\n\t\t\t\tgrp.scale.set(rigScale, rigScale, rigScale) \n\t\t\t\t\n\t\t\t\t# The group is now the 'root'\n\t\t\t\tmyParent = TinyDAG(str(grp), None)\n\t\t\telse:\n\t\t\t\tmyParent = TinyDAG(str(self._rootNode), None)\n\t\t\t\tself._clear_animation()\n\t\t\t\n\t\t\tfor line in f:\n\t\t\t\tline = line.replace(\"\t\",\" \") # force spaces\n\t\t\t\tif not motion:\n\t\t\t\t\t# root joint\n\t\t\t\t\tif line.startswith(\"ROOT\"):\n\t\t\t\t\t\t# Set the Hip joint as root\n\t\t\t\t\t\tif self._rootNode:\n\t\t\t\t\t\t\tmyParent = TinyDAG(str(self._rootNode), None)\n\t\t\t\t\t\telse:\n\t\t\t\t\t\t\tmyParent = TinyDAG(line[5:].rstrip(), myParent)\n\t\t\t\t\t\n\t\t\t\t\tif \"JOINT\" in line:\n\t\t\t\t\t\tjnt = line.split(\" \")\n\t\t\t\t\t\t# Create the joint\n\t\t\t\t\t\tmyParent = TinyDAG(jnt[-1].rstrip(), myParent)\n\t\n\t\t\t\t\tif \"End Site\" in line:\n\t\t\t\t\t\t# Finish up a hierarchy and ignore a closing bracket\n\t\t\t\t\t\tsafeClose = True\n\t\n\t\t\t\t\tif \"}\" in line:\n\t\t\t\t\t\t# Ignore when safeClose is on\n\t\t\t\t\t\tif safeClose:\n\t\t\t\t\t\t\tsafeClose = False\n\t\t\t\t\t\t\tcontinue\n\t\t\t\t\t\t\n\t\t\t\t\t\t# Go up one level\n\t\t\t\t\t\tif myParent is not None:\n\t\t\t\t\t\t\tmyParent = myParent.pObj\n\t\t\t\t\t\t\tif myParent is not None:\n\t\t\t\t\t\t\t\tmc.select(myParent._fullPath())\n\t\t\t\t\t\t\t\n\t\t\t\t\tif \"CHANNELS\" in line:\n\t\t\t\t\t\tchan = line.strip().split(\" \")\n\t\t\t\t\t\tif self._debug:\n\t\t\t\t\t\t\tprint chan\n\t\t\t\t\t\t\n\t\t\t\t\t\t# Append the channels that are animated\n\t\t\t\t\t\tfor i in range(int(chan[1]) ):\n\t\t\t\t\t\t\tself._channels.append(\"%s.%s\" % (myParent._fullPath(), translationDict[chan[2 + i]] ) )\n\t\t\t\t\t\t\n\t\t\t\t\tif \"OFFSET\" in line:\n\t\t\t\t\t\toffset = line.strip().split(\" \")\n\t\t\t\t\t\tif self._debug:\n\t\t\t\t\t\t\tprint offset\n\t\t\t\t\t\tjntName = str(myParent)\n\t\t\t\t\t\t\n\t\t\t\t\t\t# When End Site is reached, name it \"_tip\"\n\t\t\t\t\t\tif safeClose:\n\t\t\t\t\t\t\tjntName += \"_tip\"\n\t\t\t\t\t\t\n\t\t\t\t\t\t# skip if exists\n\t\t\t\t\t\tif mc.objExists(myParent._fullPath()):\n\t\t\t\t\t\t\tjnt = pm.PyNode(myParent._fullPath())\n\t\t\t\t\t\t\tjnt.rotateOrder.set(rotOrder)\n\t\t\t\t\t\t\tjnt.translate.set([float(offset[1]), float(offset[2]), float(offset[3])])\n\t\t\t\t\t\t\tcontinue\n\t\t\t\t\t\t\n\t\t\t\t\t\t# Build the joint and set its properties\n\t\t\t\t\t\tjnt = pm.joint(name=jntName, p=(0,0,0))\n\t\t\t\t\t\tjnt.translate.set([float(offset[1]), float(offset[2]), float(offset[3])])\n\t\t\t\t\t\tjnt.rotateOrder.set(rotOrder)\n\t\t\t\t\t\n\t\t\t\t\tif \"MOTION\" in line:\n\t\t\t\t\t\t# Animate!\n\t\t\t\t\t\tmotion = True\n\t\t\t\t\t\n\t\t\t\t\tif self._debug:\n\t\t\t\t\t\tif myParent is not None:\n\t\t\t\t\t\t\tprint \"parent: %s\" % myParent._fullPath()\n\t\t\t\t\t\t\t\n\t\t\t\telse:\n\t\t\t\t\t# We don't really need to use Framecount and time(since Python handles file reads nicely)\n\t\t\t\t\tif \"Frame\" not in line:\n\t\t\t\t\t\tdata = line.split(\" \")\n\t\t\t\t\t\tif len(data) > 0:\n\t\t\t\t\t\t\tif data[0] == \"\": data.pop(0)\n\t\t\t\t\t\t\n\t\t\t\t\t\tif self._debug:\n\t\t\t\t\t\t\tprint \"Animating..\"\n\t\t\t\t\t\t\tprint \"Data size: %d\" % len(data)\n\t\t\t\t\t\t\tprint \"Channels size: %d\" % len(self._channels)\n\t\t\t\t\t\t# Set the values to channels\n\t\t\t\t\t\tfor x in range(0, len(data) - 1 ):\n\t\t\t\t\t\t\tif self._debug:\n\t\t\t\t\t\t\t\tprint \"Set Attribute: %s %f\" % (self._channels[x], float(data[x]))\n\t\t\t\t\t\t\tmc.setKeyframe(self._channels[x], time=frame, value=float(data[x]))\n\t\t\t\t\t\t\n\t\t\t\t\t\tframe = frame + 1\n\t\n\tdef _clear_animation(self):\n\t\t# select root joint\n\t\tpm.select(str(self._rootNode), hi=True)\n\t\tnodes = pm.ls(sl=True)\n\t\t\n\t\ttrans_attrs = [\"translateX\", \"translateY\", \"translateZ\"]\n\t\trot_attrs = [\"rotateX\", \"rotateY\", \"rotateZ\"]\n\t\tfor node in nodes:\n\t\t\tfor attr in trans_attrs:\n\t\t\t\tconnections = node.attr(attr).inputs()\n\t\t\t\tpm.delete(connections)\n\t\t\tfor attr in rot_attrs:\n\t\t\t\tconnections = node.attr(attr).inputs()\n\t\t\t\tpm.delete(connections)\n\t\t\t\tnode.attr(attr).set(0)\n\t\n\tdef _on_select_root(self, e):\n\t\t# When targeting, set the root joint (Hips)\n\t\tselection = pm.ls(sl=True, type=\"joint\")\n\t\tif len(selection) == 0:\n\t\t\tself._rootNode = None\n\t\t\tmc.textField(self._textfield, e=True, text=\"\")\n\t\telse:\n\t\t\tself._rootNode = selection[0]\n\t\t\tmc.textField(self._textfield, e=True, text=str(self._rootNode))\n\t\t\nif __name__ == \"__main__\":\n\tdialog = BVHImporterDialog()\n" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+        -mi "K2P XML Export" ( "# http://eat3d.com/free/maya_python\n\n#from pymel.core import *\n#from xml.dom.minidom import *\n\n\nstartTime = int(playbackOptions(query=True, minTime=True))\nstopTime = int(playbackOptions(query=True, maxTime=True))\nfilePath = \"/Users/nick/Desktop/\"\nfileName = \"doc.xml\"\n\nopenniNames = [\"head\", \"neck\", \"torso\", \"l_shoulder\", \"l_elbow\", \"l_hand\", \"r_shoulder\", \"r_elbow\", \"r_hand\", \"l_hip\", \"l_knee\", \"l_foot\", \"r_hip\", \"r_knee\", \"r_foot\"]\ncmuNames = [\"Head\", \"Neck1\", \"Spine\", \"LeftArm\", \"LeftForeArm\", \"LeftFingerBase\", \"RightArm\", \"RightForeArm\", \"RightFingerBase\", \"LeftUpLeg\", \"LeftLeg\", \"LeftToeBase\", \"RightUpLeg\", \"RightLeg\", \"RightToeBase\"]\nmobuNames = [\"Head\", \"Neck\", \"Spine\", \"LeftArm\", \"LeftForeArm\", \"LeftHand\", \"RightArm\", \"RightForeArm\", \"RightHand\", \"LeftUpLeg\", \"LeftLeg\", \"LeftFoot\", \"RightUpLeg\", \"RightLeg\", \"RightFoot\"]\n\n# build XML\n\ndoc = Document()\n\nroot_node = doc.createElement(\"MotionCapture\")\ndoc.appendChild(root_node)\nroot_node.setAttribute(\"width\", \"640\")\nroot_node.setAttribute(\"height\", \"480\")\nroot_node.setAttribute(\"depth\", \"200\")\nroot_node.setAttribute(\"dialogueFile\", \"none\")\nroot_node.setAttribute(\"fps\", \"24\")\nroot_node.setAttribute(\"numFrames\", str(stopTime))\n\nfor i in range(startTime, stopTime+1):\n\tprint str(startTime) + \" \" + str(stopTime)\n\tcurrentTime(i)\n\tframe_node = doc.createElement(\"MocapFrame\")\n\troot_node.appendChild(frame_node)\n\tframe_node.setAttribute(\"index\",str(i-1))\n\n\tskel_node = doc.createElement(\"Skeleton\")\n\tframe_node.appendChild(skel_node)\n\tskel_node.setAttribute(\"id\",\"0\")\n\n\tjoint_node = doc.createElement(\"Joints\")\n\tskel_node.appendChild(joint_node)\n\n\ttarget = selected()\n\tprint target\n\n\tjoints = listRelatives(target[0], ad=True)\n\tjoints.append(target[0])\n\tprint \"~~~~~     \" + str(joints) + \"     ~~~~~\"\n\n\tfor j in range(0,len(joints)):\n\t\ttry:\n\t\t\tk_node = doc.createElement(str(joints[j]))\n\t\t\tjoint_node.appendChild(k_node)\n\n\t\t\tp = xform(joints[j], q=True, t=True, ws=True)\n\t\t\tk_node.setAttribute(\"x\", str(-1 * p[0]))\n\t\t\tk_node.setAttribute(\"y\", str(-1 * p[1]))\n\t\t\tk_node.setAttribute(\"z\", str(p[2]))\n\t\texcept:\n\t\t\tprint \"Couldn't get joint position.\"\n\nxml_file = open(filePath + fileName, \"w\")\nxml_file.write(doc.toprettyxml())\nxml_file.close()\n\nprint doc.toprettyxml()" )
+        -mip 0
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "QuickShader" 
+        -enableBackground 0
+        -align "center" 
+        -label "Shaders" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/voxel.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/voxel.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "quickShader()" 
+        -sourceType "python" 
+        -doubleClickCommand "paintAssign()" 
+        -commandRepeatable 1
+        -flat 1
+        -mi "(1) Quick shader" ( "quickShader()" )
+        -mip 0
+        -mi "(2) Assign Paint Effects" ( "paintAssign()" )
+        -mip 1
+        -mi "Reveal on Y axis" ( "revealYaxis()" )
+        -mip 2
+        -mi "Wireframe" ( "/**********************************\n***********************************\n\nWireframe Render Speedy 2.0\n\n//Created On : Apr 07th 2012\n//Authored By - Crunk AKA Savio Fernandes\n\n//Install & Execute:\n-Copy this file to your maya default script directory\n-Source \"crWireframeRenderSpeedy.mel\"\n\n//Description:\nThis scripts basically is an extension of my wireframe render tutorial, which uses toon shader.\nIt gets quite annoying after sometime, doing same settings again and again. So this does it in a Click! :)\n\n//Usage :\n1. Select the Object Mesh.\n2. Select the Mode (Countour Shader/Toon Shader). Click Refresh.\n3. Click Assign new wireframe Shader.\n4. New Options will be available to tweak.\n5. Enjoy :)\n\n//Link To Page\nhttp://www.artbycrunk.com/script/maya/scripts-wireframe-render-speedy/\n\n\n//Link To Tutorial\nToonShader - http://www.artbycrunk.com/tutorial/maya/rendering-wireframe-using-toonshader/\nContourShader - http://www.artbycrunk.com/tutorial/maya/rendering-wireframe-using-mentalray-contourshader/\n\n// Copyright (c) 2012 artbycrunk.com <artbycrunk@gmail.com>\n// Released under GPL v3\n\n******************************* \nUPDATES :\n\nApr 07 2012 - Ver 2.0 - \tAdded Switch Between Both Techinques.\n\t\t\t\t\t\t\tBase for ToonWireframeShader Script.\n\n\n********************************** */\n\nglobal proc crWireframeRenSpeedy()\n{\n\tint $WRS_Mode;\n\tstring $wireSS[];\n\t\n\tstring $version = \"2.0\";\n\t\n\tif (`window -q -ex crWRSWin`) deleteUI crWRSWin;\n\twindow -t (\"crWireframeRenderSpeedy \"+$version) -in (\"crTWR \"+$version) -wh 276 120 -s 1 crWRSWin ;\n\t\n\tmenuBarLayout crWRSWin_menuBarLayout;\n\t\n\tmenu -tearOff 0 -l \"Delete\" WRSmenuDelete;\n\n\tmenu -tearOff 0 -l \"About\";\t\n\t\tmenuItem -l \"How To Use...\" -ann \"How To Use Script\" -c \"\";\n\t\tmenuItem -l \"artbycrunk@gmail.com\";\n\t\n\tcolumnLayout -adjustableColumn true ;\n\t\n\tprint (\"Hello crWireframeRenSpeedy\"+\"   \");\n\t\n\trowColumnLayout -numberOfColumns 2 -cw 1 180 -cw 2 75;\n\t\toptionMenuGrp -cw 1 50 -label \"Mode\" -cc \"crWRS_ModeChange()\" crWRS_optionMode;\n\t\t\tmenuItem -label \"Toon Shader\";\n\t\t\tmenuItem -label \"Countour Shader\";\n\t\tbutton -h 20 -l \"Refresh\" -c \"crWireframeRenSpeedy()\" but_refresh;\n\tsetParent ..;\n\t\n\tif(`optionVar -ex \"crWRS_Mode\"`)\n\t{\n\t\t$WRS_Mode = `optionVar -q \"crWRS_Mode\"`;\n\t\toptionMenuGrp -e -sl $WRS_Mode crWRS_optionMode;\n\t}\n\t\n\tseparator;\n\tif ($WRS_Mode == 1)\n\t{\n\t\tclear $wireSS;\n\t\t$wireSS = `ls -type \"pfxToon\"`;\n\t\t\n\t\tfor( $wireS in $wireSS )\n\t\t{\n\t\t\tif (`attributeExists \"wireShader\" $wireS`) {\n\t\t\t\tframeLayout -cll 1 -borderVisible true -labelVisible true -labelAlign \"center\" -label $wireS -marginWidth 5 -marginHeight 5 -cc \"crWRS_SizeChange(1)\" -ec \"crWRS_SizeChange(1)\" (\"Frame\"+$wireS);\n\t\t\t\t\tcolumnLayout -adjustableColumn true;\n\t\t\t\t\t\tattrColorSliderGrp -l \"Color\" -cw 1 100 -cw 2 55 -cw 3 100 -cat 1 \"right\" 4 -at ($wireS+\".creaseColor\") -sb 0;\n\t\t\t\t\t\tattrFieldSliderGrp -l \"Thickness\" -cw 1 100 -cw 2 55 -cw 3 100 -min 0 -max 10.0 -at ($wireS+\".creaseLineWidth\");\n\t\t\t\t\t\tbutton -h 20 -l \"Assign To Selected\" -c (\"removePfxToonOutlines; assignPfxToon \"+$wireS+\" 0\");\n\t\t\t\t\tseparator;\n\t\t\t\t\tsetParent ..;\n\t\t\t\tsetParent ..;\n\t\t\t\tmenuItem -p \"WRSmenuDelete\" -l $wireS -ann (\"Delete \"+$wireS) -c (\"crWRS_Delete(\\\"\"+$wireS+\"\\\")\");\n\t\t\t}\n\t\t}\n\n\t}\n\t\n\tif ($WRS_Mode == 2)\n\t{\n\t\tclear $wireSS;\n\t\t$wireSS = `ls -et \"lambert\"`;\n\t\t\n\t\tfor( $wireS in $wireSS )\n\t\t{\n\t\t\tif (`attributeExists \"wireShader\" $wireS`) {\n\t\t\t\tframeLayout -cll 1 -borderVisible true -labelVisible true -labelAlign \"center\" -label $wireS -marginWidth 5 -marginHeight 5 -cc \"crWRS_SizeChange(2)\" -ec \"crWRS_SizeChange(2)\" (\"Frame\"+$wireS);\n\t\t\t\t\tcolumnLayout -adjustableColumn true;\n\t\t\t\t\t\tattrColorSliderGrp -l \"Color\" -cw 1 100 -cw 2 55 -cw 3 100 -cat 1 \"right\" 4 -at ($wireS+\"SG.miContourColor\") -sb 0;\n\t\t\t\t\t\tattrFieldSliderGrp -l \"Thickness\" -cw 1 100 -cw 2 55 -cw 3 100 -min 0 -max 10.0 -at ($wireS+\"SG.miContourWidth\");\n\t\t\t\t\t\tbutton -h 20 -l \"Assign To Selected\" -c (\"sets -e -forceElement \"+$wireS+\"SG;\");\n\t\t\t\t\tseparator;\n\t\t\t\t\tsetParent ..;\n\t\t\t\tsetParent ..;\n\t\t\t\tmenuItem -p \"WRSmenuDelete\" -l $wireS -ann (\"Delete \"+$wireS) -c (\"crWRS_Delete(\\\"\"+$wireS+\"\\\")\");\n\t\t\t}\n\t\t}\n\t}\n\t\n\tseparator;\n\tseparator;\n\tbutton -h 48 -l \"Assign New Wireframe\" -c \"crWRS_AssignWire\";\n\tbutton -l \"www.artbycrunk.com\" -h 20 but_about;\n\t\n\tcrWRS_SizeChange($WRS_Mode);\n\t\n\tshowWindow crWRSWin;\n\t\n}\n\nglobal proc crWRS_MRinitialize()\n{\n\tif (!`pluginInfo -query -l Mayatomr`)\n\t{\n\t   catch( `loadPlugin -qt Mayatomr`);  \n\t}\n\t\n\tif ( catch(`getAttr \"miDefaultFramebuffer.contourEnable\"`) )\n\t{\n\t\tunifiedRenderGlobalsWindow;\n\t\tsetAttr \"defaultRenderGlobals.currentRenderer\" -type \"string\" mentalRay;\n\t\trendererChanged;\n\t\ttabLayout -e -sti 3 mentalRayTabLayout;\n\t\tfillSelectedTabForCurrentRenderer;\n\t\twindow -e -vis 0 unifiedRenderGlobalsWindow;\n\t\t\n\t\tsetAttr \"miDefaultFramebuffer.contourEnable\" 1;\n\t\tsetAttr \"miDefaultFramebuffer.contourSamples\" 3;\n\t\tsetAttr \"miDefaultFramebuffer.contourFilter\" 1;\n\t\tsetAttr \"miDefaultFramebuffer.contourFilterSupport\" 2;\n\t\tsetAttr \"miDefaultOptions.contourNormalGeom\" 1;\n\t}\n}\n\nglobal proc crWRS_ModeChange()\n{\n\tint $WRS_Mode = `optionMenuGrp -q -sl crWRS_optionMode`;\n\toptionVar -rm \"crWRS_Mode\" ;\n\toptionVar -iv \"crWRS_Mode\" $WRS_Mode ;\n\t\tif($WRS_Mode == 2)\n\t\t{\n\t\t\tcrWRS_MRinitialize();\n\t\t}else{\n\t\t\tsetAttr \"defaultRenderGlobals.currentRenderer\" -type \"string\" mayaSoftware;\n\t\t}\n}\n\n\nglobal proc crWRS_Delete(string $shape)\n{\n\tselect $shape;\n\tstring $pfxtoon[] = `pickWalk -d up`;\n\tif(size($pfxtoon)){delete $pfxtoon[0];}\n\tcrWireframeRenSpeedy();\n}\n\nglobal proc crWRS_SizeChange(int $mode)\n{\n\tstring $wireSS[];\n\t\n\tif($mode == 1) {clear $wireSS; $wireSS = `ls -type \"pfxToon\"`;}\n\tif($mode == 2) {clear $wireSS; $wireSS = `ls -et \"lambert\"`;}\n\t\n\tif(size($wireSS))\n\t{\n\t\tint $winHeight = 115;\n\t\tfor( $wireS in $wireSS )\n\t\t{ \n\t\t\tif (`attributeExists \"wireShader\" $wireS`) {\n\t\t\t\tint $collapse = `frameLayout -q -cl (\"Frame\"+$wireS)`;\n\t\t\t\tif($collapse == 1 ){$winHeight = $winHeight+22;}\n\t\t\t\telse { $winHeight = $winHeight+100;}\n\t\t\t}\n\t\t}\n\t\t\n\t\twindow -e -wh 276 $winHeight -s 1 crWRSWin ;\n\t\t\n\t} else {\n\twindow -e -wh 276 120 -s 1 crWRSWin ;\n\t}\n}\n\nglobal proc crWRS_AssignWire() {\n\n\tstring $selectedNode[], $createdNode[], $nodetype;\n\n\t$selectedNode = `ls -sl`;\n\t\n\tint $WRS_Mode = `optionMenuGrp -q -sl crWRS_optionMode`;\n\t\n\t\tif( nodeType($selectedNode[0]) == \"transform\" )\n\t\t{\n\t\t\tif( $WRS_Mode == 1 )\n\t\t\t{\n\t\t\t\tassignNewPfxToon;\n\t\t\t\t$createdNode= `ls -sl`;\n\t\t\t\tif( size($createdNode) ){ $nodetype = nodeType ($createdNode[0]);}\n\t\t\t\t\n\t\t\t\tif($nodetype == \"pfxToon\")\n\t\t\t\t{\n\t\t\t\t\tstring $pfxtoon[] = `pickWalk -d up`;\n\t\t\t\t\tstring $pfxToonShader = `rename $pfxtoon[0] \"crToonWireframeShader\"`;\n\t\t\t\t\tstring $pfxToonShape[] = `pickWalk -d down`;\n\n\t\t\t\t\tsetAttr ($pfxToonShape[0]+\".profileLines\") 0;\n\t\t\t\t\tsetAttr ($pfxToonShape[0]+\".borderLines\") 0;\n\t\t\t\t\tsetAttr ($pfxToonShape[0]+\".creaseLines\") 1;\n\t\t\t\t\tsetAttr ($pfxToonShape[0]+\".hardCreasesOnly\") 0;\n\t\t\t\t\tsetAttr ($pfxToonShape[0]+\".creaseAngleMax\") 0;\n\t\t\t\t\tsetAttr ($pfxToonShape[0]+\".creaseAngleMin\") 0;\n\t\t\t\t\tsetAttr ($pfxToonShape[0]+\".creaseLineWidth\") 0.5;\n\t\t\t\t\taddAttr -ln \"wireShader\"  -at long  -dv 1 $pfxToonShape[0];\n\t\t\t\t}\n\t\t\t}\n\t\t\tif( $WRS_Mode == 2 )\n\t\t\t{\n\t\t\t\tstring $shader = `createNode -ss -n \"crCountourWireframeShader\" \"lambert\"` ;\n\t\t\t\tsets -renderable true -noSurfaceShader true -empty -name ($shader+\"SG\");\n\t\t\t\taddAttr -ln \"wireShader\"  -at long  -dv 1 $shader;\n\t\t\t\tconnectAttr -f ($shader+\".outColor\") (($shader+\"SG\")+\".surfaceShader\");\n\t\t\t\tsets -e -forceElement ($shader+\"SG\") $selectedNode;\n\t\t\t\t\n\t\t\t\tsetAttr (($shader+\"SG\")+\".miContourEnable\") 1;\n\t\t\t}\n\t\t\tcrWireframeRenSpeedy();\n\t\t}else{\n\t\t\terror \"Please Select Valid Objects\";\n\t\t}\n\t\n}\ncrWireframeRenSpeedy();" )
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Add Locator" 
+        -enableBackground 0
+        -align "center" 
+        -label "Locators" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/addlocator.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/addlocator.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "addLocator()" 
+        -sourceType "python" 
+        -doubleClickCommand "addLocator(True)" 
+        -commandRepeatable 1
+        -flat 1
+        -mi "(1) Add locator" ( "addLocator()" )
+        -mip 0
+        -mi "(2) Add locator and parent" ( "addLocator(True)" )
+        -mip 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Key All Joints" 
+        -enableBackground 0
+        -align "center" 
+        -label "Joints" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/key-all-joints.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/key-all-joints.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "keyAllChildren()" 
+        -sourceType "python" 
+        -doubleClickCommand "keyAllChildren(True)" 
+        -commandRepeatable 1
+        -flat 1
+        -mi "(1) Key all" ( "keyAllChildren()" )
+        -mip 0
+        -mi "(2) Key all (joints only)" ( "keyAllChildren(True)" )
+        -mip 1
+        -mi "Lock translate + scale" ( "lockChildren(False,True,False,True)" )
+        -mip 2
+        -mi "Lock rotate + scale" ( "lockChildren(False,False, True, True)" )
+        -mip 3
+        -mi "Lock scale" ( "lockChildren(False,False,False,True)" )
+        -mip 4
+        -mi "Lock all" ( "lockAll()" )
+        -mip 5
+        -mi "Unlock all" ( "lockNone()" )
+        -mip 6
+        -mi "Lock puppet" ( "lockPuppet()" )
+        -mip 7
+        -mi "Eye rig" ( "eyeRig(10)" )
+        -mip 8
+        -mi "Parent constraint all" ( "parentConstraintAll()" )
+        -mip 9
+        -mi "Test joints - 5" ( "testJoints()" )
+        -mip 10
+        -mi "Test joints - 3" ( "foo = testJoints(2,3)\nd(foo[0])\ns(foo[1][0])\nfkikCreateController()" )
+        -mip 11
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Rigging" 
+        -enableBackground 0
+        -align "center" 
+        -label "Rigging" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/autorig.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/autorig.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "fkCreateController()" 
+        -sourceType "python" 
+        -doubleClickCommand "ikCreateControllerAlt()" 
+        -commandRepeatable 1
+        -flat 1
+        -mi "(1) FK controller" ( "fkCreateController()" )
+        -mip 0
+        -mi "(2) IK controller" ( "ikCreateControllerAlt()" )
+        -mip 1
+        -mi "FKIK controller" ( "fkikCreateController()" )
+        -mip 2
+        -mi "Add float" ( "addAttrFloat()" )
+        -mip 3
+        -mi "Add string" ( "addAttrString()" )
+        -mip 4
+        -mi "Add boolean" ( "addAttrBoolean()" )
+        -mip 5
+        -mi "Add vector" ( "addAttrVector()" )
+        -mip 6
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Boolean Loop" 
+        -enableBackground 0
+        -align "center" 
+        -label "Modeling" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/booleanloop.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/booleanloop.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "booleanLoop()" 
+        -sourceType "python" 
+        -doubleClickCommand "iteratePolyToSubdiv(delete=True)" 
+        -commandRepeatable 1
+        -flat 1
+        -mi "(1) Boolean loop" ( "booleanLoop()" )
+        -mip 0
+        -mi "(2) Iterate poly to subdiv" ( "iteratePolyToSubdiv(delete=True)" )
+        -mip 1
+        -mi "Fracture" ( "import other_polyFracture as pf\nreload(pf)\npf.pub_polyVoronoi()\n" )
+        -mip 2
+        -mi "Voxelize" ( "import other_voxelizer as vx\nreload(vx)\nvx.promptSetup()\n\n" )
+        -mip 3
+        -mi "Puppet mesh" ( "puppetMesh()" )
+        -mip 4
+        -mi "Cubes" ( "cubes()" )
+        -mip 5
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -enable 1
+        -width 35
+        -height 35
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Move to selected" 
+        -enableBackground 0
+        -align "center" 
+        -label "General" 
+        -labelOffset 0
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.2 
+        -image "/Users/nick/Development/Maya/_shelf buttons/_icons/general.png" 
+        -image1 "/Users/nick/Development/Maya/_shelf buttons/_icons/general.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "moveTo()\n" 
+        -sourceType "python" 
+        -doubleClickCommand "showHide()" 
+        -commandRepeatable 1
+        -flat 1
+        -mi "(1) Move to" ( "moveTo()\n" )
+        -mip 0
+        -mi "(2) Show/hide" ( "showHide()" )
+        -mip 1
+        -mi "Toggle selectable" ( "toggleSelectable()" )
+        -mip 2
+        -mi "Parent to last selection" ( "parentLast()" )
+        -mip 3
+        -mi "Duplicate special" ( "duplicateSpecial()" )
+        -mip 4
+        -mi "Duplicate first selection" ( "duplicateFirst()" )
+        -mip 5
+        -mi "Duplicate first selection w/shader" ( "duplicateFirst(True)" )
+        -mip 6
+        -mi "Instance first selection" ( "instanceFirst()" )
+        -mip 7
+        -mi "Instance first selection w/shader" ( "instanceFirst(True)" )
+        -mip 8
+        -mi "DELETE ALL" ( "rm()" )
+        -mip 9
+    ;
+
+} 
