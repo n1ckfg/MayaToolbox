@@ -68,7 +68,7 @@ def fkikCreateController(target=None, name="controller"):
             # do later!
             #py.parentConstraint(settings,target[i],mo=1)
             fkikName = "FKIK_switch"
-            fkik = addAttrFloat([settings],name=fkikName)
+            fkik = addAttrFloatSlider([settings],name=fkikName)
             fkikVal = mc.getAttr(settings + "." + fkikName)
             print fkikVal
 
@@ -510,6 +510,13 @@ def addAttrFloat(target=None, name="tempFloat"):
         target = mc.ls(sl=1)
     for i in range(0,len(target)):
         mel.eval("addAttr -ln \"" + name + "\"  -at double  "+target[i]+";")
+        mel.eval("setAttr -e-keyable true "+target[i]+"." + name + ";")
+
+def addAttrFloatSlider(target=None, name="tempFloat",minVal=0,maxVal=1,defaultVal=0):
+    if not target:
+        target = mc.ls(sl=1)
+    for i in range(0,len(target)):
+        mel.eval("addAttr -ln \"" + name + "\"  -at double  -min "+str(minVal)+" -max "+str(maxVal)+" -dv "+str(defaultVal)+"  "+target[i]+";")
         mel.eval("setAttr -e-keyable true "+target[i]+"." + name + ";")
 
 def addAttrString(target=None, name="tempString"):
