@@ -36,21 +36,46 @@ def fkikCreateController(target=None, name="controller"):
             print "Needs to be exactly three joints."
             return
         else:
-            s(target[i])
-            
+            #s(target[i])
+            tempTarget = mc.listRelatives([target[i]], ad=1)
+            tempTarget.append(target[i])
+            print "0. tempTarget: " + str(tempTarget)
+            origTarget = []
+            for h in range(0,len(tempTarget)):
+                origTarget.append(tempTarget[(len(tempTarget)-1)-h])
+            print "1. origTarget: " + str(origTarget)
+
             name1 = getUniqueName(target[i]+"_IK")
             ikTarget = duplicateSpecial(name=name1)
-            print "ikTarget: " + str(ikTarget)
+            print "2. ikTarget: " + str(ikTarget)
 
             name2 = getUniqueName(target[i]+"_FK")
             fkTarget = duplicateSpecial(name=name2)
-            print "fkTarget: " + str(fkTarget)
+            print "3. fkTarget: " + str(fkTarget)
 
             name3 = getUniqueName(name)
             ikCreateControllerAlt(startJoint=ikTarget[0], endJoint=ikTarget[2], name=name3)
             
             name4 = getUniqueName(name)
             fkCreateController(fkTarget, name=name4)
+
+            settings = controllerGeometry(controlType="star",size=2,name="settings")
+            # ...if you want to rotate the star controller
+            #mc.setAttr(settings + ".rotateX",90)
+            #freezeTransformations(settings)
+            pos = getPos([target[i]])
+            mc.move(pos[0][0],pos[0][1],pos[0][2])
+            py.parentConstraint(settings,target[i],mo=1)
+            fkik = addAttrBoolean([settings],name="FKIK_switch")
+            fkikVal = getAttr(settings + ".FKIK_switch")
+            print fkikVal
+
+            for j in range(0,countChain(target[i])):
+                py.parentConstraint(fkTarget[j],origTarget[j])
+                py.parentConstraint(ikTarget[j],origTarget[j])
+
+            name5 = getUniqueName(name)
+            mc.group(settings,name1,name2,name3,name4,name=name5)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -424,7 +449,7 @@ def fkControllerConstraints(target,constraint,controller):
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-def controllerGeometry(controlType,size,name,appendCtl):
+def controllerGeometry(controlType="cube",size=1,name="controller",appendCtl="_ctl"):
     if(controlType=="circle"):
         ctl = mc.circle(r=size/2.0, n=name + appendCtl)
         #setAttr(ls(sl=1)[0] + ".rotateX",90)
@@ -478,14 +503,18 @@ def addAttrString(target=None, name="tempString"):
         #mel.eval("setAttr -e-keyable true "+target[i]+"." + name + ";")
 
 def addAttrBoolean(target=None, name="tempBoolean"):
+    returns = []
     if not target:
         target = mc.ls(sl=1)
     for i in range(0,len(target)):
         mel.eval("addAttr -ln \"" + name + "\"  -at bool  "+target[i]+";")
         mel.eval("setAttr -e-keyable true "+target[i]+"." + name + ";")
+        val = target[i] + "." + name
+        returns.append(val)
+    return returns
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-ccfk=fkCreateController
-ccik=ikCreateController
-ccfkik = fkikCreateController
+fk=fkCreateController
+ik=ikCreateController
+fkik = fkikCreateController

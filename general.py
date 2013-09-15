@@ -56,8 +56,14 @@ def k(_t=None):
         mc.select(_t)
     mc.setKeyframe()
 
+def g(_t=None):
+    if not _t:
+        _t = mc.ls(sl=1)
+    obj = mc.group(_t)
+    return obj
+
 def rnd3d(spread=5):
-    return rnd(-spread,spread),rnd(-spread,spread),rnd(-spread,spread)
+    return [rnd(-spread,spread),rnd(-spread,spread),rnd(-spread,spread)]
 
 def rndMove(spread=5):
     val = rnd3d(spread)
@@ -108,6 +114,12 @@ def toggleSelectable(target=None):
             mc.setAttr(target[i] + ".overrideEnabled",1)
             mc.setAttr(target[i] + ".overrideDisplayType",2)
 
+def freezeTransformations(target=None):
+    if not target:
+        target = mc.ls(sl=1)
+    mc.select(target)
+    mel.eval("makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1;")
+    return target
 #~~
 
 def parentLast():

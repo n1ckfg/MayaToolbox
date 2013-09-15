@@ -11,17 +11,24 @@ import re
 #~~
 from general import *
 
-def testJoints(numChains = 2, numJoints = 5):
+def testJoints(numChains = 2, numJoints = 5, selectLast=True):
     rm()
-    makeChains(numChains,numJoints)    
+    obj = makeChains(numChains,numJoints)
+    if(selectLast==True):
+        mc.select(obj[len(obj)-1][0])    
+    return obj
 
 def makeChains(numChains = 2, numJoints = 5):
+    returns = []
     mc.select(d=True)
     for i in range(0,numChains):
         joints = makeJoints(numJoints)
         mc.select(joints[0])
         mc.move(numJoints*i,0,0)
         mc.select(d=True)
+        returns.append(joints)
+    return returns
+
 
 def makeJoints(reps=3):
     joints = []
