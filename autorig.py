@@ -11,6 +11,31 @@ import re
 #~~
 from general import *
 
+# function to create a default bipedal skeleton
+def createBipedSkeleton(prefix='', size=1.0):
+   rootJnt = mc.joint(prefix+'_root_jnt', p=(0,15,0))
+ 
+   # make other joints
+ 
+   # orient skeleton
+   orientBipedSkeleton(rootJnt)
+ 
+   return rootJnt
+ 
+# function to reorient the skeleton joints to "factory settings" so that the autorig maintains consistent orientations no matter the joint positions.
+def orientBipedSkeleton(rootJnt = None):
+   if not rootJnt:
+      return False
+ 
+   # orient rootJnt
+   mc.joint(rootJnt, e=True, oj='xzy', secondaryAxisOrient='zup', zso=True)
+ 
+   # find and orient the rest of the joints
+ 
+   return True 
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 # Write a function that will build an IK/FK rig programmatically, given 3 joints as the input
 # 1. Function should assume joints are oriented correctly
 # 2. Process:
@@ -27,72 +52,84 @@ from general import *
 #   2.11. Cleans up nodes into a single grouped hierarchy, leaving the original chain intact.
 # 3. return group
 
-def fkikCreateController(target=None, name="controller"):
-    if not target:
+def fkikCreateController(startJoint=None, endJoint=None, name="controller"):
+    name = getUniqueName(name)
+    target = []
+
+    print "startJoint: " + str(startJoint) + "   endJoint: " + str(endJoint)
+
+    if not startJoint or not endJoint:
         target = s()
-
+    else:
+        firstList = mc.listRelatives([startJoint], ad=1)
+        secondList = mc.listRelatives([endJoint], ad=1)
+        target = []
+        for i in range(0,len(firstList) - len(secondList)):
+            target.append(firstList[i])
+        target.append(startJoint)
+        print "Specified start and end joints."
+        print "Listing: " + target
+    
     for i in range(0,len(target)):
-        if(countChain(target[i])!=2):
-            print "Needs to be exactly three joints."
-            return
-        else:
-            #s(target[i])
-            tempTarget = mc.listRelatives([target[i]], ad=1)
-            tempTarget.append(target[i])
-            print "0. tempTarget: " + str(tempTarget)
-            origTarget = []
-            for h in range(0,len(tempTarget)):
-                origTarget.append(tempTarget[(len(tempTarget)-1)-h])
-            print "1. origTarget: " + str(origTarget)
+        tempTarget = mc.listRelatives([target[i]], ad=1)
+        tempTarget.append(target[i])
+        print "0. tempTarget: " + str(tempTarget)
+        origTarget = []
+        for h in range(0,len(tempTarget)):
+            origTarget.append(tempTarget[(len(tempTarget)-1)-h])
+        print "1. origTarget: " + str(origTarget)
 
-            name1 = getUniqueName(target[i]+"_IK")
-            ikTarget = duplicateSpecial(name=name1)
-            print "2. ikTarget: " + str(ikTarget)
+        name1 = getUniqueName(target[i]+"_IK")
+        ikTarget = duplicateSpecial(name=name1)
+        print "2. ikTarget: " + str(ikTarget)
 
-            name2 = getUniqueName(target[i]+"_FK")
-            fkTarget = duplicateSpecial(name=name2)
-            print "3. fkTarget: " + str(fkTarget)
+        name2 = getUniqueName(target[i]+"_FK")
+        fkTarget = duplicateSpecial(name=name2)
+        print "3. fkTarget: " + str(fkTarget)
 
-            name3 = getUniqueName(name)
-            ikCreateControllerAlt(startJoint=ikTarget[0], endJoint=ikTarget[2], name=name3)
-            
-            name4 = getUniqueName(name)
-            fkCreateController(fkTarget, name=name4)
+        name3 = getUniqueName(name)
+        if not startJoint or not endJoint:
+            startJoint = ikTarget[0]
+            endJoint = ikTarget[len(target)-2]
+        ikCreateControllerAlt(startJoint=startJoint, endJoint=endJoint, name=name3)
+        
+        name4 = getUniqueName(name)
+        fkCreateController(fkTarget, name=name4)
 
-            settings = controllerGeometry(controlType="star",size=2,name="settings")
-            # ...if you want to rotate the star controller
-            #mc.setAttr(settings + ".rotateX",90)
-            #freezeTransformations(settings)
-            pos = getPos([target[i]])
-            mc.move(pos[0][0],pos[0][1],pos[0][2])
-            # do later!
-            #py.parentConstraint(settings,target[i],mo=1)
-            fkikName = "FKIK_switch"
-            fkik = addAttrFloatSlider([settings],name=fkikName)
-            fkikVal = mc.getAttr(settings + "." + fkikName)
-            print fkikVal
+        settings = controllerGeometry(controlType="star",size=2,name="settings")
+        # ...if you want to rotate the star controller
+        #mc.setAttr(settings + ".rotateX",90)
+        #freezeTransformations(settings)
+        pos = getPos([target[i]])
+        mc.move(pos[0][0],pos[0][1],pos[0][2])
+        # do later!
+        #py.parentConstraint(settings,target[i],mo=1)
+        fkikName = "FKIK_switch"
+        fkik = addAttrFloatSlider([settings],name=fkikName)
+        fkikVal = mc.getAttr(settings + "." + fkikName)
+        print fkikVal
 
-            for j in range(0,countChain(target[i])+1):
-                pcfk = py.parentConstraint(fkTarget[j],origTarget[j])
-                expr1 = "expressionEditor EE \""+pcfk+"\" \""+fkTarget[j]+"W0\";"
-                print "expr1: " + expr1
-                #expr2 = "expression -s \""+str(pcfk)+"."+str(fkTarget[j])+"W0 = "+str(settings)+"."+str(fkikName)+"\"  -o "+str(settings)+" -ae 1 -uc all ;"
-                expr2 = "expression -s \""+pcfk+"."+fkTarget[j]+"W0 = abs(1-"+settings+"."+fkikName+")\"  -o "+settings+" -ae 1 -uc all ;"
-                print "expr2: " + expr2
-                mel.eval(expr1)
-                mel.eval(expr2)
-                #~~
-                pcik = py.parentConstraint(ikTarget[j],origTarget[j])
-                expr3 = "expressionEditor EE \""+pcik+"\" \""+ikTarget[j]+"W1\";"
-                print "expr1: " + expr3
-                expr4 = "expression -s \""+pcik+"."+ikTarget[j]+"W1 = "+settings+"."+fkikName+"\"  -o "+settings+" -ae 1 -uc all ;"
-                print "expr2: " + expr4
-                mel.eval(expr3)
-                mel.eval(expr4)
+        for j in range(0,countChain(target[i])+1):
+            pcfk = py.parentConstraint(fkTarget[j],origTarget[j])
+            expr1 = "expressionEditor EE \""+pcfk+"\" \""+fkTarget[j]+"W0\";"
+            print "expr1: " + expr1
+            #expr2 = "expression -s \""+str(pcfk)+"."+str(fkTarget[j])+"W0 = "+str(settings)+"."+str(fkikName)+"\"  -o "+str(settings)+" -ae 1 -uc all ;"
+            expr2 = "expression -s \""+pcfk+"."+fkTarget[j]+"W0 = abs(1-"+settings+"."+fkikName+")\"  -o "+settings+" -ae 1 -uc all ;"
+            print "expr2: " + expr2
+            mel.eval(expr1)
+            mel.eval(expr2)
+            #~~
+            pcik = py.parentConstraint(ikTarget[j],origTarget[j])
+            expr3 = "expressionEditor EE \""+pcik+"\" \""+ikTarget[j]+"W1\";"
+            print "expr1: " + expr3
+            expr4 = "expression -s \""+pcik+"."+ikTarget[j]+"W1 = "+settings+"."+fkikName+"\"  -o "+settings+" -ae 1 -uc all ;"
+            print "expr2: " + expr4
+            mel.eval(expr3)
+            mel.eval(expr4)
 
-            py.parentConstraint(settings,target[i],mo=1)
-            name5 = getUniqueName(name)
-            mc.group(settings,name1,name2,name3,name4,name=name5)
+        py.parentConstraint(settings,target[i],mo=1)
+        name5 = getUniqueName(name)
+        mc.group(settings,name1,name2,name3,name4,name=name5)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
