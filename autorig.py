@@ -12,16 +12,54 @@ import re
 from general import *
 
 # function to create a default bipedal skeleton
-def createBipedSkeleton(prefix='', size=1.0):
-   rootJnt = mc.joint(prefix+'_root_jnt', p=(0,15,0))
+def createBipedSkeleton(prefix="", size=1.0):
+    joints = []
+
+    if len(prefix) > 0:
+        prefix += ("_")
+
+    rootJnt = mc.joint(name=prefix+"root_jnt", p=(0.0*size,15.0*size,0.0*size))
+
+    # make other joints
+    #1. root to head2
+    spine1Jnt = mc.joint(prefix+"root_jnt", name="spine1_jnt", p=(0.0*size,15.0*size,0.0*size))
+    spine2Jnt = mc.joint(prefix+"spine1_jnt", name="spine2_jnt", p=(0.0*size,15.0*size,0.0*size))
+    neckJnt = mc.joint(prefix+"spine2_jnt", name="neck_jnt", p=(0.0*size,15.0*size,0.0*size))
+    head1Jnt = mc.joint(prefix+"neck_jnt", name="head1_jnt", p=(0.0*size,15.0*size,0.0*size))
+    head2Jnt = mc.joint(prefix+"head1_jnt", name="head2_jnt", p=(0.0*size,15.0*size,0.0*size))
+
+    #2. root to toe_l
+
+    #3. root to toe_r
+
+    #4. spine2 to wrist_l
+
+    #5. spine2 to wrist_r
+
+    #6. wrist_l to fingers
+
+    #7. wrist_r to fingers
+    
+    clavicle_l_jnt
+    shoulder_l_jnt
+    elbow_l_jnt
+    wrist_l_jnt
+
+
+    hip_l_jnt
+    knee_l_jnt
+    ankle_l_jnt
+    ball_l_jnt
+    toe_l_jnt
+
+
+    # orient skeleton
+    #orientBipedSkeleton(rootJnt)
+
+    return rootJnt
  
-   # make other joints
- 
-   # orient skeleton
-   orientBipedSkeleton(rootJnt)
- 
-   return rootJnt
- 
+cbs = createBipedSkeleton
+
 # function to reorient the skeleton joints to "factory settings" so that the autorig maintains consistent orientations no matter the joint positions.
 def orientBipedSkeleton(rootJnt = None):
    if not rootJnt:
