@@ -115,32 +115,23 @@ def createBipedSkeleton(prefix="", size=1.0):
     pinky4RJnt = mc.joint(prefix+"pinky3_r_jnt", name=prefix+"pinky4_r_jnt", p=(-15.595*size, 23.072*size, -2.269*size))
 
     # orient skeleton
-    #try:
     orientBipedSkeleton(rootJnt)
-    #except:
-    #    print "Orient failed."
 
     mc.select(rootJnt)
     return rootJnt
  
 # function to reorient the skeleton joints to "factory settings" so that the autorig maintains consistent orientations no matter the joint positions.
 def orientBipedSkeleton(rootJnt = None):
-    #if not rootJnt:
-    #    return False
+    if not rootJnt:
+        return False
 
-    """
     target = mc.listRelatives(rootJnt, ad=1)
     target.append(rootJnt)
-    print target
-    """
-    target = listAll([rootJnt])
-    print target
-    
+
     # orient rootJnt
+    # find and orient the rest of the joints
     for i in range(0,len(target)):
         mc.joint(target[i], e=True, oj='xzy', secondaryAxisOrient='zup', zso=True)
-
-    # find and orient the rest of the joints
 
     return True 
 
