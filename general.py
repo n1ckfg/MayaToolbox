@@ -10,6 +10,7 @@ import os
 import re
 #~~
 
+#select
 def s(_t=None,d=False,all=False):
     if(d==True):
         py.select(d=True)
@@ -25,7 +26,7 @@ def s(_t=None,d=False,all=False):
         else:
             py.select(_t)
             return _t
-
+#time
 def t(_t=None):
     try:
         mc.currentTime(_t)
@@ -33,6 +34,7 @@ def t(_t=None):
         print "time: " + str(mc.currentTime(q=True))
     return mc.currentTime(q=True)
 
+#delete
 def d(_t=None, all=False):
     if _t:
         s(_t)
@@ -40,9 +42,11 @@ def d(_t=None, all=False):
         s(all=True)
     py.delete()
 
+#delete all
 def rm():
     d(all=True)
 
+#move
 def m(p, _t=None):
     if not _t:
         _t = mc.ls(sl=1)
@@ -51,24 +55,60 @@ def m(p, _t=None):
         mc.select(_t[i])
         mc.move(p[0],p[1],p[2])
 
+#keyframe
 def k(_t=None):
     if(_t):
         mc.select(_t)
     mc.setKeyframe()
 
+#group
 def g(_t=None):
     if not _t:
         _t = mc.ls(sl=1)
     obj = mc.group(_t)
     return obj
 
+def listAll(target=None):
+    allJoints = []
+    if not target:
+        target = s()
+    if(len(target)==1):
+        allJoints = mc.listRelatives(ad=1)
+        allJoints.append(target[0])        
+    else:
+        for i in range(0,len(target)):
+            joints = mc.listRelatives(ad=1)
+            joints.append(target[i])
+            allJoints.append(joints)
+        
+    print allJoints
+    return allJoints
+
+def posAll(target=None):
+    pos = []
+    
+    if not target:
+        target = s()
+    
+    obj = listAll()
+    
+    for i in range(0,len(obj)):
+        p = getPos([obj[i]])
+        pos.append(p[0])
+        
+    print pos
+    return pos
+
+#random 3d vector
 def rnd3d(spread=5):
     return [rnd(-spread,spread),rnd(-spread,spread),rnd(-spread,spread)]
 
+#move to random location
 def rndMove(spread=5):
     val = rnd3d(spread)
     mc.move(val[0],val[1],val[2])
 
+#get position
 def getPos(target=None):
     returns = []
     if not target:
@@ -79,6 +119,7 @@ def getPos(target=None):
         returns.append(p)
     return returns
 
+#move to last object
 def moveTo(target=None):
     #1. make an array of all selected objects
     if not target:
@@ -92,6 +133,7 @@ def moveTo(target=None):
         mc.select(target[i])
         mc.move(pos[0],pos[1],pos[2])
 
+#toggle visibility
 def showHide(target=None):
     if not target:
        target = mc.ls(sl=1)
@@ -103,6 +145,7 @@ def showHide(target=None):
         if(visible==True):
            mc.setAttr(target[i] + ".v",0) 
 
+#toggle selectability
 def toggleSelectable(target=None):
     if not target:
         target = mc.ls(sl=1)
@@ -114,6 +157,7 @@ def toggleSelectable(target=None):
             mc.setAttr(target[i] + ".overrideEnabled",1)
             mc.setAttr(target[i] + ".overrideDisplayType",2)
 
+#reset transformations to 0
 def freezeTransformations(target=None):
     if not target:
         target = mc.ls(sl=1)
@@ -122,6 +166,7 @@ def freezeTransformations(target=None):
     return target
 #~~
 
+#parent to last selection
 def parentLast():
     #1. make an array of all selected objects
     target = mc.ls(sl=1)

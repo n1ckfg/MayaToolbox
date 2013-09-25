@@ -18,59 +18,135 @@ def createBipedSkeleton(prefix="", size=1.0):
     if len(prefix) > 0:
         prefix += ("_")
 
-    rootJnt = mc.joint(name=prefix+"root_jnt", p=(0.0*size,15.0*size,0.0*size))
+    rootJnt = mc.joint(name=prefix+"root_jnt", p=(0.0*size,15.161*size,0.0*size))
 
     # make other joints
     #1. root to head2
-    spine1Jnt = mc.joint(prefix+"root_jnt", name="spine1_jnt", p=(0.0*size,15.0*size,0.0*size))
-    spine2Jnt = mc.joint(prefix+"spine1_jnt", name="spine2_jnt", p=(0.0*size,15.0*size,0.0*size))
-    neckJnt = mc.joint(prefix+"spine2_jnt", name="neck_jnt", p=(0.0*size,15.0*size,0.0*size))
-    head1Jnt = mc.joint(prefix+"neck_jnt", name="head1_jnt", p=(0.0*size,15.0*size,0.0*size))
-    head2Jnt = mc.joint(prefix+"head1_jnt", name="head2_jnt", p=(0.0*size,15.0*size,0.0*size))
+    spine1Jnt = mc.joint(prefix+"root_jnt", name=prefix+"spine1_jnt", p=(0.0*size,18.161*size,-0.313*size))
+    spine2Jnt = mc.joint(prefix+"spine1_jnt", name=prefix+"spine2_jnt", p=(0.0*size,21.370*size,-0.104*size))
+    neckJnt = mc.joint(prefix+"spine2_jnt", name=prefix+"neck_jnt", p=(0.0*size,24.37*size,0.104*size))
+    head1Jnt = mc.joint(prefix+"neck_jnt", name=prefix+"head1_jnt", p=(0.0*size,26.362*size,0.28*size))
+    head2Jnt = mc.joint(prefix+"head1_jnt", name=prefix+"head2_jnt", p=(0.0*size,30.362*size,0.279*size))
 
     #2. root to toe_l
+    hipLJnt = mc.joint(prefix+"root_jnt", name=prefix+"hip_l_jnt", p=(2.385*size,15.022*size,0.016*size))
+    kneeLJnt = mc.joint(prefix+"hip_l_jnt", name=prefix+"knee_l_jnt", p=(2.385*size,8.2*size,1.561*size))
+    ankleLJnt = mc.joint(prefix+"knee_l_jnt", name=prefix+"ankle_l_jnt", p=(2.385*size,1.253*size,0.0*size))
+    ballLJnt = mc.joint(prefix+"ankle_l_jnt", name=prefix+"ball_l_jnt", p=(2.385*size,0.253*size,2.0*size))
+    toeLJnt = mc.joint(prefix+"ball_l_jnt", name=prefix+"toe_l_jnt", p=(2.385*size,0.253*size,4.0*size))
 
-    #3. root to toe_r
+    #3. spine2 to wrist_l
+    clavicleLJnt = mc.joint(prefix+"spine2_jnt", name=prefix+"clavicle_l_jnt", p=(0.897*size,23.147*size,0.582*size))
+    shoulderLJnt = mc.joint(prefix+"clavicle_l_jnt", name=prefix+"shoulder_l_jnt", p=(3.217*size,23.716*size,0.045*size))
+    elbowLJnt = mc.joint(prefix+"shoulder_l_jnt", name=prefix+"elbow_l_jnt", p=(7.131*size,23.716*size,-1.239*size))
+    wristLJnt = mc.joint(prefix+"elbow_l_jnt", name=prefix+"wrist_l_jnt", p=(11.204*size,23.716*size,-0.658*size))
 
-    #4. spine2 to wrist_l
+    #4a. wrist_l to thumb4_l
+    thumb1LJnt = mc.joint(prefix+"wrist_l_jnt", name=prefix+"thumb1_l_jnt", p=(11.909*size, 23.716*size, 0.026*size))
+    thumb2LJnt = mc.joint(prefix+"thumb1_l_jnt", name=prefix+"thumb2_l_jnt", p=(12.129*size, 23.402*size, 0.656*size))
+    thumb3LJnt = mc.joint(prefix+"thumb2_l_jnt", name=prefix+"thumb3_l_jnt", p=(12.610*size, 23.063*size, 1.2118*size))
+    thumb4LJnt = mc.joint(prefix+"thumb3_l_jnt", name=prefix+"thumb4_l_jnt", p=(13.303*size, 22.8*size, 1.477*size))
 
-    #5. spine2 to wrist_r
+    #4b. wrist_l to index4_l
+    index1LJnt = mc.joint(prefix+"wrist_l_jnt", name=prefix+"index1_l_jnt", p=(13.0421*size, 23.716*size, 0.104*size))
+    index2LJnt = mc.joint(prefix+"index1_l_jnt", name=prefix+"index2_l_jnt", p=(13.957*size, 23.716*size, 0.261*size))
+    index3LJnt = mc.joint(prefix+"index2_l_jnt", name=prefix+"index3_l_jnt", p=(14.915*size, 23.48*size, 0.426*size))
+    index4LJnt = mc.joint(prefix+"index3_l_jnt", name=prefix+"index4_l_jnt", p=(15.79*size, 23.021*size, 0.576*size))
 
-    #6. wrist_l to fingers
+    #4c. wrist_l to middle4_l
+    middle1LJnt = mc.joint(prefix+"wrist_l_jnt", name=prefix+"middle1_l_jnt", p=(13.052*size, 23.716*size, -0.597*size))
+    middle2LJnt = mc.joint(prefix+"middle1_l_jnt", name=prefix+"middle2_l_jnt", p=(14.046*size, 23.716*size, -0.541*size))
+    middle3LJnt = mc.joint(prefix+"middle2_l_jnt", name=prefix+"middle3_l_jnt", p=(15.081*size, 23.464*size, -0.484*size))
+    middle4LJnt = mc.joint(prefix+"middle3_l_jnt", name=prefix+"middle4_l_jnt", p=(16.028*size, 22.974*size, -0.431*size))
 
-    #7. wrist_r to fingers
+    #4d. wrist_l to ring4_l
+    ring1LJnt = mc.joint(prefix+"wrist_l_jnt", name=prefix+"ring1_l_jnt", p=(13.053*size, 23.716*size, -1.223*size))
+    ring2LJnt = mc.joint(prefix+"ring1_l_jnt", name=prefix+"ring2_l_jnt", p=(13.995*size, 23.716*size, -1.243*size))
+    ring3LJnt = mc.joint(prefix+"ring2_l_jnt", name=prefix+"ring3_l_jnt", p=(14.979*size, 23.477*size, -1.265*size))
+    ring4LJnt = mc.joint(prefix+"ring3_l_jnt", name=prefix+"ring4_l_jnt", p=(15.879*size, 23.0127*size, -1.284*size))
+
+    #4e. wrist_l to pinky4_l
+    pinky1LJnt = mc.joint(prefix+"wrist_l_jnt", name=prefix+"pinky1_l_jnt", p=(13.045*size, 23.716*size, -1.886*size))
+    pinky2LJnt = mc.joint(prefix+"pinky1_l_jnt", name=prefix+"pinky2_l_jnt", p=(13.891*size, 23.716*size, -2.013*size))
+    pinky3LJnt = mc.joint(prefix+"pinky2_l_jnt", name=prefix+"pinky3_l_jnt", p=(14.781*size, 23.497*size, -2.147*size))
+    pinky4LJnt = mc.joint(prefix+"pinky3_l_jnt", name=prefix+"pinky4_l_jnt", p=(15.595*size, 23.072*size, -2.269*size))
+
+    #5. root to toe_r
+    hipRJnt = mc.joint(prefix+"root_jnt", name=prefix+"hip_r_jnt", p=(-2.385*size,15.022*size,0.016*size))
+    kneeRJnt = mc.joint(prefix+"hip_r_jnt", name=prefix+"knee_r_jnt", p=(-2.385*size,8.2*size,1.561*size))
+    ankleRJnt = mc.joint(prefix+"knee_r_jnt", name=prefix+"ankle_r_jnt", p=(-2.385*size,1.253*size,0.0*size))
+    ballRJnt = mc.joint(prefix+"ankle_r_jnt", name=prefix+"ball_r_jnt", p=(-2.385*size,0.253*size,2.0*size))
+    toeRJnt = mc.joint(prefix+"ball_r_jnt", name=prefix+"toe_r_jnt", p=(-2.385*size,0.253*size,4.0*size))
+
+    #6. spine2 to wrist_r
+    clavicleRJnt = mc.joint(prefix+"spine2_jnt", name=prefix+"clavicle_r_jnt", p=(-0.897*size,23.147*size,0.582*size))
+    shoulderRJnt = mc.joint(prefix+"clavicle_r_jnt", name=prefix+"shoulder_r_jnt", p=(-3.217*size,23.716*size,0.045*size))
+    elbowRJnt = mc.joint(prefix+"shoulder_r_jnt", name=prefix+"elbow_r_jnt", p=(-7.131*size,23.716*size,-1.239*size))
+    wristRJnt = mc.joint(prefix+"elbow_r_jnt", name=prefix+"wrist_r_jnt", p=(-11.204*size,23.716*size,-0.658*size))
     
-    clavicle_l_jnt
-    shoulder_l_jnt
-    elbow_l_jnt
-    wrist_l_jnt
+    #7a. wrist_r to thumb4_r
+    thumb1RJnt = mc.joint(prefix+"wrist_r_jnt", name=prefix+"thumb1_r_jnt", p=(-11.909*size, 23.716*size, 0.026*size))
+    thumb2RJnt = mc.joint(prefix+"thumb1_r_jnt", name=prefix+"thumb2_r_jnt", p=(-12.129*size, 23.402*size, 0.656*size))
+    thumb3RJnt = mc.joint(prefix+"thumb2_r_jnt", name=prefix+"thumb3_r_jnt", p=(-12.610*size, 23.063*size, 1.2118*size))
+    thumb4RJnt = mc.joint(prefix+"thumb3_r_jnt", name=prefix+"thumb4_r_jnt", p=(-13.303*size, 22.8*size, 1.477*size))
 
+    #7b. wrist_r to index4_r
+    index1RJnt = mc.joint(prefix+"wrist_r_jnt", name=prefix+"index1_r_jnt", p=(-13.0421*size, 23.716*size, 0.104*size))
+    index2RJnt = mc.joint(prefix+"index1_r_jnt", name=prefix+"index2_r_jnt", p=(-13.957*size, 23.716*size, 0.261*size))
+    index3RJnt = mc.joint(prefix+"index2_r_jnt", name=prefix+"index3_r_jnt", p=(-14.915*size, 23.48*size, 0.426*size))
+    index4RJnt = mc.joint(prefix+"index3_r_jnt", name=prefix+"index4_r_jnt", p=(-15.79*size, 23.021*size, 0.576*size))
 
-    hip_l_jnt
-    knee_l_jnt
-    ankle_l_jnt
-    ball_l_jnt
-    toe_l_jnt
+    #7c. wrist_r to middle4_r
+    middle1RJnt = mc.joint(prefix+"wrist_r_jnt", name=prefix+"middle1_r_jnt", p=(-13.052*size, 23.716*size, -0.597*size))
+    middle2RJnt = mc.joint(prefix+"middle1_r_jnt", name=prefix+"middle2_r_jnt", p=(-14.046*size, 23.716*size, -0.541*size))
+    middle3RJnt = mc.joint(prefix+"middle2_r_jnt", name=prefix+"middle3_r_jnt", p=(-15.081*size, 23.464*size, -0.484*size))
+    middle4RJnt = mc.joint(prefix+"middle3_r_jnt", name=prefix+"middle4_r_jnt", p=(-16.028*size, 22.974*size, -0.431*size))
 
+    #7d. wrist_r to ring4_r
+    ring1RJnt = mc.joint(prefix+"wrist_r_jnt", name=prefix+"ring1_r_jnt", p=(-13.053*size, 23.716*size, -1.223*size))
+    ring2RJnt = mc.joint(prefix+"ring1_r_jnt", name=prefix+"ring2_r_jnt", p=(-13.995*size, 23.716*size, -1.243*size))
+    ring3RJnt = mc.joint(prefix+"ring2_r_jnt", name=prefix+"ring3_r_jnt", p=(-14.979*size, 23.477*size, -1.265*size))
+    ring4RJnt = mc.joint(prefix+"ring3_r_jnt", name=prefix+"ring4_r_jnt", p=(-15.879*size, 23.0127*size, -1.284*size))
+
+    #7e. wrist_r to pinky4_r
+    pinky1RJnt = mc.joint(prefix+"wrist_r_jnt", name=prefix+"pinky1_r_jnt", p=(-13.045*size, 23.716*size, -1.886*size))
+    pinky2RJnt = mc.joint(prefix+"pinky1_r_jnt", name=prefix+"pinky2_r_jnt", p=(-13.891*size, 23.716*size, -2.013*size))
+    pinky3RJnt = mc.joint(prefix+"pinky2_r_jnt", name=prefix+"pinky3_r_jnt", p=(-14.781*size, 23.497*size, -2.147*size))
+    pinky4RJnt = mc.joint(prefix+"pinky3_r_jnt", name=prefix+"pinky4_r_jnt", p=(-15.595*size, 23.072*size, -2.269*size))
 
     # orient skeleton
-    #orientBipedSkeleton(rootJnt)
+    #try:
+    orientBipedSkeleton(rootJnt)
+    #except:
+    #    print "Orient failed."
 
+    mc.select(rootJnt)
     return rootJnt
  
-cbs = createBipedSkeleton
-
 # function to reorient the skeleton joints to "factory settings" so that the autorig maintains consistent orientations no matter the joint positions.
 def orientBipedSkeleton(rootJnt = None):
-   if not rootJnt:
-      return False
- 
-   # orient rootJnt
-   mc.joint(rootJnt, e=True, oj='xzy', secondaryAxisOrient='zup', zso=True)
- 
-   # find and orient the rest of the joints
- 
-   return True 
+    #if not rootJnt:
+    #    return False
+
+    """
+    target = mc.listRelatives(rootJnt, ad=1)
+    target.append(rootJnt)
+    print target
+    """
+    target = listAll([rootJnt])
+    print target
+    
+    # orient rootJnt
+    for i in range(0,len(target)):
+        mc.joint(target[i], e=True, oj='xzy', secondaryAxisOrient='zup', zso=True)
+
+    # find and orient the rest of the joints
+
+    return True 
+
+def cbs():
+    rm()
+    createBipedSkeleton()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
