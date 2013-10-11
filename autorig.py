@@ -11,6 +11,14 @@ import re
 #~~
 from general import *
 
+def orientConstraint(target=None):
+    if not target:
+        target = s()
+
+    mel.eval("orientConstraint -mo -weight 1;")
+
+    return target
+
 # function to create a default bipedal skeleton
 def createBipedSkeleton(prefix="", size=1.0):
     joints = []
