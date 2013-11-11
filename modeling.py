@@ -11,6 +11,17 @@ import re
 #~~
 from general import *
 
+def text(t = "foo", font="Droid Sans", hipoly = True, cleanup = True):
+    obj1 = mc.textCurves( f=font,t=t)
+    obj2 = mc.planarSrf(obj1)
+    if hipoly:
+        obj3 = nurbsToPoly()
+    else:
+        obj3 = mel.eval("nurbsToPoly -mnd 1  -ch 1 -f 1 -pt 1 -pc 500 -chr 0.9 -ft 0.7787 -mel 1 -d 0.196 -ut 1 -un 3 -vt 1 -vn 3 -uch 0 -ucr 0 -cht 0.01 -es 0 -ntr 0 -mrt 0 -uss 1 \"" + obj2[0] + "\";")
+    if cleanup:
+        d([obj1,obj2])
+    return obj3
+
 def puppetMesh(target=None):
     returns = []
     
