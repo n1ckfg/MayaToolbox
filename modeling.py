@@ -11,7 +11,8 @@ import re
 #~~
 from general import *
 
-def text(t = "foo", font="Droid Sans", hipoly = True, cleanup = True):
+def text(t = "foo", font="Droid Sans", hipoly = False, cleanup = True):
+    #note: hipoly mode seems to generate a couple weird extra vertices in the final output.
     obj1 = mc.textCurves( f=font,t=t)
     obj2 = mc.planarSrf(obj1)
     if hipoly:
