@@ -72,7 +72,7 @@ def g(_t=None):
 def cp(_t=None):
     if not _t:
         _t = s()
-    mc.xform(_t, cp=True)
+    py.xform(_t, cp=True)
 
 def listAll(target=None):
     allJoints = []
