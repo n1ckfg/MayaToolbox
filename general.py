@@ -68,6 +68,12 @@ def g(_t=None):
     obj = mc.group(_t)
     return obj
 
+#center pivot
+def cp(_t=None):
+    if not _t:
+        _t = s()
+    mc.xform(_t, cp=True)
+
 def listAll(target=None):
     allJoints = []
     if not target:

@@ -21,6 +21,7 @@ def text(t = "foo", font="Droid Sans", hipoly = False, cleanup = True):
         obj3 = mel.eval("nurbsToPoly -mnd 1  -ch 1 -f 1 -pt 1 -pc 500 -chr 0.9 -ft 0.7787 -mel 1 -d 0.196 -ut 1 -un 3 -vt 1 -vn 3 -uch 0 -ucr 0 -cht 0.01 -es 0 -ntr 0 -mrt 0 -uss 1 \"" + obj2[0] + "\";")
     if cleanup:
         d([obj1,obj2])
+        mc.xform(obj3[0], cp=True)
     return obj3
 
 def puppetMesh(target=None):
