@@ -11,6 +11,37 @@ import re
 #~~
 from general import *
 
+
+def onVerts(target=None):
+    #1. make an array of all selected objects
+    if not target:
+        target = mc.ls(sl=1)
+
+    #2. get the first selected object so it can be copied...
+    foo = target[0]
+
+    #3. then get the vertices of each other object and copy the first one there.
+    for i in range(1,len(target)):
+
+        v = getVertPos(target[i])
+
+        for j in range(0,len(v)):
+            s(foo)
+            py.mel.eval("duplicate -un -ic -rc")
+            mc.move(v[j][0],v[j][1],v[j][2])
+
+
+def getVertPos( shapeNode ) :
+    vtxWorldPosition = []    # will contain positions in space of all object vertices
+    vtxIndexList = mc.getAttr( shapeNode+".vrts", multiIndices=True )
+ 
+    for i in vtxIndexList :
+        curPointPosition = mc.xform( str(shapeNode)+".pnts["+str(i)+"]", query=True, translation=True, worldSpace=True )    # [1.1269192869360154, 4.5408735275268555, 1.3387055339628269]
+        vtxWorldPosition.append( curPointPosition )
+ 
+    return vtxWorldPosition
+
+
 def text(t = "foo", font="Droid Sans", hipoly = False, cleanup = True):
     #note: hipoly mode seems to generate a couple weird extra vertices in the final output.
     obj1 = mc.textCurves( f=font,t=t)
