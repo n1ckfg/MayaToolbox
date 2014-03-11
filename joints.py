@@ -57,12 +57,19 @@ def makeJoints(reps=3):
         joints.append(newJoint)
     return joints
 
-def keyAllChildren(jointsOnly=False):
+def keyAllChildren(op="set", jointsOnly=False): #set, cut, copy, paste
    selectedObjects = mc.ls(sl=True)
    targetObjects = mc.listRelatives( selectedObjects, ad=True ) + selectedObjects
    if(jointsOnly):
       targetObjects = mc.ls(targetObjects, type='joint')
-   mc.setKeyframe( targetObjects )
+   if(op=="set"):
+      py.setKeyframe( targetObjects )
+   elif(op=="cut"):
+      py.cutKey( targetObjects )
+   elif(op=="copy"):
+      py.copyKey( targetObjects )
+   elif(op=="paste"):
+      py.pasteKey( targetObjects )
 
 def lockTranslate(target, doLock):
     mc.setAttr(target + ".translateX",lock=doLock)

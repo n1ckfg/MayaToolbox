@@ -188,6 +188,23 @@ def parentLast():
     
 #~~
 
+#parent each selection to the next
+def parentChain():
+    #1. make an array of all selected objects
+    target = mc.ls(sl=1)
+
+    #2. parent each selected object to the last object
+    for i in range(0,len(target)):
+        if(i>0):
+            mc.select(target[i])
+            mc.parent(target[i],target[i-1])
+
+
+    #3. select first object
+    mc.select(target[0])
+    
+#~~
+
 def instanceFirst(doShaders=False):
     #1. make an array of all selected objects
     target = mc.ls(sl=1)
@@ -329,6 +346,8 @@ def getUniqueName(name):
         # recursively run through the function until a unique name is reached and returned
         return getUniqueName(newName)
 
+#~~
+
 def lookAt(target=None):
     if not target:
         target = mc.ls(sl=1)
@@ -353,4 +372,192 @@ def lookAt(target=None):
         mc.connectAttr( angleBtwnNode+'.eulerZ', convertZ+'.input' )
         mc.connectAttr( convertZ+'.output', target[i]+'.rotateZ' )
 
+#unfinished
+def tryGetAngle():
+    s(["camera1"])
+    resetRotation()
+
+    target = s(["head","neck","camera2"])
+
+    scaler = 10
+
+    for i in range(inTime(),outTime()):
+        t(i)
+        v1 = xform(target[0], q=True, t=True, ws=True)
+        v2 = xform(target[1], q=True, t=True, ws=True)
+
+        r = angleBetween(vector1=v1,vector2=v2,euler=True)
+        print r
+        s(target[2])
+        rotate(r[0]*scaler,r[1]*scaler,r[2]*scaler, rotateXYZ=True)
+        k()
+
+#~~
+
+def inTime():
+    returns = int(mc.playbackOptions(q=True, animationStartTime=True))
+    #returns = int(findKeyframe(which='first'))
+    return returns
+
+def outTime():
+    returns = int(mc.playbackOptions(q=True, animationEndTime=True))+2
+    #returns = int(findKeyframe(which='last'))+2
+    return returns
+
+def bakeKeys(target=None, iT=inTime(), oT=outTime()):
+    if not target:
+        target=s()
+
+    for i in range(0,len(target)):
+        evalString = "bakeResults -simulation true -t \"" + str(iT) + ":" + str(oT) + "\" -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -removeBakedAttributeFromLayer false -bakeOnOverrideLayer false -minimizeRotation true -controlPoints false -shape true {\"" + str(target[i]) + "\"};"
+        py.mel.eval(evalString)
+
+def resetAll(target=None, iT=inTime(), oT=outTime()):
+    resetPosition(target, iT, oT)
+    resetRotation(target, iT, oT)
+    resetScale(target, iT, oT)
+
+def normalizeAll(target=None, iT=inTime(), oT=outTime()):
+    normalizePosition(target)
+    normalizeRotation(target)
+    normalizeScale(target)
+
+def resetPosition(target=None, iT=inTime(), oT=outTime()):
+    if not target:
+        target = s()
+
+    for i in range(0,len(target)):
+
+        for m in range(iT,oT):
+            try:
+                py.keyframe(target[i]+'.translateX',edit=True,time=[m],valueChange=0)
+                py.keyframe(target[i]+'.translateY',edit=True,time=[m],valueChange=0)
+                py.keyframe(target[i]+'.translateZ',edit=True,time=[m],valueChange=0)
+            except:
+                print "Couldn't set keyframe " + str(m) + "."
+
+def resetRotation(target=None, iT=inTime(), oT=outTime()):
+    if not target:
+        target = s()
+
+    for i in range(0,len(target)):
+
+        for m in range(iT,oT):
+            try:
+                py.keyframe(target[i]+'.rotateX',edit=True,time=[m],valueChange=0)
+                py.keyframe(target[i]+'.rotateY',edit=True,time=[m],valueChange=0)
+                py.keyframe(target[i]+'.rotateZ',edit=True,time=[m],valueChange=0)
+            except:
+                print "Couldn't set keyframe " + str(m) + "."  
+
+def resetScale(target=None, iT=inTime(), oT=outTime()):
+    if not target:
+        target = s()
+
+    for i in range(0,len(target)):
+
+        for m in range(iT,oT):
+            try:
+                py.keyframe(target[i]+'.scaleX',edit=True,time=[m],valueChange=1)
+                py.keyframe(target[i]+'.scaleY',edit=True,time=[m],valueChange=1)
+                py.keyframe(target[i]+'.scaleZ',edit=True,time=[m],valueChange=1)
+            except:
+                print "Couldn't set keyframe " + str(m) + "."  
+
+def normalizePosition(target=None, iT=inTime(), oT=outTime()):
+    x = 0
+    y = 0
+    z = 0
+
+    p = []
+
+    if not target:
+        target = s()
+
+    for i in range(0,len(target)):
+
+        for j in range(iT,oT):
+            t(j)
+            pp = py.xform(target[i], q=True, t=True, ws=True)
+            p.append(pp)
+
+            pOrig = p[0]
+
+            for m in range(iT,oT):
+                try:
+                    x = p[m][0]-pOrig[0]
+                    y = p[m][1]-pOrig[1]
+                    z = p[m][2]-pOrig[2]
+
+                    py.keyframe(target[i]+'.translateX',edit=True,time=[m],valueChange=x)
+                    py.keyframe(target[i]+'.translateY',edit=True,time=[m],valueChange=y)
+                    py.keyframe(target[i]+'.translateZ',edit=True,time=[m],valueChange=z)
+                except:
+                    print "Couldn't set keyframe " + str(m) + "."
+
+def normalizeRotation(target=None, iT=inTime(), oT=outTime()):
+    x = 0
+    y = 0
+    z = 0
+
+    p = []
+
+    if not target:
+        target = s()
+
+    for i in range(0,len(target)):
+
+        for j in range(iT,oT):
+            t(j)
+            pp = py.xform(target[i], q=True, rotation=True, ws=True)
+            p.append(pp)
+
+            pOrig = p[0]
+
+            for m in range(iT,oT):
+                try:
+                    x = p[m][0]-pOrig[0]
+                    y = p[m][1]-pOrig[1]
+                    z = p[m][2]-pOrig[2]
+                    
+                    py.keyframe(target[i]+'.rotateX',edit=True,time=[m],valueChange=x)
+                    py.keyframe(target[i]+'.rotateY',edit=True,time=[m],valueChange=y)
+                    py.keyframe(target[i]+'.rotateZ',edit=True,time=[m],valueChange=z)
+                except:
+                    print "Couldn't set keyframe " + str(m) + "."
+
+def normalizeScale(target=None, iT=inTime(), oT=outTime()):
+    x = 0
+    y = 0
+    z = 0
+
+    p = []
+
+    if not target:
+        target = s()
+
+    for i in range(0,len(target)):
+
+        for j in range(iT,oT):
+            t(j)
+            pp = mc.py.xform(target[i], q=True, scale=True, ws=True)
+            p.append(pp)
+
+            pOrig = p[0]
+
+            for m in range(iT,oT):
+                try:
+                    x = p[m][0]/pOrig[0]
+                    y = p[m][1]/pOrig[1]
+                    z = p[m][2]/pOrig[2]
+                    
+                    py.keyframe(target[i]+'.scaleX',edit=True,time=[m],valueChange=x)
+                    py.keyframe(target[i]+'.scaleY',edit=True,time=[m],valueChange=y)
+                    py.keyframe(target[i]+'.scaleZ',edit=True,time=[m],valueChange=z)
+                except:
+                    print "Couldn't set keyframe " + str(m) + "."
+
+
+
+               
 
