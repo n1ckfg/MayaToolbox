@@ -557,7 +557,18 @@ def normalizeScale(target=None, iT=inTime(), oT=outTime()):
                 except:
                     print "Couldn't set keyframe " + str(m) + "."
 
+def renamer(source="", dest="", target=None):
+    if not target:
+        target = s()
+        target = mc.listRelatives( target, ad=True ) + target
 
+    for i in range(0,len(target)):
+        s(target[i])
+        nameText = str(target[i])
+        nameText = nameText.replace(source,dest)
+        print nameText
+        mc.rename(target[i], nameText)
+        
 
                
 
