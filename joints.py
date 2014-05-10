@@ -69,7 +69,11 @@ def keyAllChildren(op="set", jointsOnly=False): #set, cut, copy, paste
    elif(op=="copy"):
       py.copyKey( targetObjects )
    elif(op=="paste"):
-      py.pasteKey( targetObjects )
+      py.pasteKey( targetObjects )   
+   elif(op=="bake"):
+      inTime=mc.playbackOptions(q=1,ast=1)
+      outTime=mc.playbackOptions(q=1,aet=1)
+      mc.bakeResults(targetObjects,simulation=1,sampleBy=1,time=(inTime,outTime))
 
 def lockTranslate(target, doLock):
     mc.setAttr(target + ".translateX",lock=doLock)
