@@ -1,21 +1,29 @@
-#XML
+# XML
+
+import pymel.core as py
+import maya.cmds as mc
+import maya.mel as mel
+from math import *
+from xml.dom.minidom import *
+from random import uniform as rnd
+import os
+import re
+#~~
+from general import *
 
 # Warning--cut-and-paste from other stuff, not cleaned up yet.
 # http://eat3d.com/free/maya_python
 
-from pymel.core import *
-from xml.dom.minidom import *
-
 # build XML
 def writeK2P():
-	startTime = int(playbackOptions(query=True, minTime=True))
-	stopTime = int(playbackOptions(query=True, maxTime=True))
-	filePath = "/Users/nick/Desktop/"
-	fileName = "doc.xml"
+    startTime = int(mc.playbackOptions(query=True, minTime=True))
+    stopTime = int(mc.playbackOptions(query=True, maxTime=True))
+    filePath = "/Users/nick/Desktop/"
+    fileName = "doc.xml"
 
-	openniNames = ["head", "neck", "torso", "l_shoulder", "l_elbow", "l_hand", "r_shoulder", "r_elbow", "r_hand", "l_hip", "l_knee", "l_foot", "r_hip", "r_knee", "r_foot"]
-	cmuNames = ["Head", "Neck1", "Spine", "LeftArm", "LeftForeArm", "LeftFingerBase", "RightArm", "RightForeArm", "RightFingerBase", "LeftUpLeg", "LeftLeg", "LeftToeBase", "RightUpLeg", "RightLeg", "RightToeBase"]
-	mobuNames = ["Head", "Neck", "Spine", "LeftArm", "LeftForeArm", "LeftHand", "RightArm", "RightForeArm", "RightHand", "LeftUpLeg", "LeftLeg", "LeftFoot", "RightUpLeg", "RightLeg", "RightFoot"]
+    openniNames = ["head", "neck", "torso", "l_shoulder", "l_elbow", "l_hand", "r_shoulder", "r_elbow", "r_hand", "l_hip", "l_knee", "l_foot", "r_hip", "r_knee", "r_foot"]
+    cmuNames = ["Head", "Neck1", "Spine", "LeftArm", "LeftForeArm", "LeftFingerBase", "RightArm", "RightForeArm", "RightFingerBase", "LeftUpLeg", "LeftLeg", "LeftToeBase", "RightUpLeg", "RightLeg", "RightToeBase"]
+    mobuNames = ["Head", "Neck", "Spine", "LeftArm", "LeftForeArm", "LeftHand", "RightArm", "RightForeArm", "RightHand", "LeftUpLeg", "LeftLeg", "LeftFoot", "RightUpLeg", "RightLeg", "RightFoot"]
 
     doc = Document()
 
@@ -30,7 +38,7 @@ def writeK2P():
 
     for i in range(startTime, stopTime+1):
         print str(startTime) + " " + str(stopTime)
-        currentTime(i)
+        mc.currentTime(i)
         frame_node = doc.createElement("MocapFrame")
         root_node.appendChild(frame_node)
         frame_node.setAttribute("index",str(i-1))
@@ -42,19 +50,24 @@ def writeK2P():
         joint_node = doc.createElement("Joints")
         skel_node.appendChild(joint_node)
 
-        target = selected()
+        target = py.selected()
         print target
 
-        joints = listRelatives(target[0], ad=True)
+        joints = py.listRelatives(target[0], ad=True)
         joints.append(target[0])
         print "~~~~~     " + str(joints) + "     ~~~~~"
 
         for j in range(0,len(joints)):
             try:
-                k_node = doc.createElement(str(joints[j]))
+                theJointName = str(joints[j])
+                for k in range(0,len(openniNames)):
+                    if(theJointName==cmuNames[k] or theJointName==mobuNames[k]):
+                        theJointName=openniNames[k]
+
+                k_node = doc.createElement(theJointName)
                 joint_node.appendChild(k_node)
 
-                p = xform(joints[j], q=True, t=True, ws=True)
+                p = py.xform(joints[j], q=True, t=True, ws=True)
                 k_node.setAttribute("x", str(-1 * p[0]))
                 k_node.setAttribute("y", str(-1 * p[1]))
                 k_node.setAttribute("z", str(p[2]))
@@ -69,31 +82,29 @@ def writeK2P():
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-from maya.cmds import *
 import xml.dom.minidom as xd
-import random as rnd
 
 def readK2P():
-	constructionHistory(toggle=False)
-	select(all=True)
-	delete()
+    mc.constructionHistory(toggle=False)
+    mc.select(all=True)
+    mc.delete()
 
-	counterMin = 1;
-	counter=counterMin;
-	counterMax = 200;
-	playbackOptions(minTime=counterMin, maxTime=counterMax)
+    counterMin = 1;
+    counter=counterMin;
+    counterMax = 200;
+    mc.playbackOptions(minTime=counterMin, maxTime=counterMax)
 
-	skipCounterMin = 1;
-	skipCounter=skipCounterMin;
-	skipCounterMax = 6;
+    skipCounterMin = 1;
+    skipCounter=skipCounterMin;
+    skipCounterMax = 6;
 
 
-	path = "/Users/nick/Development/Maya/readxml"
-	fileName = "mocapData1.xml"
-	#trackPoint = ["l_foot","l_knee","l_hip","r_foot","r_knee","r_hip","l_hand","l_elbow","l_shoulder","r_hand","r_elbow","r_shoulder","torso","neck","head"]
-	trackPoint = ["head"]
-	scaler = 10
-	grav = gravity()
+    path = "/Users/nick/Development/Maya/readxml"
+    fileName = "mocapData1.xml"
+    #trackPoint = ["l_foot","l_knee","l_hip","r_foot","r_knee","r_hip","l_hand","l_elbow","l_shoulder","r_hand","r_elbow","r_shoulder","torso","neck","head"]
+    trackPoint = ["head"]
+    scaler = 10
+    grav = mc.gravity()
 
     xmlFile = xd.parse(path + "/" + fileName)
     print("loaded: " + fileName)
@@ -111,16 +122,16 @@ def readK2P():
             z = scaler * float(j.getAttribute("z"))
             
             if(x!=0 and y!=0 and z!=0):
-                currentTime(counter)
+                mc.currentTime(counter)
                 counter+=1
                 if(skipCounter<skipCounterMax):
                     jointCounter+=1
-                    polyCube(name=cubeName+str(counter))
+                    mc.polyCube(name=cubeName+str(counter))
                     #polyCube(sx=2, sy=2, sz=2, name=cubeName+str(counter))
                     #polySmooth(dv=1)
-                    connectDynamic(f=grav) #adds gravity
-                    move(x, y, z)
-                    rotate(rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler))
+                    mc.connectDynamic(f=grav) #adds gravity
+                    mc.move(x, y, z)
+                    mc.rotate(rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler))
                     skipCounter+=1
                 else:
                     skipCounter=skipCounterMin
@@ -130,9 +141,9 @@ def readK2P():
         #select(all=True)
         #polyUnite(constructionHistory=False) #1=union, 2=difference, 3=intersection
 
-    floor = polyPlane(w=30,h=30)
-    rigidBody(passive=True)
-    move(0,0,0)
+    floor = mc.polyPlane(w=30,h=30)
+    mc.rigidBody(passive=True)
+    mc.move(0,0,0)
 
     print("...script complete.")
 
