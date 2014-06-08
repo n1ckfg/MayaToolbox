@@ -19,3 +19,4 @@ from joints import *
 from modeling import *
 from paint import *
 from autorig import *
+from xmlrw import *
