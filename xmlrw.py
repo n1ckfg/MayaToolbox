@@ -9,7 +9,7 @@ from random import uniform as rnd
 import os
 import re
 #~~
-from general import *
+from mayatoolbox import *
 
 # Warning--cut-and-paste from other stuff, not cleaned up yet.
 # http://eat3d.com/free/maya_python

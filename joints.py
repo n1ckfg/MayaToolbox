@@ -9,7 +9,7 @@ from random import uniform as rnd
 import os
 import re
 #~~
-from general import *
+from mayatoolbox import *
 
 def testJoints(numChains = 2, numJoints = 5, selectLast=True):
     rm()

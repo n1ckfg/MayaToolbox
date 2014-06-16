@@ -12,7 +12,7 @@ import os
 import re
 #~~
 # MayaToolbox components
-from general import *
+from mayatoolbox import *
 from shaders import *
 from locators import *
 from joints import *

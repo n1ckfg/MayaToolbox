@@ -9,7 +9,7 @@ from random import uniform as rnd
 import os
 import re
 #~~
-from general import *
+from mayatoolbox import *
 from modeling import *
 
 def lightningStar(target=None):

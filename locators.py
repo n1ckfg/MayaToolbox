@@ -9,7 +9,7 @@ from random import uniform as rnd
 import os
 import re
 #~~
-from general import *
+from mayatoolbox import *
 from shaders import *
 
 def addLocator(alsoParent=False):
