@@ -573,7 +573,7 @@ def polyCount():
     returns = 0
     try:
         returns = polyEvaluate(f=True)
-        print "faces: " + returns
+        print "faces: " + str(returns)
     except:
-        print "faces: " + returns
+        print "faces: " + str(returns)
     return returns
