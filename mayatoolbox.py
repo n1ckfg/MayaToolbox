@@ -570,5 +570,5 @@ def renamer(source="", dest="", target=None):
         mc.rename(target[i], nameText)
         
 def pcount():
-    returns = polyEvaluate(f=True)
+    returns = mc.polyEvaluate(f=True)
     return returns
