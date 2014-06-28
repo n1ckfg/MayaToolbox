@@ -569,6 +569,11 @@ def renamer(source="", dest="", target=None):
         print nameText
         mc.rename(target[i], nameText)
         
-
-               
-
+def polyCount():
+    returns = 0
+    try:
+        returns = polyEvaluate(f=True)
+        print "faces: " + returns
+    except:
+        print "faces: " + returns
+    return returns
