@@ -13,9 +13,9 @@ from mayatoolbox import *
 
 def sCameraCubeCam(p = [0,0,0], r = [0,0,0], name="camera"):
     name = getUniqueName(name)
-    target = camera(n=str(name))
-    move(p[0],p[1],p[2])
-    rotate(r[0],r[1],r[2])
+    target = py.camera(n=str(name))
+    py.move(p[0],p[1],p[2])
+    py.rotate(r[0],r[1],r[2])
     return target
 
 
@@ -36,11 +36,11 @@ def sCameraCube(ipd = 0.064):
     target += sCameraCubeCam([0,0,-ipd], [0,0,90], "CameraWestL") #westL
     target += sCameraCubeCam([0,0,ipd], [0,0,90], "CameraWestR") #westR
 
-    sl = spaceLocator(name="cameraRoot")
+    sl = py.spaceLocator(name="cameraRoot")
 
     for i in range(0,len(target)):
         try:
-            parent(target[i],sl)
+            py.parent(target[i],sl)
         except:
             print "Error parenting camera to locator."
 
