@@ -11,6 +11,41 @@ import re
 #~~
 from mayatoolbox import *
 
+def sCameraCubeCam(p = [0,0,0], r = [0,0,0], name="camera"):
+    name = getUniqueName(name)
+    target = camera(n=str(name))
+    move(p[0],p[1],p[2])
+    rotate(r[0],r[1],r[2])
+    return target
+
+
+def sCameraCube(ipd = 0.064):
+    target = []
+
+    target += sCameraCubeCam([-ipd,0,0], [0,0,0], "CameraNorthL") #northL
+    target += sCameraCubeCam([ipd,0,0], [0,0,0], "CameraNorthR") #northR
+    target += sCameraCubeCam([-ipd,0,0], [0,0,180], "CameraSouthL") #southL
+    target += sCameraCubeCam([ipd,0,0], [0,0,180], "CameraSouthR") #southR
+    target += sCameraCubeCam([-ipd,0,0], [0,90,0], "CameraUpL") #upL
+    target += sCameraCubeCam([ipd,0,0], [0,90,0], "CameraUpR") #upR
+    target += sCameraCubeCam([-ipd,0,0], [0,-90,0], "CameraDownL") #downL
+    target += sCameraCubeCam([ipd,0,0], [0,-90,0], "CameraDownR") #downR
+    #~~
+    target += sCameraCubeCam([0,0,-ipd], [0,0,-90], "CameraEastL") #eastL
+    target += sCameraCubeCam([0,0,ipd], [0,0,-90], "CameraEastR") #eastR
+    target += sCameraCubeCam([0,0,-ipd], [0,0,90], "CameraWestL") #westL
+    target += sCameraCubeCam([0,0,ipd], [0,0,90], "CameraWestR") #westR
+
+    sl = spaceLocator(name="cameraRoot")
+
+    for i in range(0,len(target)):
+        try:
+            parent(target[i],sl)
+        except:
+            print "Error parenting camera to locator."
+
+    s(sl)
+
 def revealYaxis():
     target = py.ls(sl=1)
 
