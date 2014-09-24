@@ -572,3 +572,8 @@ def renamer(source="", dest="", target=None):
 def pcount():
     returns = mc.polyEvaluate(f=True)
     return returns
+
+def unparent(target = None):
+    if not target:
+        target = s()
+    py.parent(target, world=True)
