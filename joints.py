@@ -11,15 +11,13 @@ import re
 #~~
 from mayatoolbox import *
 
-def looseJoints(target=None, aim=True):
+def looseJoints(target=None):
     if not target:
         target = s()
         
     for i in range(0,len(target)):
         s(target[i])
         jnt = py.joint(name=getUniqueName(target[i]+"_jnt"))
-        if(aim==True):
-          py.aimConstraint(target[i],jnt)
         unparent(jnt)
 
 def testJoints(numChains = 2, numJoints = 5, selectLast=True):
