@@ -10,46 +10,46 @@ import os
 import re
 #~~
 from mayatoolbox import *
-
+from joints import *
 
 def buildFromLocators():
     looseJoints()
     #~~
     s(["torso","torso_jnt"])
-    pointConstraint()
+    py.pointConstraint()
     #~~
     s(["r_hip","torso_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     s(["r_knee","r_hip_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     s(["r_foot","r_knee_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     #~~
     s(["l_hip","torso_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     s(["l_knee","l_hip_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     s(["l_foot","l_knee_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     #~~
     s(["r_shoulder","torso_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     s(["r_elbow","r_shoulder_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     s(["r_hand","r_elbow_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     #~~
     s(["l_shoulder","torso_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     s(["l_elbow","l_shoulder_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     s(["l_hand","l_elbow_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     #~~
     s(["neck","torso_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     s(["head","neck_jnt"])
-    aimConstraint()
+    py.aimConstraint()
     #~~
     s(["torso_jnt","r_shoulder_jnt","r_elbow_jnt","r_hand_jnt"])
     parentChain()
@@ -68,7 +68,7 @@ def buildFromLocators():
         s(tt[i])
         bakeKeys(iT=inTime(), oT=outTime())
     for i in range(0,len(tt)):
-        delete(cn=True)
+        py.delete(cn=True)
         
 
 # Warning--cut-and-paste from other stuff, not cleaned up yet.
