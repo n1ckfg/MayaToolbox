@@ -18,5 +18,5 @@ from locators import *
 from joints import *
 from modeling import *
 from paint import *
-from autorig import *
+from rigging import *
 from mocap import *
