@@ -408,9 +408,10 @@ def bakeKeys(target=None, iT=inTime(), oT=outTime()):
     if not target:
         target=s()
 
-    for i in range(0,len(target)):
-        evalString = "bakeResults -simulation true -t \"" + str(iT) + ":" + str(oT) + "\" -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -removeBakedAttributeFromLayer false -bakeOnOverrideLayer false -minimizeRotation true -controlPoints false -shape true {\"" + str(target[i]) + "\"};"
-        py.mel.eval(evalString)
+    for i in range(0,len(target)): 
+        py.mel.eval("bakeResults -simulation true -t \"" + str(iT) + ":" + str(oT) + "\" -sampleBy 1 -disableImplicitControl true -preserveOutsideKeys true -sparseAnimCurveBake false -removeBakedAttributeFromLayer false -bakeOnOverrideLayer false -minimizeRotation true -controlPoints false -shape true {\"" + str(target[i]) + "\"};")
+
+bakeAnimation = bakeKeys
 
 def resetAll(target=None, iT=inTime(), oT=outTime()):
     resetPosition(target, iT, oT)

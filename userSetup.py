@@ -20,3 +20,4 @@ from modeling import *
 from paint import *
 from rigging import *
 from mocap import *
+from dynamics import *
