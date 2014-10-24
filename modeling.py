@@ -41,6 +41,30 @@ def getVertPos( shapeNode ) :
  
     return vtxWorldPosition
 
+#from Sam Lavigne
+def moveVerts(target=None, spread=1, time=50):
+    if not target:
+        target = s()
+
+    for i in range(0,len(target)):
+        # iterate through every vertex in the sphere           
+        index = 1
+        for v in target[i].vtx:
+            # set initial position
+            py.setKeyframe(v, t=1)
+            original = v.getPosition()
+
+            # make a new position
+            new_pos = [p + rnd(-spread, spread) for p in original]
+            
+            v.setPosition(new_pos)
+            py.setKeyframe(v, t=index)
+            
+            v.setPosition(original)
+            py.setKeyframe(v, t=index+time)
+            
+            index += 1
+
 
 def text(t = "foo", font="Droid Sans", hipoly = False, cleanup = True):
     #note: hipoly mode seems to generate a couple weird extra vertices in the final output.

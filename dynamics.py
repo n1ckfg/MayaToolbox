@@ -28,14 +28,16 @@ def quickDyn(spread=5, num=10, joints=False, bake=False):
     s(target)
     py.rigidBody()
 
-    if(joints==False && bake==True):
+    for i in range(0,len(target)):
+        py.connectDynamic(target[i],f=g)
+
+    if(joints==False and bake==True):
         bakeAnimation(target)
         
     if(joints==True):
         target2 = []
 
         for i in range(0,len(target)):
-            py.connectDynamic(target[i],f=g)
             s(target[i])
             jnt = py.joint()
             target2.append(jnt)
