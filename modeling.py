@@ -11,6 +11,10 @@ import re
 #~~
 from mayatoolbox import *
 
+def eroder(repeat=1, iter=1):
+    for i in range(0,repeat):
+        polyAverageVertex(i=iter)
+        ch()
 
 def onVerts(target=None):
     #1. make an array of all selected objects
@@ -125,19 +129,23 @@ def iteratePolyToSubdiv(target=None,polys=1000,reps=1000,delete=False):
                 print "Failed to convert " + str(target[i]) + " using < " + str(currentPolyCount) + " polys in " + str(counter+1) + " tries."
 
 
-def booleanLoop():
+def booleanLoop(legacy=False):
     #1. Make an array of all selections
     target = mc.ls(sl=1)
 
-    #2. Boolean union each item in the array to the next
-    for i in range(0,len(target)-1,2):
-        mc.polyBoolOp(target[i],target[i+1])
-        
-        #3. Delete construction history
-        mc.delete(ch=True)
+    if (legacy):
+        #2. Boolean union each item in the array to the next
+        for i in range(0,len(target)-1,2):
+            mc.polyBoolOp(target[i],target[i+1])
+            
+            #3. Delete construction history
+            mc.delete(ch=True)
 
-        #4. Recenter the pivot
-        mc.xform(cp=True)
+            #4. Recenter the pivot
+            mc.xform(cp=True)
+    else:
+        mc.polyCBoolOp()
+        mc.delete(ch=True)
 
 def cubes(num=100,spread=5):
     val = []

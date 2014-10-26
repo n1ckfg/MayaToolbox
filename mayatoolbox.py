@@ -10,6 +10,12 @@ import os
 import re
 #~~
 
+#delete history
+def ch(target=None):
+    if not target:
+        target = s()
+    mc.delete(target, ch=True)
+
 #select
 def s(_t=None,d=False,all=False):
     if(d==True):
