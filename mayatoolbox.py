@@ -14,7 +14,9 @@ import re
 def ch(target=None):
     if not target:
         target = s()
-    mc.delete(target, ch=True)
+    for i in range(0,len(target)):
+        s(target[i])
+        mc.delete(ch=True)
 
 #select
 def s(_t=None,d=False,all=False):

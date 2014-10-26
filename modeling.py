@@ -13,7 +13,7 @@ from mayatoolbox import *
 
 def eroder(repeat=1, iter=1):
     for i in range(0,repeat):
-        polyAverageVertex(i=iter)
+        mc.polyAverageVertex(i=iter)
         ch()
 
 def onVerts(target=None):
