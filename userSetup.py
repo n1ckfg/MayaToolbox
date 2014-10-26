@@ -1,3 +1,5 @@
+# SETUP
+
 # for experimenting in the script window
 from pymel.core import *
 #~~
@@ -14,8 +16,7 @@ import re
 # MayaToolbox components
 from mayatoolbox import *
 from shaders import *
-from locators import *
-from joints import *
+from animation import *
 from modeling import *
 from paint import *
 from rigging import *

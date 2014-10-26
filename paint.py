@@ -1,4 +1,4 @@
-# MODELING
+# PAINT EFFECTS
 
 import pymel.core as py
 import maya.cmds as mc

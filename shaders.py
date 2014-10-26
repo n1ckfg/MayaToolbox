@@ -1,4 +1,4 @@
-# SHADERS
+# SHADERS, CAMERAS, ETC.
 
 import pymel.core as py
 import maya.cmds as mc

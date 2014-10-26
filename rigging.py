@@ -1,4 +1,4 @@
-#AUTORIG
+# RIGGING
 
 import pymel.core as py
 import maya.cmds as mc
@@ -10,29 +10,7 @@ import os
 import re
 #~~
 from mayatoolbox import *
-
-def createConstraint(target=None, type="parent"):
-    if not target:
-        target = s()
-
-    #point, orient, and parent constraints work similarly
-    if(type=="orient"):
-        mel.eval("orientConstraint -mo -weight 1;")
-    if(type=="parent"):
-        mel.eval("parentConstraint -mo -weight 1;")
-    if(type=="point"):
-        mel.eval("pointConstraint -mo -weight 1;")
-
-    return target
-
-# legacy   
-def orientConstraint(target=None):
-    if not target:
-        target = s()
-
-    mel.eval("orientConstraint -mo -weight 1;")
-
-    return target
+from animation import *
 
 # function to create a default bipedal skeleton
 def createBipedSkeleton(prefix="", size=1.0):

@@ -1,4 +1,4 @@
-# Dynamics
+# DYNAMICS
 
 import pymel.core as py
 import maya.cmds as mc
@@ -10,7 +10,7 @@ import os
 import re
 #~~
 from mayatoolbox import *
-from joints import *
+from animation import *
 
 def quickDyn(spread=5, num=10, joints=False, bake=False):
     target = []

@@ -1,4 +1,4 @@
-# GENERAL
+# GENERAL UTILITIES
 
 import pymel.core as py
 import maya.cmds as mc

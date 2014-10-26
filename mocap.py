@@ -1,4 +1,4 @@
-# XML
+# MOCAP
 
 import pymel.core as py
 import maya.cmds as mc
@@ -10,7 +10,7 @@ import os
 import re
 #~~
 from mayatoolbox import *
-from joints import *
+from animation import *
 
 def buildFromLocators():
     looseJoints()

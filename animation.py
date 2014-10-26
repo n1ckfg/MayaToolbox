@@ -1,4 +1,4 @@
-# ANIMATION
+# ANIMATION--JOINTS, CONSTRAINTS, KEYFRAMES, ETC.
 
 import pymel.core as py
 import maya.cmds as mc
@@ -20,6 +20,29 @@ def looseJoints(target=None):
         jnt = py.joint(name=getUniqueName(target[i]+"_jnt"))
         unparent(jnt)
 
+def createConstraint(target=None, type="parent"):
+    if not target:
+        target = s()
+
+    #point, orient, and parent constraints work similarly
+    if(type=="orient"):
+        mel.eval("orientConstraint -mo -weight 1;")
+    if(type=="parent"):
+        mel.eval("parentConstraint -mo -weight 1;")
+    if(type=="point"):
+        mel.eval("pointConstraint -mo -weight 1;")
+
+    return target
+
+# legacy   
+def orientConstraint(target=None):
+    if not target:
+        target = s()
+
+    mel.eval("orientConstraint -mo -weight 1;")
+
+    return target
+    
 def testJoints(numChains = 2, numJoints = 5, selectLast=True):
     rm()
     obj = makeChains(numChains,numJoints)
