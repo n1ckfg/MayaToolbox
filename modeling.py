@@ -16,7 +16,7 @@ def eroder(repeat=1, iter=1):
         mc.polyAverageVertex(i=iter)
         ch()
 
-def onVerts(target=None):
+def onVerts(target=None, normals=True, type="vector"):
     #1. make an array of all selected objects
     if not target:
         target = mc.ls(sl=1)
@@ -28,13 +28,23 @@ def onVerts(target=None):
     for i in range(1,len(target)):
 
         v = getVertPos(target[i])
-
+            
         for j in range(0,len(v)):
+            s(foo)
+            foo2 = py.duplicate()
+            mc.move(v[j][0],v[j][1],v[j][2])
+
+            if(normals==True):
+                py.mel.eval("select -r " + target[i] + ".vtx[" + str(j) +"] " + foo2[0] + ";")
+                normalConstraint(worldUpType=type)
+
+            '''
+            else:
             s(foo)
             py.mel.eval("duplicate -un -ic -rc")
             mc.move(v[j][0],v[j][1],v[j][2])
-
-
+            '''
+            
 def getVertPos( shapeNode ) :
     vtxWorldPosition = []    # will contain positions in space of all object vertices
     vtxIndexList = mc.getAttr( shapeNode+".vrts", multiIndices=True )
