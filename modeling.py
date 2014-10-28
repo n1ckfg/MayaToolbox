@@ -36,7 +36,7 @@ def onVerts(target=None, normals=True, type="vector"):
 
             if(normals==True):
                 py.mel.eval("select -r " + target[i] + ".vtx[" + str(j) +"] " + foo2[0] + ";")
-                normalConstraint(worldUpType=type)
+                py.normalConstraint(worldUpType=type)
 
             '''
             else:
