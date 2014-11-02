@@ -11,6 +11,15 @@ import re
 #~~
 from mayatoolbox import *
 
+def fixNormals(target=None):
+    if not target:
+        target = s()
+
+    for i in range(0,len(target)):
+        s(target[i])
+        py.polySetToFaceNormal()
+        py.polySoftEdge()
+
 def eroder(repeat=1, iter=1):
     for i in range(0,repeat):
         mc.polyAverageVertex(i=iter)
