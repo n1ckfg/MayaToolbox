@@ -61,6 +61,14 @@ def makeChains(numChains = 2, numJoints = 5):
         returns.append(joints)
     return returns
 
+def cleanJoints(target=None):
+    if not target:
+        target = s()
+    
+    for i in range(0,len(target)):
+        s(target[i])
+        mel.eval("makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -pn 1;")
+        mel.eval("joint -e  -oj none -ch -zso;")
 
 def makeJoints(reps=3):
     joints = []
