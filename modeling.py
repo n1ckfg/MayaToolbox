@@ -11,6 +11,9 @@ import re
 #~~
 from mayatoolbox import *
 
+def fixColors(filePath="C:/Users/nick/Desktop/vertex_color_test.abc"):
+    mel.eval("AbcImport -mode import -rcs 3fc \"" + filePath + "\";")
+	
 def fixNormals(target=None):
     if not target:
         target = s()
