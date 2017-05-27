@@ -171,6 +171,21 @@ def toggleSelectable(target=None):
             mc.setAttr(target[i] + ".overrideEnabled",1)
             mc.setAttr(target[i] + ".overrideDisplayType",2)
 
+def getAllObjects():
+    s(all=True)
+    target = s()
+    s(d=True)
+    return target
+
+def getNewObjects(oldObjects):
+    newObjects = getAllObjects()
+    finalList = newObjects
+    for i, newObj in enumerate(newObjects):
+        for oldObj in oldObjects:
+            if (newObj == oldObj):
+                finalList = [x for x in finalList if x != oldObj]
+    return finalList
+    
 #reset transformations to 0
 def freezeTransformations(target=None):
     if not target:
