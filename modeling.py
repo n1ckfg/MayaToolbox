@@ -223,3 +223,18 @@ def makeLine(p1=[-2,0,0], p2=[2,0,0], name="curve"):
     name = getUniqueName(name)
     ctl = mc.curve(n=name, d=1, p=(p1,p2), k=(0,1))
     return ctl
+
+def smoothMesh(target=None):
+    if not target:
+        target = s()
+    
+    polysOnly = py.filterExpand(target, sm=12)
+    py.select(polysOnly, r=True)
+
+    for i in range(0,len(target)):
+        try:
+            py.mel.eval("polySmooth -mth 0 -dv 1 -bnr 2 -c 1 -kb 1 -ksb 1 -khe 0 -kt 1 -kmb 1 -suv 0 -peh 0 -sl 1 -dpe 1 -ps 0.1 -ro 1 -ch 1 " + target[i] + ";")    
+            py.mel.eval("BakeAllNonDefHistory;")
+            py.mel.eval("bakePartialHistory -all;")
+        except:
+            print "Smooth failed; " + target[i] + " probably isn't a polygonal mesh."

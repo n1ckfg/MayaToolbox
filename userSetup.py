@@ -11,6 +11,7 @@ from math import *
 from xml.dom.minidom import *
 from random import uniform as rnd
 import os
+import sys
 import re
 #~~
 # MayaToolbox components
@@ -22,3 +23,8 @@ from paint import *
 from rigging import *
 from mocap import *
 from dynamics import *
+
+#~~
+# more packages
+sys.path.append('/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/PIL/')
+#sys.path.append('/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/')
