@@ -5,6 +5,7 @@ import maya.cmds as mc
 import maya.mel as mel
 from math import *
 from xml.dom.minidom import *
+import xml.etree.ElementTree as etree
 from random import uniform as rnd
 import os
 import re
