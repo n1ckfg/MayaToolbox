@@ -11,6 +11,11 @@ import re
 #~~
 from mayatoolbox import *
 
+def setVertexColor(r=1, g=0, b=0):
+	c = (r,g,b)
+	polyColorPerVertex(colorRGB=c)
+	return c
+
 def sCameraCubeCam(p = [0,0,0], r = [0,0,0], fov=90, name="camera"):
     name = getUniqueName(name)
     target = py.camera(n=str(name), horizontalFieldOfView=fov)
