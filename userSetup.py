@@ -13,6 +13,9 @@ from random import uniform as rnd
 import os
 import sys
 import re
+import sys as sys
+import xml.etree.ElementTree as etree
+from operator import itemgetter
 #~~
 # MayaToolbox components
 from mayatoolbox import *

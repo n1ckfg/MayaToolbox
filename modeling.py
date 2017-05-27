@@ -224,6 +224,11 @@ def makeLine(p1=[-2,0,0], p2=[2,0,0], name="curve"):
     ctl = mc.curve(n=name, d=1, p=(p1,p2), k=(0,1))
     return ctl
 
+def drawPoints(points=None, name="curve"):
+    name = getUniqueName(name)
+    crv = mc.curve(n=name, d=1, p=points)
+    return crv
+    
 def smoothMesh(target=None):
     if not target:
         target = s()
