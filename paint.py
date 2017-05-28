@@ -66,7 +66,7 @@ def paintAssign(target=None, brush="fire"):
     return returns
 
 def gmlToPaintEffects(brush="fire", bake=True, reducePolys=0.1, maxPolys=1000000):
-    inputDir="/Users/nick/Desktop/output_r_hand.gml"
+    inputDir=openFileDialog("gml")
     paintCurves = []
     tree = etree.parse(inputDir)
     root = tree.getroot()
@@ -107,9 +107,9 @@ def bakePaintEffects(target=None, reducePolys=0.1, maxPolys=1000000):
     mel.eval("doPaintEffectsToPoly(1,1,1,1," + str(maxPolys) + ");")
     ch()
     if (reducePolys < 1.0):
-        polyReduce(percentage=(reducePolys * 100.0))
+        mc.polyReduce(percentage=(reducePolys * 100.0))
         ch()
-    polyQuad()
+    mc.polyQuad()
     ch()
 
 # ~ ~ ~ BRUSHES ~ ~ ~

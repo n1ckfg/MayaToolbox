@@ -270,6 +270,17 @@ def instanceFirst(doShaders=False):
 
 #~~
 
+# http://download.autodesk.com/us/maya/2009help/CommandsPython/fileDialog.html
+# http://download.autodesk.com/us/maya/2011help/CommandsPython/fileDialog2.html
+
+def openFileDialog(fileFilter="*"):
+    returns = py.fileDialog2(fileFilter="*." + fileFilter, dialogStyle=1, fileMode=1)
+    return str(returns[0])
+
+def saveFileDialog(fileFilter="*"):
+    returns = py.fileDialog2(fileFilter="*." + fileFilter, dialogStyle=1, fileMode=0)
+    return str(returns[0])
+
 def duplicateFirst(doShaders=False):
     #1. make an array of all selected objects
     target = mc.ls(sl=1)
