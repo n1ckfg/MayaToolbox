@@ -16,6 +16,9 @@ def setVertexColor(r=1, g=0, b=0):
 	polyColorPerVertex(colorRGB=c)
 	return c
 
+def getVertexColor():
+    return polyColorPerVertex(query=True, colorRGB=True)
+
 def sCameraCubeCam(p = [0,0,0], r = [0,0,0], fov=90, name="camera"):
     name = getUniqueName(name)
     target = py.camera(n=str(name), horizontalFieldOfView=fov)
