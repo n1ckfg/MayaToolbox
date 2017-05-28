@@ -11,6 +11,16 @@ import re
 #~~
 from mayatoolbox import *
 
+def getVerts(target=None):
+    if not target:
+        target = s()[0]
+    return mc.getAttr(target + ".vrts", multiIndices=True)
+
+def selectVerts(target=None):
+    if not target:
+        target = s()[0]
+    py.select(target.vtx)
+
 def fixColors(filePath="C:/Users/nick/Desktop/vertex_color_test.abc"):
     mel.eval("AbcImport -mode import -rcs 3fc \"" + filePath + "\";")
 	
