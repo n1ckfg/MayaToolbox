@@ -154,14 +154,26 @@ def moveTo(target=None):
 #toggle visibility
 def showHide(target=None):
     if not target:
-       target = mc.ls(sl=1)
+       target = s()
 
     for i in range(0,len(target)):
         visible = mc.getAttr(target[i] + ".v")
         if(visible==False):
-           mc.setAttr(target[i] + ".v",1)
+           mc.setAttr(target[i] + ".v", 1)
         if(visible==True):
-           mc.setAttr(target[i] + ".v",0) 
+           mc.setAttr(target[i] + ".v", 0)
+
+def show(target=None):
+    if not target:
+        target = s()
+    for i in range(0, len(target)):
+        mc.setAttr(target[i] + ".v", 1)
+
+def hide(target=None):
+    if not target:
+        target = s()
+    for i in range(0, len(target)):
+        mc.setAttr(target[i] + ".v", 0)
 
 #toggle selectability
 def toggleSelectable(target=None):
@@ -441,6 +453,9 @@ def outTime():
     returns = int(mc.playbackOptions(q=True, animationEndTime=True))+2
     #returns = int(findKeyframe(which='last'))+2
     return returns
+
+def getStartEnd():
+    return inTime(), outTime()
 
 def bakeKeys(target=None, iT=inTime(), oT=outTime()):
     if not target:

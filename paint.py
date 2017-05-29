@@ -100,7 +100,8 @@ def bakePaintEffects(target=None, reducePolys=0.1, maxPolys=0):
 
 # ~ ~ ~ ~ ~ ~
 
-def latkToPaintEffects(brush=None, bake=True, reducePolys=0.5, maxPolys=0):
+def latkToPaintEffects(brush=None, bake=True, reducePolys=0.5, maxPolys=0, animateFrames=True):
+    start, end = getStartEnd()
     globalScale = (10,10,10)
     inputDir=openFileDialog("json")
     with open(inputDir) as data_file:    
@@ -109,6 +110,7 @@ def latkToPaintEffects(brush=None, bake=True, reducePolys=0.5, maxPolys=0):
     for h in range(0, len(data["grease_pencil"][0]["layers"])):
         for i in range(0, len(data["grease_pencil"][0]["layers"][h]["frames"])):
             strokes = []
+            frameList = []
             for j in range(0, len(data["grease_pencil"][0]["layers"][h]["frames"][i]["strokes"])):
                 points = []
                 for l in range(0, len(data["grease_pencil"][0]["layers"][h]["frames"][i]["strokes"][j]["points"])):
@@ -119,23 +121,50 @@ def latkToPaintEffects(brush=None, bake=True, reducePolys=0.5, maxPolys=0):
                 strokes.append(points)
             for stroke in strokes:
                 drawPoints(stroke, uniqueName=False)
-                paintCurve(brush=brush, bake=bake, reducePolys=reducePolys, maxPolys=maxPolys)
+                paintStroke = paintCurve(brush=brush, bake=bake, reducePolys=reducePolys, maxPolys=maxPolys)
+                frameList.append(paintStroke)
 
-'''
-for i in range(0, len(frameList)):
-    totalCounter += 1
-    print(frameList[i].name + " | " + str(totalCounter) + " of " + totalStrokes + " total")
-    if (_animateFrames==True):
-        hideFrame(frameList[i], 0, True)
-        for j in range(start, end):
-            if (j == layer.frames[c].frame_number):
-                hideFrame(frameList[i], j, False)
-                keyTransform(frameList[i], j)
-            elif (c < len(layer.frames)-1 and j > layer.frames[c].frame_number and j < layer.frames[c+1].frame_number):
-                hideFrame(frameList[i], j, False)
-            elif (c != len(layer.frames)-1):
-                hideFrame(frameList[i], j, True)
-'''
+            # TODO Fix for variable length frames, needs JSON to have frame_number field per frame.
+            # TODO Add transform animation.
+            for i in range(0, len(frameList)):
+                if (animateFrames==True):
+                    hideFrame(frameList[i], 0, True)
+                    for j in range(start, end):
+                        if (j == i):#layer.frames[c].frame_number):
+                            hideFrame(frameList[i], j, False)
+                            #keyTransform(frameList[i], j)
+                        #elif (c < len(layer.frames)-1 and j > layer.frames[c].frame_number and j < layer.frames[c+1].frame_number):
+                        elif (i < len(frameList)-1 and j > i and j < i+1):
+                            hideFrame(frameList[i], j, False)
+                        elif (i != len(frameList)-1):
+                            hideFrame(frameList[i], j, True)
+
+            '''
+            for i in range(0, len(frameList)):
+                totalCounter += 1
+                print(frameList[i].name + " | " + str(totalCounter) + " of " + totalStrokes + " total")
+                if (_animateFrames==True):
+                    hideFrame(frameList[i], 0, True)
+                    for j in range(start, end):
+                        if (j == layer.frames[c].frame_number):
+                            hideFrame(frameList[i], j, False)
+                            keyTransform(frameList[i], j)
+                        elif (c < len(layer.frames)-1 and j > layer.frames[c].frame_number and j < layer.frames[c+1].frame_number):
+                            hideFrame(frameList[i], j, False)
+                        elif (c != len(layer.frames)-1):
+                            hideFrame(frameList[i], j, True)
+            '''
+
+def hideFrame(target, _frame, _hide):
+    if not target:
+        target = s()
+    t(_frame)
+    for obj in target:
+        if (_hide==True):
+            py.setAttr(obj + ".v", 0)
+        else:
+            py.setAttr(obj + ".v", 1)
+        py.setKeyframe(obj, attribute="visible")
 
 def gmlToPaintEffects(brush="fire", bake=True, reducePolys=0.1, maxPolys=0):
     inputDir=openFileDialog("gml")
