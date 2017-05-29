@@ -19,7 +19,7 @@ def ch(target=None):
         mc.delete(ch=True)
 
 #select
-def s(_t=None,d=False,all=False):
+def s(_t=None, d=False, all=False):
     if(d==True):
         py.select(d=True)
     elif(all==True):
@@ -34,6 +34,10 @@ def s(_t=None,d=False,all=False):
         else:
             py.select(_t)
             return _t
+
+def ss(_t=None, d=False, all=False):
+    return s(_t, d, all)[0]
+
 #time
 def t(_t=None):
     try:
