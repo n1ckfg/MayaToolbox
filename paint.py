@@ -157,25 +157,29 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
                         elif (c != len(layer.frames)-1):
                             hideFrame(frameList[i], j, True)
             '''
-            print("*** FINISHED ***")
+    print("*** FINISHED ***")
 
 def latk():
     rm()
-    latkToPaintEffects(inputDir="C:/Users/nick/Documents/GitHub/LightningArtist/latkUnreal/Content/Latk/layer_test.json", brush="fire")
+    latkToPaintEffects(inputDir="C:/Users/nick/Documents/GitHub/LightningArtist/latkUnreal/Content/Latk/layer_test.json", brush="oil")
 
 def hideFrame(target=None, _frame=0, _hide=True):
+    pass
+    '''
     if not target:
         target = s()
     t(_frame)
-    '''
     for i in range (0, len(target)):
         if (_hide==True):
-            py.setAttr(target[i] + ".v", 0)
+            py.setAttr(target[i] + ".visibility", 0, keyable=True)
         else:
-            py.setAttr(target[i] + ".v", 1)
-        k()
+            py.setAttr(target[i] + ".visibility", 1, keyable=True)
+        try:
+            k()
+        except:
+            pass
     '''
-
+    
 def gmlToPaintEffects(inputDir=None, brush="fire", bake=True, reducePolys=0.1, maxPolys=0):
     if not inputDir:
         inputDir=openFileDialog("gml")

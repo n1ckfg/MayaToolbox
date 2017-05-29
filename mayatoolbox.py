@@ -163,6 +163,7 @@ def showHide(target=None):
         if(visible==True):
            mc.setAttr(target[i] + ".v", 0)
 
+'''
 def show(target=None):
     if not target:
         target = s()
@@ -174,6 +175,7 @@ def hide(target=None):
         target = s()
     for i in range(0, len(target)):
         mc.setAttr(target[i] + ".v", 0)
+'''
 
 #toggle selectability
 def toggleSelectable(target=None):
