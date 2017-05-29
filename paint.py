@@ -9,6 +9,7 @@ import xml.etree.ElementTree as etree
 from random import uniform as rnd
 import os
 import re
+import json
 #~~
 from mayatoolbox import *
 from modeling import *
@@ -64,6 +65,30 @@ def paintAssign(target=None, brush="fire"):
         returns.append(getNewObjects(oldObjects)[1])
         
     return returns
+
+def latkToPaintEffects(brush="fire", bake=True, reducePolys=0.1, maxPolys=1000000):
+    globalScale = (10,10,10)
+    inputDir=openFileDialog("json")
+    with open(inputDir) as data_file:    
+        data = json.load(data_file)
+    #~
+    for h in range(0, len(data["grease_pencil"][0]["layers"])):
+        for i in range(0, len(data["grease_pencil"][0]["layers"][h]["frames"])):
+            strokes = []
+            for j in range(0, len(data["grease_pencil"][0]["layers"][h]["frames"][i]["strokes"])):
+                points = []
+                for l in range(0, len(data["grease_pencil"][0]["layers"][h]["frames"][i]["strokes"][j]["points"])):
+                    x = data["grease_pencil"][0]["layers"][h]["frames"][i]["strokes"][j]["points"][l]["co"][0] * globalScale[0]
+                    y = data["grease_pencil"][0]["layers"][h]["frames"][i]["strokes"][j]["points"][l]["co"][1] * globalScale[1]
+                    z = data["grease_pencil"][0]["layers"][h]["frames"][i]["strokes"][j]["points"][l]["co"][2] * globalScale[2]
+                    points.append((x,y,z))
+                strokes.append(points)
+            paintCurves = []
+            for stroke in strokes:
+                crv = drawPoints(stroke, uniqueName=False)
+                #paintCurves.append(crv)
+            #s(d=True)
+            #newCurves = paintSurface(paintCurves, brush, bake, reducePolys, maxPolys)
 
 def gmlToPaintEffects(brush="fire", bake=True, reducePolys=0.1, maxPolys=1000000):
     inputDir=openFileDialog("gml")

@@ -159,14 +159,16 @@ def readK2P():
     skipCounterMax = 6;
 
 
-    path = "/Users/nick/Development/Maya/readxml"
-    fileName = "mocapData1.xml"
-    #trackPoint = ["l_foot","l_knee","l_hip","r_foot","r_knee","r_hip","l_hand","l_elbow","l_shoulder","r_hand","r_elbow","r_shoulder","torso","neck","head"]
-    trackPoint = ["head"]
+    #path = "/Users/nick/Development/Maya/readxml"
+    #fileName = "mocapData1.xml"
+    fileName = openFileDialog("xml")
+    trackPoint = ["l_foot","l_knee","l_hip","r_foot","r_knee","r_hip","l_hand","l_elbow","l_shoulder","r_hand","r_elbow","r_shoulder","torso","neck","head"]
+    #trackPoint = ["head"]
     scaler = 10
-    grav = mc.gravity()
+    #grav = mc.gravity()
 
-    xmlFile = xd.parse(path + "/" + fileName)
+    #xmlFile = xd.parse(path + "/" + fileName)
+    xmlFile = xd.parse(fileName)
     print("loaded: " + fileName)
 
     for t in trackPoint:    
@@ -189,9 +191,10 @@ def readK2P():
                     mc.polyCube(name=cubeName+str(counter))
                     #polyCube(sx=2, sy=2, sz=2, name=cubeName+str(counter))
                     #polySmooth(dv=1)
-                    mc.connectDynamic(f=grav) #adds gravity
+                    #mc.connectDynamic(f=grav) #adds gravity
                     mc.move(x, y, z)
-                    mc.rotate(rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler))
+                    #mc.rotate(rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler))
+                    mc.rotate(rnd(-1 * scaler, scaler),rnd(-1 * scaler, scaler),rnd(-1 * scaler, scaler))
                     skipCounter+=1
                 else:
                     skipCounter=skipCounterMin
@@ -202,7 +205,7 @@ def readK2P():
         #polyUnite(constructionHistory=False) #1=union, 2=difference, 3=intersection
 
     floor = mc.polyPlane(w=30,h=30)
-    mc.rigidBody(passive=True)
+    #mc.rigidBody(passive=True)
     mc.move(0,0,0)
 
     print("...script complete.")
