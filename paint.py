@@ -35,14 +35,19 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
         s(target[i])
         py.mel.eval("AttachBrushToCurves;")
         crv = getNewObjects(oldObjects)[1]
-        s(crv)
         if (bake==True):
+            oldObjects = getAllObjects()
+            s(crv)
             py.mel.eval("doPaintEffectsToPoly(1,1,1,1," + str(maxPolys) + ");")
+            #crv.setAttr("sampleDensity", reducePolys)
+            obj = getNewObjects(oldObjects)[3]
             #ch()
-            crv.setAttr("sampleDensity", reducePolys)
             #ch()
             #py.polyReduce(percentage=10)
             #ch()
+            returns.append(obj)
+        else:
+            returns.append(crv)
         d(target[i])
 
     return returns
@@ -126,9 +131,11 @@ def latkToPaintEffects(brush=None, bake=True, reducePolys=0.5, maxPolys=0, anima
 
             # TODO Fix for variable length frames, needs JSON to have frame_number field per frame.
             # TODO Add transform animation.
-            for i in range(0, len(frameList)):
-                if (animateFrames==True):
-                    hideFrame(frameList[i], 0, True)
+            if (animateFrames==True):
+                for i in range(0, len(frameList)):
+                    s(frameList[i])
+                    hideFrame(0, True)
+                    '''
                     for j in range(start, end):
                         if (j == i):#layer.frames[c].frame_number):
                             hideFrame(frameList[i], j, False)
@@ -138,6 +145,7 @@ def latkToPaintEffects(brush=None, bake=True, reducePolys=0.5, maxPolys=0, anima
                             hideFrame(frameList[i], j, False)
                         elif (i != len(frameList)-1):
                             hideFrame(frameList[i], j, True)
+                        '''
 
             '''
             for i in range(0, len(frameList)):
@@ -155,16 +163,16 @@ def latkToPaintEffects(brush=None, bake=True, reducePolys=0.5, maxPolys=0, anima
                             hideFrame(frameList[i], j, True)
             '''
 
-def hideFrame(target, _frame, _hide):
+def hideFrame(target=None, _frame=0, _hide=True):
     if not target:
         target = s()
     t(_frame)
-    for obj in target:
+    for i in range (0, len(target)):
         if (_hide==True):
-            py.setAttr(obj + ".v", 0)
+            py.setAttr(target[i] + ".v", 0)
         else:
-            py.setAttr(obj + ".v", 1)
-        py.setKeyframe(obj, attribute="visible")
+            py.setAttr(target[i] + ".v", 1)
+        k()
 
 def gmlToPaintEffects(brush="fire", bake=True, reducePolys=0.1, maxPolys=0):
     inputDir=openFileDialog("gml")
