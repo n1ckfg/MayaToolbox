@@ -47,7 +47,7 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
 
     return returns
 
-def paintSurface(target=None, brush="fire", bake=True, reducePolys=0.1, maxPolys=0):
+def paintSurface(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
     returns = []
     deleteCurves = []
     if not target:
@@ -100,7 +100,7 @@ def bakePaintEffects(target=None, reducePolys=0.1, maxPolys=0):
 
 # ~ ~ ~ ~ ~ ~
 
-def latkToPaintEffects(brush="fire", bake=True, reducePolys=0.5, maxPolys=0):
+def latkToPaintEffects(brush=None, bake=True, reducePolys=0.5, maxPolys=0):
     globalScale = (10,10,10)
     inputDir=openFileDialog("json")
     with open(inputDir) as data_file:    
@@ -120,6 +120,22 @@ def latkToPaintEffects(brush="fire", bake=True, reducePolys=0.5, maxPolys=0):
             for stroke in strokes:
                 drawPoints(stroke, uniqueName=False)
                 paintCurve(brush=brush, bake=bake, reducePolys=reducePolys, maxPolys=maxPolys)
+
+'''
+for i in range(0, len(frameList)):
+    totalCounter += 1
+    print(frameList[i].name + " | " + str(totalCounter) + " of " + totalStrokes + " total")
+    if (_animateFrames==True):
+        hideFrame(frameList[i], 0, True)
+        for j in range(start, end):
+            if (j == layer.frames[c].frame_number):
+                hideFrame(frameList[i], j, False)
+                keyTransform(frameList[i], j)
+            elif (c < len(layer.frames)-1 and j > layer.frames[c].frame_number and j < layer.frames[c+1].frame_number):
+                hideFrame(frameList[i], j, False)
+            elif (c != len(layer.frames)-1):
+                hideFrame(frameList[i], j, True)
+'''
 
 def gmlToPaintEffects(brush="fire", bake=True, reducePolys=0.1, maxPolys=0):
     inputDir=openFileDialog("gml")
