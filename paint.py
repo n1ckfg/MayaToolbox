@@ -38,9 +38,9 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
         s(crv)
         if (bake==True):
             py.mel.eval("doPaintEffectsToPoly(1,1,1,1," + str(maxPolys) + ");")
-            ch()
+            #ch()
             crv.setAttr("sampleDensity", reducePolys)
-            ch()
+            #ch()
             #py.polyReduce(percentage=10)
             #ch()
         d(target[i])
