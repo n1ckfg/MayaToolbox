@@ -40,7 +40,8 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
             oldObjects = getAllObjects()
             s(crv)
             py.mel.eval("doPaintEffectsToPoly(1,1,1,1," + str(maxPolys) + ");")
-            obj = getNewObjects(oldObjects)[3]
+            newObjects = getNewObjects(oldObjects)
+            obj = newObjects[len(newObjects)-1]
             s(obj)
             ch()
             d(crv)
@@ -53,6 +54,7 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
             returns.append(crv)
         d(target[i])
 
+    print("Created " + str(returns))
     return returns
 
 def paintSurface(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
@@ -138,7 +140,7 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
             if (animateFrames==True):
                 for m in range(start, end):
                     for n in range(0, len(frameList)):
-                        if (m==n):
+                        if (n >= m):
                             hideFrame(frameList[n], m, False)
                         else:
                             hideFrame(frameList[n], m, True)
@@ -164,22 +166,16 @@ def latk():
     latkToPaintEffects(inputDir="C:/Users/nick/Documents/GitHub/LightningArtist/latkUnreal/Content/Latk/layer_test.json", brush="oil")
 
 def hideFrame(target=None, _frame=0, _hide=True):
-    pass
-    '''
     if not target:
         target = s()
-    t(_frame)
+    #t(_frame)
     for i in range (0, len(target)):
         if (_hide==True):
-            py.setAttr(target[i] + ".visibility", 0, keyable=True)
+            py.setAttr(target[i] + ".v", 0)
         else:
-            py.setAttr(target[i] + ".visibility", 1, keyable=True)
-        try:
-            k()
-        except:
-            pass
-    '''
-    
+            py.setAttr(target[i] + ".v", 1)
+        py.setKeyframe(target[i], time=_frame)
+
 def gmlToPaintEffects(inputDir=None, brush="fire", bake=True, reducePolys=0.1, maxPolys=0):
     if not inputDir:
         inputDir=openFileDialog("gml")
