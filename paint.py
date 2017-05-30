@@ -138,12 +138,14 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
             # TODO Fix for variable length frames, needs JSON to have frame_number field per frame.
             # TODO Add transform animation.
             if (animateFrames==True):
-                for m in range(start, end):
-                    for n in range(0, len(frameList)):
-                        if (n >= m):
-                            hideFrame(frameList[n], m, False)
+                print(str(len(frameList)) + " items in frameList")
+                for m in range(0, len(frameList)):
+                    hideFrame(frameList[m], start, True)
+                    for n in range(start, end):
+                        if (n == m):
+                            hideFrame(frameList[m], n, False)
                         else:
-                            hideFrame(frameList[n], m, True)
+                            hideFrame(frameList[m], n, True)
             '''
             for i in range(0, len(frameList)):
                 totalCounter += 1
