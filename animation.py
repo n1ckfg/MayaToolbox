@@ -11,6 +11,17 @@ import re
 #~~
 from mayatoolbox import *
 
+def timeSequence(target=None):
+    if not target:
+        target = s()
+    for i in range(start, end-1):
+        for j in range(0, len(target)):
+            if (i==j+1):
+                mc.setAttr(target[j] + ".v", 1, keyable=True)
+            else:
+                mc.setAttr(target[j] + ".v", 0, keyable=True)
+            mc.setKeyframe(time=i)
+
 def looseJoints(target=None):
     if not target:
         target = s()

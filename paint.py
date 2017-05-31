@@ -138,14 +138,15 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
             # TODO Fix for variable length frames, needs JSON to have frame_number field per frame.
             # TODO Add transform animation.
             if (animateFrames==True):
-                for n in range(0, len(frameList)):
-                    for m in range(start, end):
-                        t(m)
-                        if (m<i):
-                            mc.setAttr(frameList[n][0] + ".v", 0)
-                        else:
-                            mc.setAttr(frameList[n][0] + ".v", 1)
-                        py.setKeyframe(frameList[n], time=m)
+                if (len(frameList) > 0):
+                    print("\nframeList for frame " + str(i) + " has " + str(len(frameList)) + " strokes.")
+                    for i in range(start, end-1):
+                        for j in range(0, len(frameList)):
+                            if (i==j+1):
+                                py.setAttr(frameList[j][0] + ".v", 1, keyable=True)
+                            else:
+                                py.setAttr(frameList[j][0] + ".v", 0, keyable=True)
+                            py.setKeyframe(frameList[j], time=i)
 
             '''
             for i in range(0, len(frameList)):
