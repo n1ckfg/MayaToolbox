@@ -138,14 +138,15 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
             # TODO Fix for variable length frames, needs JSON to have frame_number field per frame.
             # TODO Add transform animation.
             if (animateFrames==True):
-                print(str(len(frameList)) + " items in frameList")
-                for m in range(0, len(frameList)):
-                    hideFrame(frameList[m], start, True)
-                    for n in range(start, end):
-                        if (n == m):
-                            hideFrame(frameList[m], n, False)
+                for n in range(0, len(frameList)):
+                    for m in range(start, end):
+                        t(m)
+                        if (m<i):
+                            mc.setAttr(frameList[n][0] + ".v", 0)
                         else:
-                            hideFrame(frameList[m], n, True)
+                            mc.setAttr(frameList[n][0] + ".v", 1)
+                        py.setKeyframe(frameList[n], time=m)
+
             '''
             for i in range(0, len(frameList)):
                 totalCounter += 1
@@ -170,13 +171,19 @@ def latk():
 def hideFrame(target=None, _frame=0, _hide=True):
     if not target:
         target = s()
-    #t(_frame)
     for i in range (0, len(target)):
         if (_hide==True):
-            py.setAttr(target[i] + ".v", 0)
+            py.setAttr(target[i][0] + ".v", 0)
         else:
-            py.setAttr(target[i] + ".v", 1)
-        py.setKeyframe(target[i], time=_frame)
+            py.setAttr(target[i][0] + ".v", 1)
+        try:
+            k()
+        except:
+            pass
+    try:
+        k()
+    except:
+        pass
 
 def gmlToPaintEffects(inputDir=None, brush="fire", bake=True, reducePolys=0.1, maxPolys=0):
     if not inputDir:
