@@ -186,7 +186,7 @@ def hideFrame(target=None, _frame=0, _hide=True):
     except:
         pass
 
-def gmlToPaintEffects(inputDir=None, brush="fire", bake=True, reducePolys=0.1, maxPolys=0):
+def gmlToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
     if not inputDir:
         inputDir=openFileDialog("gml")
     paintCurves = []
@@ -221,7 +221,7 @@ def gmlToPaintEffects(inputDir=None, brush="fire", bake=True, reducePolys=0.1, m
         crv = drawPoints(points)
         paintCurves.append(crv)
     s(d=True)
-    newCurves = paintSurface(paintCurves, brush, bake, reducePolys, maxPolys)
+    newCurves = paintCurve(paintCurves, brush, bake, reducePolys, maxPolys)
 
 # ~ ~ ~ BRUSHES ~ ~ ~
 
