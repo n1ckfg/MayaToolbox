@@ -140,13 +140,17 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
             if (animateFrames==True):
                 if (len(frameList) > 0):
                     print("\nframeList for frame " + str(i) + " has " + str(len(frameList)) + " strokes.")
-                    for i in range(start, end-1):
-                        for j in range(0, len(frameList)):
-                            if (i==j+1):
-                                py.setAttr(frameList[j][0] + ".v", 1, keyable=True)
-                            else:
-                                py.setAttr(frameList[j][0] + ".v", 0, keyable=True)
-                            py.setKeyframe(frameList[j], time=i)
+                    
+                    s(frameList)
+                    frameListObj = py.polyUnite(ch=False, object=True) #name=getUniqueName("stroke"))
+                    print(frameListObj)
+                    ch()
+                    for m in range(start, end-1):
+                        if (i==m):
+                            py.setAttr(frameListObj[0] + ".v", 1, keyable=True)
+                        else:
+                            py.setAttr(frameListObj[0] + ".v", 0, keyable=True)
+                        py.setKeyframe(frameListObj, time=m)
 
             '''
             for i in range(0, len(frameList)):
@@ -167,7 +171,7 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
 
 def latk():
     rm()
-    latkToPaintEffects(inputDir="C:/Users/nick/Documents/GitHub/LightningArtist/latkUnreal/Content/Latk/layer_test.json", brush="oil")
+    latkToPaintEffects(inputDir="C:/Users/nick/Documents/GitHub/LightningArtist/latkUnreal/Content/Latk/layer_test.json", brush="neon")
 
 def hideFrame(target=None, _frame=0, _hide=True):
     if not target:
