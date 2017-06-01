@@ -131,9 +131,10 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
                     points.append((x,y,z))
                 strokes.append(points)
             for stroke in strokes:
-                drawPoints(stroke, uniqueName=False)
-                paintStroke = paintCurve(brush=brush, bake=bake, reducePolys=reducePolys, maxPolys=maxPolys)
-                frameList.append(paintStroke)
+                if (len(stroke) > 1):
+                    drawPoints(stroke, uniqueName=False)
+                    paintStroke = paintCurve(brush=brush, bake=bake, reducePolys=reducePolys, maxPolys=maxPolys)
+                    frameList.append(paintStroke)
 
             # TODO Fix for variable length frames, needs JSON to have frame_number field per frame.
             # TODO Add transform animation.
