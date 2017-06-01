@@ -142,7 +142,11 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
                     print("\nframeList for frame " + str(i) + " has " + str(len(frameList)) + " strokes.")
                     
                     s(frameList)
-                    frameListObj = py.polyUnite(ch=False, object=True) #name=getUniqueName("stroke"))
+                    frameListObj = frameList[0]
+                    try:
+                        frameListObj = py.polyUnite(ch=False, object=True) #name=getUniqueName("stroke"))
+                    except:
+                        pass
                     print(frameListObj)
                     ch()
                     for m in range(start, end-1):
