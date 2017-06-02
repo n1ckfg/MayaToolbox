@@ -111,7 +111,6 @@ def bakePaintEffects(target=None, reducePolys=0.1, maxPolys=0):
 # ~ ~ ~ ~ ~ ~
 
 def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, maxPolys=0, animateFrames=True):
-    start, end = getStartEnd()
     globalScale = (10,10,10)
     if not inputDir:
         inputDir=openFileDialog("json")
@@ -119,6 +118,10 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
         data = json.load(data_file)
     #~
     for h in range(0, len(data["grease_pencil"][0]["layers"])):
+        inTime(0)
+        outTime(len(data["grease_pencil"][0]["layers"][h]["frames"]))
+        start, end = getStartEnd()
+        #~
         for i in range(0, len(data["grease_pencil"][0]["layers"][h]["frames"])):
             strokes = []
             frameList = []
@@ -150,13 +153,14 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
                         pass
                     print(frameListObj)
                     ch()
-                    for m in range(start, end-1):
+                    for m in range(start, end):
                         if (i==m):
                             py.setAttr(frameListObj[0] + ".v", 1, keyable=True)
                         else:
                             py.setAttr(frameListObj[0] + ".v", 0, keyable=True)
                         py.setKeyframe(frameListObj, time=m)
 
+            # Old mesh show/hide method from Blender
             '''
             for i in range(0, len(frameList)):
                 totalCounter += 1

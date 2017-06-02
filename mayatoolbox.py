@@ -446,18 +446,29 @@ def tryGetAngle():
 
 #~~
 
-def inTime():
-    returns = int(mc.playbackOptions(q=True, animationStartTime=True))
-    #returns = int(findKeyframe(which='first'))
-    return returns
+def inTime(newTime=None):
+    if newTime != None and newTime != 0:
+        mc.playbackOptions(minTime=newTime, animationStartTime=newTime)
+    elif newTime != None and newTime ==0:
+        mc.playbackOptions(minTime=newTime, animationStartTime=newTime)
+    return int(mc.playbackOptions(q=True, animationStartTime=True))
 
-def outTime():
-    returns = int(mc.playbackOptions(q=True, animationEndTime=True))+2
-    #returns = int(findKeyframe(which='last'))+2
-    return returns
+def outTime(newTime=None):
+    if newTime != None and newTime != 0:
+        mc.playbackOptions(maxTime=newTime, animationEndTime=newTime)
+    elif newTime != None and newTime ==0:
+        mc.playbackOptions(maxTime=newTime, animationEndTime=newTime)
+    #return int(mc.playbackOptions(q=True, animationEndTime=True)) + 2
+    return int(mc.playbackOptions(q=True, animationEndTime=True))
 
 def getStartEnd():
-    return inTime(), outTime()
+    #return inTime(), outTime()
+    return inTime(), outTime() + 1
+
+def checkStartEnd():
+    start, end = getStartEnd()
+    for i in range(start, end):
+        print(str(i))
 
 def bakeKeys(target=None, iT=inTime(), oT=outTime()):
     if not target:
