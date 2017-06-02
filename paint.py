@@ -33,13 +33,13 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
     for i in range(0,len(target)):
         oldObjects = getAllObjects()
         s(target[i])
-        py.mel.eval("AttachBrushToCurves;")
+        mel.eval("AttachBrushToCurves;")
         crv = getNewObjects(oldObjects)[1]
         crv.setAttr("sampleDensity", reducePolys)
         if (bake==True):
             oldObjects = getAllObjects()
             s(crv)
-            py.mel.eval("doPaintEffectsToPoly(1,1,1,1," + str(maxPolys) + ");")
+            mel.eval("doPaintEffectsToPoly(1,1,1,1," + str(maxPolys) + ");")
             newObjects = getNewObjects(oldObjects)
             obj = newObjects[len(newObjects)-1]
             s(obj)
@@ -47,7 +47,7 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
             d(crv)
             #ch()
             #ch()
-            #py.polyReduce(percentage=10)
+            #mc.polyReduce(percentage=10)
             #ch()
             returns.append(obj)
         else:
@@ -103,7 +103,7 @@ def bakePaintEffects(target=None, reducePolys=0.1, maxPolys=0):
         for obj in target:
             obj.setAttr("sampleDensity", reducePolys)
             ch()
-        #py.polyReduce(percentage=10)
+        #mc.polyReduce(percentage=10)
         #ch()
     mc.polyQuad()
     ch()
@@ -148,17 +148,17 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
                     s(frameList)
                     frameListObj = frameList[0]
                     try:
-                        frameListObj = py.polyUnite(ch=False, object=True) #name=getUniqueName("stroke"))
+                        frameListObj = mc.polyUnite(ch=False, object=True) #name=getUniqueName("stroke"))
                     except:
                         pass
                     print(frameListObj)
                     ch()
                     for m in range(start, end):
                         if (i==m):
-                            py.setAttr(frameListObj[0] + ".v", 1, keyable=True)
+                            mc.setAttr(frameListObj[0] + ".v", 1, keyable=True)
                         else:
-                            py.setAttr(frameListObj[0] + ".v", 0, keyable=True)
-                        py.setKeyframe(frameListObj, time=m)
+                            mc.setAttr(frameListObj[0] + ".v", 0, keyable=True)
+                        mc.setKeyframe(frameListObj, time=m)
 
             # Old mesh show/hide method from Blender
             '''
@@ -187,9 +187,9 @@ def hideFrame(target=None, _frame=0, _hide=True):
         target = s()
     for i in range (0, len(target)):
         if (_hide==True):
-            py.setAttr(target[i][0] + ".v", 0)
+            mc.setAttr(target[i][0] + ".v", 0)
         else:
-            py.setAttr(target[i][0] + ".v", 1)
+            mc.setAttr(target[i][0] + ".v", 1)
         try:
             k()
         except:
