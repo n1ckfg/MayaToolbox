@@ -182,9 +182,39 @@ def latk():
     rm()
     latkToPaintEffects(inputDir="C:/Users/nick/Documents/GitHub/LightningArtist/latkUnreal/Content/Latk/layer_test.json", brush="neon")
 
+def getQuillParentColor(target=None):
+    if not target:
+        target = ss()
+    try:
+        targetParent = None
+        try:
+            targetParent = listRelatives(parent=True)[0]
+        except:
+            targetParent = listRelatives(parent=True)
+        rgba = getAttr(targetParent + ".rgba")
+        color = (rgba[0], rgba[1], rgba[2], rgba[3])
+        return color
+    except:
+        return (0,0,0,1)
+    
+def getAllQuillParentColors():
+    colors = []
+    curves = listAllCurves()
+    for curve in curves:
+        ss(curve)
+        color = getQuillParentColor(curve)
+        colors.append(color)
+    return colors
+
 def latkFromQuill():
     curves = listAllCurves()
     strokes = getAllCurveCvs()
+    colors = getAllQuillParentColors()
+
+    if (len(curves) == len(strokes) == len(colors)):
+        pass
+    else:
+        print("Warning: color information doesn't match stroke information.")
 
     url = saveFileDialog("json")#filepath # compatibility with gui keywords
     writeFilePath = "/Users/nick/Projects/LightningArtist/LightningArtistJS/animations/"
@@ -218,12 +248,10 @@ def latkFromQuill():
                 sb += "                                {" + "\n" # one stroke
                 for i in range(0, len(strokes)):#layer.frames[currentFrame].strokes)):
                     color = (0,0,0)
-                    '''
                     try:
-                        color = palette.colors[layer.frames[currentFrame].strokes[i].colorname].color
+                        color = colors[i]#palette.colors[layer.frames[currentFrame].strokes[i].colorname].color
                     except:
                         pass
-                    '''    
                     sb += "                                    \"color\": [" + str(color[0]) + ", " + str(color[1]) + ", " + str(color[2])+ "]," + "\n"
                     sb += "                                    \"points\": [" + "\n"
                     for j in range(0, len(strokes[i])):#layer.frames[currentFrame].strokes[i].points)):
