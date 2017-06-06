@@ -182,6 +182,116 @@ def latk():
     rm()
     latkToPaintEffects(inputDir="C:/Users/nick/Documents/GitHub/LightningArtist/latkUnreal/Content/Latk/layer_test.json", brush="neon")
 
+def latkFromQuill():
+    curves = listAllCurves()
+    strokes = getAllCurveCvs()
+
+    url = saveFileDialog("json")#filepath # compatibility with gui keywords
+    writeFilePath = "/Users/nick/Projects/LightningArtist/LightningArtistJS/animations/"
+    writeFileName = "new_test.json"
+    #~
+    #if(bake == True):
+        #bakeFrames()
+    #gp = bpy.context.scene.grease_pencil
+    globalScale = (-0.1, 0.1, 0.1)
+    globalOffset = (0, 0, 0)
+    useScaleAndOffset = True
+    numPlaces = 7
+    roundValues = True
+    #palette = getActivePalette()
+    #~
+    sg = "{" + "\n"
+    sg += "    \"creator\": \"maya\"," + "\n"
+    sg += "    \"grease_pencil\": [" + "\n"
+    sg += "        {" + "\n"
+    sg += "            \"layers\": [" + "\n"
+    sl = ""
+    for f in range(0, 1):#len(gp.layers)):
+        sb = ""
+        #layer = gp.layers[f]
+        for h in range(0, 1):#len(layer.frames)):
+            #currentFrame = h
+            #goToFrame(h)
+            sb += "                        {" + "\n" # one frame
+            sb += "                            \"strokes\": [" + "\n"
+            if (len(strokes) > 0):#layer.frames[currentFrame].strokes) > 0):
+                sb += "                                {" + "\n" # one stroke
+                for i in range(0, len(strokes)):#layer.frames[currentFrame].strokes)):
+                    color = (0,0,0)
+                    '''
+                    try:
+                        color = palette.colors[layer.frames[currentFrame].strokes[i].colorname].color
+                    except:
+                        pass
+                    '''    
+                    sb += "                                    \"color\": [" + str(color[0]) + ", " + str(color[1]) + ", " + str(color[2])+ "]," + "\n"
+                    sb += "                                    \"points\": [" + "\n"
+                    for j in range(0, len(strokes[i])):#layer.frames[currentFrame].strokes[i].points)):
+                        x = 0.0
+                        y = 0.0
+                        z = 0.0
+                        pressure = 1.0
+                        strength = 1.0
+                        #.
+                        print(strokes[i][j])
+                        point = strokes[i][j]#layer.frames[currentFrame].strokes[i].points[j].co
+                        #pressure = layer.frames[currentFrame].strokes[i].points[j].pressure
+                        #strength = layer.frames[currentFrame].strokes[i].points[j].strength
+                        if useScaleAndOffset == True:
+                            x = (point[0] * globalScale[0]) + globalOffset[0]
+                            y = (point[1] * globalScale[1]) + globalOffset[1]
+                            z = (point[2] * globalScale[2]) + globalOffset[2]
+                        else:
+                            x = point[0]
+                            y = point[1]
+                            z = point[2]
+                        #~
+                        if roundValues == True:
+                            sb += "                                        {\"co\": [" + roundVal(x, numPlaces) + ", " + roundVal(y, numPlaces) + ", " + roundVal(z, numPlaces) + "], \"pressure\": " + roundVal(pressure, numPlaces) + ", \"strength\": " + roundVal(strength, numPlaces)
+                        else:
+                            sb += "                                        {\"co\": [" + str(x) + ", " + str(y) + ", " + str(z) + "], \"pressure\": " + pressure + ", \"strength\": " + strength                  
+                        #~
+                        if (j == len(strokes[i])-1):#layer.frames[currentFrame].strokes[i].points) - 1:
+                            sb += "}" + "\n"
+                            sb += "                                    ]" + "\n"
+                            if (i == len(strokes) - 1):
+                                sb += "                                }" + "\n" # last stroke for this frame
+                            else:
+                                sb += "                                }," + "\n" # end stroke
+                                sb += "                                {" + "\n" # begin stroke
+                        else:
+                            sb += "}," + "\n"
+                    if i == len(strokes) - 1:
+                        sb += "                            ]" + "\n"
+            else:
+                sb += "                            ]" + "\n"
+            if (h == 0):
+                sb += "                        }" + "\n"
+            else:
+                sb += "                        }," + "\n"
+        #~
+        sf = "                {" + "\n" 
+        sf += "                    \"name\": \"" + "maya_layer1" + "\"," + "\n"
+        sf += "                    \"frames\": [" + "\n" + sb + "                    ]" + "\n"
+        if (f == 0):
+            sf += "                }" + "\n"
+        else:
+            sf += "                }," + "\n"
+        sl += sf
+        #~
+    sg += sl
+    sg += "            ]" + "\n"
+    sg += "        }"+ "\n"
+    sg += "    ]"+ "\n"
+    sg += "}"+ "\n"
+    if (url==None):
+        url = writeFilePath + writeFileName
+    #~
+    with open(url, "w") as f:
+        f.write(sg)
+        f.closed
+    print("Wrote " + url)
+
 def hideFrame(target=None, _frame=0, _hide=True):
     if not target:
         target = s()

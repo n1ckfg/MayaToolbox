@@ -21,9 +21,11 @@ def selectVerts(target=None):
         target = s()[0]
     py.select(target.vtx)
 
-def fixColors(filePath="C:/Users/nick/Desktop/vertex_color_test.abc"):
+def fixAlembicColors(filePath=None):
+    if not filePath:
+        filePath = openFileDialog("abc")
     mel.eval("AbcImport -mode import -rcs 3fc \"" + filePath + "\";")
-	
+
 def fixNormals(target=None):
     if not target:
         target = s()

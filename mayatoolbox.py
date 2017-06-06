@@ -102,6 +102,36 @@ def listAll(target=None):
     print allJoints
     return allJoints
 
+def listAllCurves():
+    return mc.ls(type="nurbsCurve", long=True, allPaths=True)
+
+def getCurveCvs(target=None):
+    points = []
+    if not target:
+        target = ss()
+    cvs = mc.getAttr(target + ".cp",s=1)
+    try:
+        if(len(cvs) > 1):
+            cvs = int(cvs[0])
+    except:
+        pass
+    print(cvs)
+    for i in range(0, cvs):
+        point = py.getAttr(target + ".cv[" + str(i) + "]")
+        points.append(point)
+    return points
+
+def getAllCurveCvs():
+    strokes = []
+    curves = listAllCurves()
+    for curve in curves:
+        try:
+            points = getCurveCvs(curve)
+            strokes.append(points)
+        except:
+            pass
+    return strokes
+
 def posAll(target=None):
     pos = []
     
@@ -644,3 +674,11 @@ def unparent(target = None):
     if not target:
         target = s()
     py.parent(target, world=True)
+
+def roundVal(a, b):
+    formatter = "{0:." + str(b) + "f}"
+    return formatter.format(a)
+
+def roundValInt(a):
+    formatter = "{0:." + str(0) + "f}"
+    return int(formatter.format(a))
