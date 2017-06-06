@@ -207,16 +207,18 @@ def getAllQuillParentColors():
     return colors
 
 def latkFromQuill():
-    curves = listAllCurves()
+    url = saveFileDialog("json")#filepath # compatibility with gui keywords
+
+    #curves = listAllCurves()
     strokes = getAllCurveCvs()
     colors = getAllQuillParentColors()
 
-    if (len(curves) == len(strokes) == len(colors)):
+    #if (len(curves) == len(strokes) == len(colors)):
+    if (len(strokes) == len(colors)):
         pass
     else:
         print("Warning: color information doesn't match stroke information.")
 
-    url = saveFileDialog("json")#filepath # compatibility with gui keywords
     writeFilePath = "/Users/nick/Projects/LightningArtist/LightningArtistJS/animations/"
     writeFileName = "new_test.json"
     #~
