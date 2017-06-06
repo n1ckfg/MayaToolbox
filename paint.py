@@ -188,10 +188,10 @@ def getQuillParentColor(target=None):
     try:
         targetParent = None
         try:
-            targetParent = listRelatives(parent=True)[0]
+            targetParent = py.listRelatives(parent=True)[0]
         except:
-            targetParent = listRelatives(parent=True)
-        rgba = getAttr(targetParent + ".rgba")
+            targetParent = py.listRelatives(parent=True)
+        rgba = py.getAttr(targetParent + ".rgba")
         color = (rgba[0], rgba[1], rgba[2], rgba[3])
         return color
     except:
