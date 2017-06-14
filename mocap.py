@@ -145,69 +145,29 @@ def writeK2P():
 import xml.dom.minidom as xd
 
 def readK2P():
-    mc.constructionHistory(toggle=False)
-    mc.select(all=True)
-    mc.delete()
-
-    counterMin = 1;
-    counter=counterMin;
-    counterMax = 200;
-    mc.playbackOptions(minTime=counterMin, maxTime=counterMax)
-
-    skipCounterMin = 1;
-    skipCounter=skipCounterMin;
-    skipCounterMax = 6;
-
-
-    #path = "/Users/nick/Development/Maya/readxml"
-    #fileName = "mocapData1.xml"
     fileName = openFileDialog("xml")
-    trackPoint = ["l_foot","l_knee","l_hip","r_foot","r_knee","r_hip","l_hand","l_elbow","l_shoulder","r_hand","r_elbow","r_shoulder","torso","neck","head"]
-    #trackPoint = ["head"]
-    scaler = 10
-    #grav = mc.gravity()
+    joints = ["l_foot","l_knee","l_hip","r_foot","r_knee","r_hip","l_hand","l_elbow","l_shoulder","r_hand","r_elbow","r_shoulder","torso","neck","head"]
+    globalScale = (10, -10, 10)
 
-    #xmlFile = xd.parse(path + "/" + fileName)
     xmlFile = xd.parse(fileName)
     print("loaded: " + fileName)
 
-    for t in trackPoint:    
-        joint = xmlFile.getElementsByTagName(t)
-        jointCounter = 0;
-        cubeName = t
-        #mergeName = t + "Merge"
+    for joint in joints:    
+        s(d=True)
+        frames = xmlFile.getElementsByTagName(joint)
+        loc = addLocator()
+        mc.rename(loc, joint)
 
-        for j in joint:
-            counter=counterMin;
-            x = scaler * float(j.getAttribute("x"))
-            y = scaler * float(j.getAttribute("y"))
-            z = scaler * float(j.getAttribute("z"))
+        for i, frame in enumerate(frames):
+            x = float(frame.getAttribute("x")) * globalScale[0]
+            y = float(frame.getAttribute("y")) * globalScale[1]
+            z = float(frame.getAttribute("z")) * globalScale[2]
             
-            if(x!=0 and y!=0 and z!=0):
-                mc.currentTime(counter)
-                counter+=1
-                if(skipCounter<skipCounterMax):
-                    jointCounter+=1
-                    mc.polyCube(name=cubeName+str(counter))
-                    #polyCube(sx=2, sy=2, sz=2, name=cubeName+str(counter))
-                    #polySmooth(dv=1)
-                    #mc.connectDynamic(f=grav) #adds gravity
-                    mc.move(x, y, z)
-                    #mc.rotate(rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler),rnd.uniform(-1 * scaler, scaler))
-                    mc.rotate(rnd(-1 * scaler, scaler),rnd(-1 * scaler, scaler),rnd(-1 * scaler, scaler))
-                    skipCounter+=1
-                else:
-                    skipCounter=skipCounterMin
+            mc.currentTime(i)
+            mc.move(x, y, z)
+            k()
 
-        print("cubes made: " + str(jointCounter))
-        
-        #select(all=True)
-        #polyUnite(constructionHistory=False) #1=union, 2=difference, 3=intersection
-
-    floor = mc.polyPlane(w=30,h=30)
-    #mc.rigidBody(passive=True)
-    mc.move(0,0,0)
-
-    print("...script complete.")
+    s(joints)
+    buildFromLocators()
 
 

@@ -220,7 +220,7 @@ def parentConstraintAll(target=None):
             mc.parentConstraint(target[len(target)-1],target[i],mo=1)
     mc.select(target)
 
-def addLocator(alsoParent=False):
+def addLocator(alsoParent=False, name=None):
     #1. make an array of all selected objects
     target = mc.ls(sl=1)
 
@@ -236,9 +236,10 @@ def addLocator(alsoParent=False):
             try:
                 kids = mc.listRelatives(target[i], children=True, type="joint", allDescendents=True)
                 for k in kids:
-                    locName = k + "_loc"
+                    if not name:
+                        name = k + "_loc"
                     locPos = mc.xform(k, q=True, t=True, ws=True)
-                    loc = mc.spaceLocator(n=locName)
+                    loc = mc.spaceLocator(n=name)
                     mc.move(locPos[0],locPos[1],locPos[2])
                     if(alsoParent==True):
                         mc.parent(k,loc)
@@ -247,13 +248,14 @@ def addLocator(alsoParent=False):
                 print "No child joints."
 
             #5. get the original selection's name
-            locName = target[i] + "_loc"
+            if not name:
+                name = target[i] + "_loc"
         
             #6. get its position
             locPos = mc.xform(target[i], q=True, t=True, ws=True)
         
             #7. create a new locator with that name at that position
-            loc = mc.spaceLocator(n=locName)
+            loc = mc.spaceLocator(n=name)
             mc.move(locPos[0],locPos[1],locPos[2])
             if(alsoParent==True):
                 mc.parent(target[i],loc)
