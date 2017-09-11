@@ -682,41 +682,41 @@ def addAttrBoolean(target=None, name="tempBoolean"):
         returns.append(val)
     return returns
 
-def createBlendShapes():
-    sel=ls(sl=1,fl=1)
+def createBlendshapes():
+    sel = mc.ls(sl=1,fl=1)
     
-    time=currentTime(q=1)
-    min=int(playbackOptions(q=1, min=1))
-    max=int(playbackOptions(q=1, max=1)+1)
+    time = mc.currentTime(q=1)
+    min = int(mc.playbackOptions(q=1, min=1))
+    max = int(mc.playbackOptions(q=1, max=1)+1)
     
-    timeStep=(float(min)/float(max))
+    timeStep = (float(min) / float(max))
     
     for i in sel:
-        bsLs=[]
+        bsLs = []
         for t in range(min, max):
-            setAttr("time1.outTime", t)
-            bsShape=duplicate(i, n="%s_fr_%02d"%(i,t))[0]
+            mc.setAttr("time1.outTime", t)
+            bsShape=mc.duplicate(i, n="%s_fr_%02d"%(i,t))[0]
             bsLs.append(bsShape)
         
-        if i.endswith("_Geo")==1:
+        if i.endswith("_Geo") == 1:
             newNm="%s_outputMesh"%i.split("_")[0]
         else:
             newNm="%s_outputMesh"%i
             
-        tar=rename(bsLs.pop(0), newNm)
+        tar = mc.rename(bsLs.pop(0), newNm)
     
-        grpNm=group(bsLs, n="%s_BS_Grp"%i)
+        grpNm = mc.group(bsLs, n="%s_BS_Grp"%i)
         
         bsLs.append(tar)
     
-        bs=blendShape(bsLs, ib=1, n=i.replace("_Geo","_BS"))
+        bs = mc.blendShape(bsLs, ib=1, n=i.replace("_Geo","_BS"))
         
-        delete(grpNm)
+        mc.delete(grpNm)
         
-        setKeyframe(bs, v=0, at=bsShape, t=min, ott="linear")
-        setKeyframe(bs, v=1, at=bsShape, t=max-1, itt="linear")
+        mc.setKeyframe(bs, v=0, at=bsShape, t=min, ott="linear")
+        mc.setKeyframe(bs, v=1, at=bsShape, t=max-1, itt="linear")
     
-    currentTime(time, u=1)
+    mc.currentTime(time, u=1)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
