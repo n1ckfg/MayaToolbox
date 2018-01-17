@@ -426,8 +426,10 @@ global proc shelf_Nick () {
         -mip 4
         -mi "Cubes" ( "cubes()" )
         -mip 5
-        -mi "Import Alembic" ( "inputDir = openFileDialog(\"abc\")\nmel.eval(\"AbcImport -rcs \" + \"\\\"\" + inputDir + \"\\\"\" + \";\")" )
+        -mi "Import Alembic" ( "inputDir = openFileDialog(\"abc\")\nmc.AbcImport(inputDir, rcs=True)" )
         -mip 6
+        -mi "Export Alembic" ( "outputDir = saveFileDialog(\"abc\")\nmsg = \"-wcs -wv -wuvs -file \" + outputDir\nmc.AbcExport(j=msg)" )
+        -mip 7
     ;
     shelfButton
         -enableCommandRepeat 1
