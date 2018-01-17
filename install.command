@@ -10,6 +10,7 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 cd $DIR
 
-cp * /Users/nick/Library/Preferences/Autodesk/maya/2016/scripts/
-# cp * /Users/nick/Library/Preferences/Autodesk/maya/2015-x64/scripts/
-# cp * /Users/nick/Library/Preferences/Autodesk/maya/2014-x64/scripts/
+cp * ~/Library/Preferences/Autodesk/maya/2018/scripts/
+cp icons/* ~/Library/Preferences/Autodesk/maya/2018/prefs/icons
+cp shelves/* ~/Library/Preferences/Autodesk/maya/2018/prefs/shelves
+

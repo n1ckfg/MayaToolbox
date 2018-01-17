@@ -1,11 +1,14 @@
 @echo off
 
-set TARGET1="%homepath%\Documents\maya\2016\scripts"
-set TARGET2="%homepath%\Documents\maya\2017\scripts"
+set TARGET=%homepath%\Documents\maya\2018\
 
 cd %cd%
 
-xcopy /s /y *.*  %TARGET1%
-xcopy /s /y *.*  %TARGET2%
+xcopy /s /y *.py  %TARGET%scripts\
+xcopy /s /y *.mel  %TARGET%prefs\
+xcopy /s /y *.txt  %TARGET%scripts\
+xcopy /s /y *.png  %TARGET%prefs\
+xcopy /s /y *.psd  %TARGET%prefs\
+xcopy /s /y *.ico  %TARGET%prefs\
 
 @pause
