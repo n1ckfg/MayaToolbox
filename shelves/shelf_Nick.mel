@@ -14,9 +14,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "Start faceshift" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Faceshift" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.25 
@@ -38,37 +44,17 @@ global proc shelf_Nick () {
         -manage 1
         -visible 1
         -preventOverride 0
-        -annotation "GoZ" 
-        -enableBackground 0
-        -align "center" 
-        -label "GoZ" 
-        -labelOffset 0
-        -font "plainLabelFont" 
-        -overlayLabelColor 0.8 0.8 0.8 
-        -overlayLabelBackColor 0 0 0 0.2 
-        -image "/Users/Shared/Pixologic/GoZApps/Maya/GoZBrush.xpm" 
-        -image1 "/Users/Shared/Pixologic/GoZApps/Maya/GoZBrush.xpm" 
-        -style "iconOnly" 
-        -marginWidth 1
-        -marginHeight 1
-        -command "source \"/Users/Shared/Pixologic/GoZApps/Maya/GoZBrushFromMaya.mel\"\n" 
-        -sourceType "mel" 
-        -commandRepeatable 1
-        -flat 1
-    ;
-    shelfButton
-        -enableCommandRepeat 1
-        -enable 1
-        -width 35
-        -height 35
-        -manage 1
-        -visible 1
-        -preventOverride 0
         -annotation "Send to Photoshop" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Send to Photoshop" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -92,9 +78,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "Send to AE" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Send to AE" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -118,9 +110,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "NI mate receiver" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "NI mate receiver" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -145,9 +143,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "Import/Export OBJ Sequence" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "OBJ Sequence" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -173,9 +177,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "BVH Importer" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "BVH Importer" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -201,9 +211,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "QuickShader" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Shaders" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -235,9 +251,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "Add Locator" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Locators" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -266,9 +288,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "Key All Joints" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Joints" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -317,9 +345,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "Rigging" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Rigging" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -358,9 +392,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "Boolean Loop" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "Modeling" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
@@ -386,6 +426,8 @@ global proc shelf_Nick () {
         -mip 4
         -mi "Cubes" ( "cubes()" )
         -mip 5
+        -mi "Import Alembic" ( "inputDir = openFileDialog(\"abc\")\nmel.eval(\"AbcImport -rcs \" + \"\\\"\" + inputDir + \"\\\"\" + \";\")" )
+        -mip 6
     ;
     shelfButton
         -enableCommandRepeat 1
@@ -397,9 +439,15 @@ global proc shelf_Nick () {
         -preventOverride 0
         -annotation "Move to selected" 
         -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
         -align "center" 
         -label "General" 
         -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
         -font "plainLabelFont" 
         -overlayLabelColor 0.8 0.8 0.8 
         -overlayLabelBackColor 0 0 0 0.2 
