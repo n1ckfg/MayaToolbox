@@ -10,4 +10,13 @@ copy /b mayatoolbox_main.py+mayatoolbox_animation.py+mayatoolbox_dynamics.py+may
 
 rem copy %BUILD_TARGET% "C:\Program Files\Adobe\Adobe After Effects CS6\Support Files\Scripts\ScriptUI Panels\"
 
+rem set TARGET=%homepath%\Documents\maya\2018\
+
+rem xcopy /s /y *.py  %TARGET%scripts\
+rem xcopy /s /y *.mel  %TARGET%prefs\
+rem xcopy /s /y *.txt  %TARGET%scripts\
+rem xcopy /s /y *.png  %TARGET%prefs\
+rem xcopy /s /y *.psd  %TARGET%prefs\
+rem xcopy /s /y *.ico  %TARGET%prefs\
+
 @pause
