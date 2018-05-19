@@ -1,19 +1,5 @@
 # PAINT EFFECTS
 
-import pymel.core as py
-import maya.cmds as mc
-import maya.mel as mel
-from math import *
-from xml.dom.minidom import *
-import xml.etree.ElementTree as etree
-from random import uniform as rnd
-import os
-import re
-import json
-#~~
-from mayatoolbox import *
-from modeling import *
-
 # test
 def lightningStar(target=None):
     if not target:
@@ -424,3 +410,6 @@ def brushNeonBlue():
     mel.eval("presetSetPressure 2 0 0 1;")
     mel.eval("presetSetPressure 3 9 0.3007999957 1;")
     mel.eval("rename (getDefaultBrush()) neonBlue;")
+
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~

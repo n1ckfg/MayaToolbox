@@ -1,16 +1,5 @@
 # ANIMATION--JOINTS, CONSTRAINTS, KEYFRAMES, ETC.
 
-import pymel.core as py
-import maya.cmds as mc
-import maya.mel as mel
-from math import *
-from xml.dom.minidom import *
-from random import uniform as rnd
-import os
-import re
-#~~
-from mayatoolbox import *
-
 def timeSequence(target=None):
     if not target:
         target = s()
@@ -261,3 +250,5 @@ def addLocator(alsoParent=False, name=None):
                 mc.parent(target[i],loc)
                 #parentConstraint(loc,target[i])
 
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~

@@ -1,16 +1,5 @@
 # MODELING
 
-import pymel.core as py
-import maya.cmds as mc
-import maya.mel as mel
-from math import *
-from xml.dom.minidom import *
-from random import uniform as rnd
-import os
-import re
-#~~
-from mayatoolbox import *
-
 def getVerts(target=None):
     if not target:
         target = s()[0]
@@ -259,3 +248,6 @@ def smoothMesh(target=None):
             py.mel.eval("bakePartialHistory -all;")
         except:
             print "Smooth failed; " + target[i] + " probably isn't a polygonal mesh."
+
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~

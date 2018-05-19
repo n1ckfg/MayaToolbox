@@ -9,23 +9,16 @@ import maya.cmds as mc
 import maya.mel as mel
 from math import *
 from xml.dom.minidom import *
+import xml.etree.ElementTree as etree
 from random import uniform as rnd
 import os
 import sys
-import re
 import sys as sys
-import xml.etree.ElementTree as etree
+import re
+import json
 from operator import itemgetter
 #~~
-# MayaToolbox components
 from mayatoolbox import *
-from shaders import *
-from animation import *
-from modeling import *
-from paint import *
-from rigging import *
-from mocap import *
-from dynamics import *
 
 #~~
 # more packages

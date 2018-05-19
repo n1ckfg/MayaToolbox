@@ -1,17 +1,5 @@
 # DYNAMICS
 
-import pymel.core as py
-import maya.cmds as mc
-import maya.mel as mel
-from math import *
-from xml.dom.minidom import *
-from random import uniform as rnd
-import os
-import re
-#~~
-from mayatoolbox import *
-from animation import *
-
 def quickDyn(spread=5, num=10, joints=False, bake=False):
     target = []
     g = py.gravity()
@@ -47,3 +35,6 @@ def quickDyn(spread=5, num=10, joints=False, bake=False):
 
         for i in range(0,len(target2)):
             unparent(target2[i])
+
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~

@@ -1,17 +1,5 @@
 # RIGGING
 
-import pymel.core as py
-import maya.cmds as mc
-import maya.mel as mel
-from math import *
-from xml.dom.minidom import *
-from random import uniform as rnd
-import os
-import re
-#~~
-from mayatoolbox import *
-from animation import *
-
 # function to create a default bipedal skeleton
 def createBipedSkeleton(prefix="", size=1.0, hands=False):
     joints = []
@@ -723,3 +711,6 @@ def createBlendshapes():
 fk=fkCreateController
 ik=ikCreateController
 fkik = fkikCreateController
+
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+# ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
