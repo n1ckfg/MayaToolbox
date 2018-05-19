@@ -1,0 +1,870 @@
+////// Tentacle v1.0
+////// Created by Kyle Layser, 2011; email: kyle@cgispirit.com.
+
+////// Description:
+////// Creates a joint chain for the use of tails, tentacles, hair, chains, ect.
+
+
+global proc editTentacle()
+{
+warning "This feature has not yet been added. Wait for future realease.";	
+}
+
+global proc makeTentacle()
+{
+///////// Values from UI /////////
+string $jntNamePre = `textFieldGrp -q -text textFieldName`;
+string $jntName = ($jntNamePre+"Tentacle_");
+/*string $jntName = ($jntNamePre+"_");
+float $jntAmtCheck = `textFieldGrp -q -value textFieldName`;*/
+float $jntAmt = `intSliderGrp -q -value densitySlider`;
+float $curlAmt = `intSliderGrp -q -value curlSlider`;
+float $curlAmtN = ("-"+$curlAmt);
+/*float $jntFalloff = `intSliderGrp -q -value chainSlider`;*/
+float $instValue = `iconTextCheckBox -q -value instCheck`;
+float $taperValue = `iconTextCheckBox -q -value taperCheck`;
+float $tetherValue = `iconTextCheckBox -q -value tetherCheck`;
+float $extraValue = `iconTextCheckBox -q -value extraCheck`;
+
+
+$nameValid = `isValidObjectName($jntName)`;
+
+if ($nameValid == 0)
+{
+error "You have not entered a valid name. Please choose a unique name.";
+}
+
+
+/// Error Checking ////
+$nameCheck = ($jntName+"_cntrl_01");
+
+$nameCheck2 = ($jntName+"_cntrl_02");
+
+$nameCheck3 = ($jntName+"_cntrl_03");
+
+
+for ($n = 1; $n < 100000; $n++)
+{
+if (`objExists ($jntName+"_cntrl_0"+$n)`)
+error "The name you've chosen is already taken. Apphend a number or choose a different name.";
+}
+
+for ($i = 1; $i < 10000; $i = $i + 2) 
+{
+if ($jntAmt == $i)
+{
+error "Sorry, you must choose an even number for the Joint Density.";
+}
+}
+
+///////// Input Variables /////////
+float $jntCap = ($jntAmt+1);
+float $jntCap2 = $jntAmt;
+
+///////// Create Length Controller /////////
+/////////
+
+///////// Create Circle Curves
+string $mCurve1[];
+$mCurve1 = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 1`;
+move 1.754063 0 -3.724354 ($mCurve1[2]+".cv[0]");
+move -5.908068 0 -6.223019 ($mCurve1[2]+".cv[1]");
+move -10.308407 0 -4.400339 ($mCurve1[2]+".cv[2]");
+move -12.131088 0 3.4531e-07 ($mCurve1[2]+".cv[3]");
+move -10.308407 0 4.40034 ($mCurve1[2]+".cv[4]");
+move -5.908068 0 6.22302 ($mCurve1[2]+".cv[5]");
+move 1.754063 0 3.724355 ($mCurve1[2]+".cv[6]");
+move 1.934573 0 3.4531e-07 ($mCurve1[2]+".cv[7]");
+rebuildCurve -ch 1 -rpo 1 -rt 0 -end 1 -kr 0 -kcp 0 -kep 1 -kt 0 -s 16 -d 3 -tol 0.01 $mCurve1[0];
+
+///////// Create Arrow Curves
+string $aCCurve1;
+$aCCurve1 = `curve -d 1 -p -0.0444647 0 -2.608802 -p 0.714001 0 -1.091871 -p -0.802931 0 -1.091871 -p -0.0444647 0 -2.608802`;
+string $aCCurve2;
+$aCCurve2 = `curve -d 1 -p 0.714001 0 1.230032 -p -0.802931 0 1.230032 -p -0.0444647 0 2.746866 -p 0.714001 0 1.230032`;
+
+///////// Create Circle Curves
+string $cCurve1[];
+$cCurve1 = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+move -rpr 0.0119853 0 0.0416736 $cCurve1[0];
+setAttr ($cCurve1[0]+".scale") 0.738551 0.738551 0.738551; 
+string $cCurve2[];
+$cCurve2 = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+move -rpr 0.0119853 0 0.0416736 $cCurve2[0];
+setAttr ($cCurve2[0]+".scale") 0.543923 0.543923 0.543923;
+
+///////// Cleanup
+delete -ch $mCurve1[0] $aCCurve1 $aCCurve2 $cCurve1[0] $cCurve2[0];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $mCurve1[0] $aCCurve1 $aCCurve2 $cCurve1[0] $cCurve2[0];
+string $aCurve1[];
+$aCurve1 = `listRelatives -shapes $aCCurve1`;
+string $aCurve2[];
+$aCurve2 = `listRelatives -shapes $aCCurve2`;
+string $cShape2[];
+$cShape2 = `listRelatives -shapes $cCurve1[0]`;
+string $cShape3[];
+$cShape3 = `listRelatives -shapes $cCurve2[0]`;
+string $lengthG[];
+$lengthG = `parent -r -s  $aCurve1[0] $aCurve2[0] $cShape2[0] $cShape3[0] $mCurve1[0]`;
+delete $aCCurve1 $aCCurve2 $cCurve1[0] $cCurve2[0];
+string $lengthCC[];
+$lengthCC = `listRelatives -parent $lengthG[0]`;
+
+
+//--//
+setAttr ($lengthCC[0]+".rotateY") 90;
+setAttr ($lengthCC[0]+".scale") 0.273 0.273 0.273;
+move -rpr 15 0 -1.51415 $lengthCC[0];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $lengthCC[0];
+//--/
+setAttr ($lengthCC[0]+".overrideEnabled") 1;
+setAttr  ($lengthCC[0]+".overrideColor") 17;
+string $lengthOffset;
+$lengthOffset = `group -n ("grp_"+$lengthCC[0]+"_offsetNode")`;
+//--//
+
+
+
+///////// Create Tail Controller  ///////// 
+
+string $cCurve6[];
+$cCurve6 = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+setAttr ($cCurve6[0]+".translateX") 35;
+setAttr ($cCurve6[0]+".translateY") 1.065;
+setAttr ($cCurve6[0]+".scale") .522 .522 .522;
+string $cCurve6b[];
+$cCurve6b = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+setAttr ($cCurve6b[0]+".translateX") 35;
+setAttr ($cCurve6b[0]+".translateY") 1.065;
+setAttr ($cCurve6b[0]+".scale") .322 .322 .322; 
+string $cCurve7[];
+$cCurve7 = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+setAttr ($cCurve7[0]+".translateX") 35;
+setAttr ($cCurve7[0]+".translateY") -1.065;
+setAttr ($cCurve7[0]+".scale") .522 .522 .522;
+string $cCurve7b[];
+$cCurve7b = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+setAttr ($cCurve7b[0]+".translateX") 35;
+setAttr ($cCurve7b[0]+".translateY") -1.065;
+setAttr ($cCurve7b[0]+".scale") .322 .322 .322; 
+string $ringCurve1[];
+$ringCurve1 = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+string $tailControl[];
+$tailControl = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+setAttr ($ringCurve1[0]+".translateX") 35;
+setAttr ($tailControl[0]+".translateX") 35;
+
+delete -ch $cCurve6[0] $cCurve6b[0] $cCurve7[0] $cCurve7b[0] $ringCurve1[0] $tailControl[0];
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0  $cCurve6[0] $cCurve6b[0] $cCurve7[0] $cCurve7b[0] $ringCurve1[0] $tailControl[0];
+string $cLine1 = `curve -d 1 -p 35.521994 1.065026 0 -p 35.521994 -1.065026 0 -k 0 -k 1`;
+string $cLine2 = `curve -d 1 -p 35 1.065026 -0.521994 -p 35 -1.065026 -0.521994 -k 0 -k 1`;
+string $cLine3 = `curve -d 1 -p 34.478006 1.065026 0 -p 34.478006 -1.065026 0 -k 0 -k 1`;
+string $cLine4 = `curve -d 1 -p 35 1.065026 0.521994 -p 35 -1.065026 0.521994 -k 0 -k 1`;
+string $sCurve6b[];
+$sCurve6b = `listRelatives -shapes  $cCurve6b[0]`;
+string $sCurve7[];
+$sCurve7 = `listRelatives -shapes  $cCurve7[0]`;
+string $sCurve7b[];
+$sCurve7b = `listRelatives -shapes  $cCurve7b[0]`;
+string $sLine1[];
+$sLine1 = `listRelatives -shapes  $cLine1`;
+string $sLine2[];
+$sLine2 = `listRelatives -shapes  $cLine2`;
+string $sLine3[];
+$sLine3 = `listRelatives -shapes  $cLine3`;
+string $sLine4[];
+$sLine4 = `listRelatives -shapes  $cLine4`;
+setAttr ($sCurve6b[0]+".overrideEnabled") 1;
+setAttr ($sCurve6b[0]+".overrideColor") 13;
+setAttr ($sCurve7b[0]+".overrideEnabled") 1;
+setAttr ($sCurve7b[0]+".overrideColor") 13;
+string $tailParent[];
+$tailParent = `parent -r -s $sLine1[0] $sLine2[0] $sLine3[0] $sLine4[0] $sCurve6b[0] $sCurve7[0] $sCurve7b[0] $cCurve6[0]`;
+string $tailControlMain[];
+$tailControlMain = `listRelatives -parent $tailParent[0]`;
+parent $tailControlMain[0] $lengthCC[0];
+
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0  $tailControlMain[0];
+setAttr ($tailControlMain[0]+".overrideEnabled") 1;
+setAttr ($tailControlMain[0]+".overrideColor") 12;
+parent $ringCurve1[0] $tailControl[0] $lengthCC[0];
+setAttr ($ringCurve1[0]+".template") 1;
+move 35 0 0 ($tailControlMain[0]+".scalePivot") ($tailControlMain[0]+".rotatePivot");
+delete $cLine1 $cLine2 $cLine3 $cLine4 $cCurve6b[0] $cCurve7[0] $cCurve7b[0];
+setAttr ($tailControl[0]+".scale") .5 .5 .5; 
+/*setAttr ($tailControlMain[0]+".translateY") -0.767;*/
+setAttr ($tailControlMain[0]+".scaleY") .28;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0  $tailControlMain[0];
+setAttr ($ringCurve1[0]+".translateX") -20;
+setAttr ($tailControlMain[0]+".translateX") -20;
+setAttr ($tailControl[0]+".translateX") -20;
+
+setAttr ($lengthOffset+".translateX") -12;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $lengthOffset;
+string $tailCntrlGroup = `group -n ($jntName+"tailCntrlOffset") $tailControlMain[0]`;
+setAttr ($tailCntrlGroup+".scaleZ") -1;
+
+//--//
+
+setAttr ($lengthCC[0]+".translateX") $jntCap2;
+aliasAttr Spacing ($lengthCC[0]+".translateX");
+
+///////// Create Master Controller  ///////// 
+string $maCurve1[];
+$maCurve1 = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+setAttr ($maCurve1[0]+".rotateZ") 90;
+setAttr ($maCurve1[0]+".scale") 2.5 2.5 2.5;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $maCurve1[0];
+delete -ch $maCurve1[0];
+addAttr -keyable true -longName "chainJointsDisplay" -shortName "chnJntDisp" -at short -min 0 -max 1 $maCurve1[0];
+addAttr -keyable true -longName "chainControlsDisplay" -shortName "chnCntrlDsp" -at short -min 0 -max 1 $maCurve1[0];
+addAttr -keyable true -longName "chainScaleControls" -shortName "chnScCtrls" -at short -min 0 -max 1 $maCurve1[0];
+addAttr -keyable false -longName "fallOffMultiplier" -shortName "flloffMltp" -at double -min -50 -max 50 $tailControl[0];
+addAttr -keyable true -longName "fallOff" -shortName "flloff" -at double -min -50 -max 50 $tailControl[0];
+addAttr -keyable true -longName "twist" -shortName "twst" -at double -min -360 -max 360 $tailControl[0];
+addAttr -keyable true -longName "twistMultiplier" -shortName "twstMltp" -at double -min -50 -max 50 $tailControl[0];
+
+setAttr ($tailControl[0]+".visibility") -keyable false 0;
+
+// Create Proxy Attributes // 
+addAttr -keyable true -longName "fallOff" -shortName "flloff" -at double -min -50 -max 50 $tailControlMain[0];
+addAttr -keyable true -longName "twist" -shortName "twst" -at double -min -360 -max 360 $tailControlMain[0];
+addAttr -keyable true -longName "twistMultiplier" -shortName "twstMltp" -at double -min -50 -max 50 $tailControlMain[0];
+
+connectAttr ($tailControlMain[0]+".twist") ($tailControl[0]+".twist");
+connectAttr ($tailControlMain[0]+".twistMultiplier") ($tailControl[0]+".twistMultiplier");
+connectAttr ($tailControlMain[0]+".fallOff") ($tailControl[0]+".fallOff");
+connectAttr ($tailControlMain[0]+".translate") ($tailControl[0]+".translate");
+
+setAttr ($maCurve1[0]+".chainScaleControls") 1;
+setAttr ($maCurve1[0]+".overrideEnabled") 1;
+setAttr  ($maCurve1[0]+".overrideColor") 18;
+setAttr ($maCurve1[0]+".chainJointsDisplay") 1;
+
+///// Add Visual Tether ////
+if ($tetherValue == 1)
+{
+string $tether1 = `joint -p 0 0 0 -n ($jntName+"cntrlTether"+"_root")`;
+string $tether2 = `joint -p 43 0 -0.067 -n ($jntName+"cntrlTether"+"_tip")`;
+setAttr ($tether1+".drawStyle") 6;
+setAttr ($tether2+".drawStyle") 6;
+setAttr ($tether1+".radius") .3;
+setAttr ($tether2+".radius") .3;
+setAttr ($tether1+".overrideEnabled") 1;
+setAttr ($tether1+".overrideColor") 22;
+pointConstraint $tailControlMain[0] $tether2;
+}
+
+///////// Create Utility Nodes  ///////// 
+createNode multiplyDivide -n ($jntName+"multDiv"+"_01");
+connectAttr -f ($lengthCC[0]+".translateX") ($jntName+"multDiv"+"_01"+".input1X");
+setAttr ($jntName+"multDiv"+"_01"+".input2X") $jntCap2;
+setAttr ($jntName+"multDiv"+"_01"+".operation") 2;
+
+// CREATE JOINT CHAIN
+/////////////////////////////////////////////////////////////
+select -cl  ;
+
+for ($a =1; $a < $jntCap; $a++)
+    {
+    // Create Joints //
+    joint -p $a 0 0 -n ("bn_"+$jntName+"0"+$a);
+    }
+    
+////// PARENT BOUND JOINTS TO GROUP //////
+select ("bn_"+$jntName+"01");
+select -hi;
+string $bnGrp = `group -n ("group_bn_"+$jntName+"01")`; 
+select -cl  ;
+
+for ($a =1; $a < $jntCap; $a++)
+    {
+    // Create Joints //
+    group -n ("oversoul_"+$jntName+"0"+$a) ("bn_"+$jntName+"0"+$a);
+    }
+select -cl  ;
+for ($a =1; $a < $jntCap; $a++)
+    {
+    // Create Joints //
+    joint -p $a 0 0 -n ($jntName+"_cntrl_0"+$a);
+	transformLimits -ry $curlAmtN $curlAmt -ery 1 1 ($jntName+"_cntrl_0"+$a);
+    }
+
+// CREATE CONTROL CHAIN
+/////////////////////////////////////////////////////////////
+
+for ($a =1; $a < $jntCap; $a++)
+    {
+    
+    // Create Joint Control Curves // 
+    string $cCircle4[];
+    $cCircle4 = `circle -s 16`;
+    setAttr ($cCircle4[0]+".rotateY") 90;
+    string $cCircle5[];
+    $cCircle5 = `circle -s 16`;
+    string $ccArrow1 = `curve -d 1 -p -0.234748 0 0 -p -0.234748 0 -0.156499 -p -0.391246 0 0 -p -0.234748 0 0.156499 -p -0.234748 0 0 -p 0.234748 0 0 -p 0.234748 0 0.156499 -p 0.391246 0 0 -p 0.234748 0 -0.156499 -p 0.234748 0 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9`;
+    string $cArrow1[];
+    $cArrow1 = `listRelatives -shapes $ccArrow1`;
+    setAttr ($cCircle5[0]+".rotateY") 90;
+    setAttr ($cCircle5[0]+".scale") 0.145 0.145 0.145;
+    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $cCircle5[0] $cCircle4[0]; 
+    delete -ch $cCircle4[0] $cCircle4[0];
+    string $sCircle5[];
+    $sCircle5 = `listRelatives -shapes $cCircle5[0]`;
+    string $finalShape1[];
+    $finalShape1 = `parent -r -s $cArrow1[0] $sCircle5[0] $cCircle4[0]`;
+    string $cSpacer[];
+    $cSpacer = `listRelatives -parent $finalShape1[0]`;
+    delete -ch $cSpacer[0];
+    rename $cSpacer[0] ("ccg"+$jntName+$a);
+    delete -ch ("ccg"+$jntName+$a);
+    setAttr ("ccg"+$jntName+$a+".overrideEnabled") 1;
+    delete $ccArrow1 $cCircle5[0];
+    setAttr ("ccg"+$jntName+$a+".overrideColor") 18;
+    
+    // Rotational Oversoul Controller //
+    string $cOS1[];
+    $cOS1 = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 16 -ch 1`;
+    setAttr ($cOS1[0]+".scale") 1.2 1.2 1.2;
+    setAttr ($cOS1[0]+".rotateZ") -90;
+    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $cOS1[0]; 
+    delete -ch $cOS1[0];
+    rename $cOS1[0] ("ccR_"+$jntName+$a);
+    parent ("ccg"+$jntName+$a) ("ccR_"+$jntName+$a);
+    group -n ("ccg"+$jntName+$a+"connectNode") ("ccR_"+$jntName+$a);
+    setAttr ("ccg"+$jntName+$a+".overrideEnabled") 1;
+    setAttr ("ccg"+$jntName+$a+".overrideColor") 18;
+    setAttr ("ccR_"+$jntName+$a+".overrideEnabled") 1;
+    setAttr ("ccR_"+$jntName+$a+".overrideColor") 29;
+    parent ("ccg"+$jntName+$a+"connectNode") ($jntName+"_cntrl_0"+$a);
+    setAttr -lock true -keyable false -channelBox false ("ccg"+$jntName+$a+".translateZ");        
+    setAttr -lock true -keyable false -channelBox false ("ccg"+$jntName+$a+".translateY");
+    setAttr -lock true -keyable false -channelBox false ("ccg"+$jntName+$a+".scale");
+    aliasAttr Spacing ("ccg"+$jntName+$a+".tx");
+    string $cOS1Shape[];
+    $cOS1Shape = `listRelatives -shapes ("ccR_"+$jntName+$a)`;
+    
+    // Connect Nodes //
+    connectAttr -f ($jntName+"multDiv"+"_01"+".outputX") ($jntName+"_cntrl_0"+$a+".translateX");
+    
+    // Master Control Connections //
+    setAttr ($jntName+"_cntrl_0"+$a+".overrideEnabled") 1;
+    connectAttr ($maCurve1[0]+".chainJointsDisplay") ($jntName+"_cntrl_0"+$a+".overrideDisplayType");
+    connectAttr ($maCurve1[0]+".chainControlsDisplay") ($cOS1Shape[0]+".visibility");
+    setAttr ("ccg"+$jntName+$a+".overrideEnabled") 1;
+    setAttr ($jntName+"_cntrl_0"+$a+".radius") .1;
+    setAttr ("ccg"+$jntName+$a+"connectNode"+".translateX") 0;
+    
+    // Point Constraints //
+    }
+ 
+/////////////////////////////////////////////////////////////
+
+group -n ("grp_"+$jntName+"controls") ($jntName+"_cntrl_0"+1);
+move 0 0 0 ("grp_"+$jntName+"controls"+".scalePivot")  ("grp_"+$jntName+"controls"+".rotatePivot");
+setAttr ("grp_"+$jntName+"controls"+".overrideEnabled") 1;
+connectAttr -f ($maCurve1[0]+".chainScaleControls") ("grp_"+$jntName+"controls"+".overrideVisibility");
+connectAttr -f ($maCurve1[0]+".chainScaleControls") ($lengthCC[0]+".overrideVisibility");
+
+// Create Root Joint
+select -cl;
+string $rootJnt = `joint -n ("root_"+$jntName)`;
+
+// CREATE CONTROL CHAIN CONTRAINTS
+/////////////////////////////////////////////////////////////
+
+connectAttr ("ccg"+$jntName+$jntCap2+".translateX") ($lengthOffset+".translateX");
+
+for ($a =1; $a < $jntCap; $a++)
+    {
+    parentConstraint -mo -weight 1 ("ccg"+$jntName+$a) ("oversoul_"+$jntName+"0"+$a);
+    }
+
+// CREATE FALLOFF UTILITIES
+/////////////////////////////////////////////////////////////
+
+for ($a = 1; $a < $jntCap2; $a++)
+    {
+    createNode -n ($jntName+"multDiv_controlInput_"+$a) multiplyDivide;
+    createNode -n ($jntName+"multDiv_translateInput_"+$a) multiplyDivide;
+    createNode -n ($jntName+"multDiv_output_"+$a) multiplyDivide;
+    
+	setAttr ($jntName+"multDiv_controlInput_"+$a+".input2X") ($a * 2);
+    setAttr ($jntName+"multDiv_controlInput_"+$a+".input2Y") ($a * 2);
+    setAttr ($jntName+"multDiv_controlInput_"+$a+".input2Z") ($a * 2);
+    
+    }
+
+for ($a = 1; $a < $jntCap2; $a++)
+    {
+    // Connection from Master Controller //
+    connectAttr ($tailControl[0]+".fallOffMultiplier") ($jntName+"multDiv_controlInput_"+$a+".input1Y");
+    connectAttr ($tailControl[0]+".fallOffMultiplier") ($jntName+"multDiv_controlInput_"+$a+".input1Z");
+    
+	// Connect Twist
+	connectAttr ($tailControl[0]+".twist") ($jntName+"multDiv_translateInput_"+$a+".input2X");
+	connectAttr ($tailControl[0]+".twistMultiplier") ($jntName+"multDiv_translateInput_"+$a+".input1X");
+	// 
+	
+    connectAttr ($tailControl[0]+".fallOff") ($jntName+"multDiv_translateInput_"+$a+".input1Y");
+    connectAttr ($tailControl[0]+".fallOff") ($jntName+"multDiv_translateInput_"+$a+".input1Z");
+    
+    // Connection from Tail Controller //
+    connectAttr ($tailControl[0]+".translateZ") ($jntName+"multDiv_translateInput_"+$a+".input2Y");
+    connectAttr ($tailControl[0]+".translateY") ($jntName+"multDiv_translateInput_"+$a+".input2Z");
+    
+    
+    connectAttr ($jntName+"multDiv_translateInput_"+$a+".outputZ") ($jntName+"multDiv_output_"+$a+".input1Z");
+    connectAttr ($jntName+"multDiv_translateInput_"+$a+".outputY") ($jntName+"multDiv_output_"+$a+".input1Y");
+
+	// Connect Twist
+	connectAttr ($jntName+"multDiv_translateInput_"+$a+".outputX") ($jntName+"multDiv_output_"+$a+".input1X");
+	//
+
+    connectAttr ($jntName+"multDiv_controlInput_"+$a+".outputZ") ($jntName+"multDiv_output_"+$a+".input2Z");
+    connectAttr ($jntName+"multDiv_controlInput_"+$a+".outputY") ($jntName+"multDiv_output_"+$a+".input2Y");
+    
+    
+    }
+
+
+
+/////////////////////////////////////////////////////////////
+setAttr ($tailControl[0]+".fallOffMultiplier") .1;
+setAttr ($tailControlMain[0]+".fallOff") 1;
+setAttr ($tailControlMain[0]+".twistMultiplier") 1;
+
+
+// Create Secondary Falloff
+/////////////////////////////////////////////////////////////
+
+if ($extraValue == 1)
+	{
+	addAttr -keyable true -longName "fallOffEnd" -shortName "flloffEnd" -at double -min -50 -max 50 $tailControl[0];
+	
+	
+	addAttr -keyable true -longName "fallOffEnd" -shortName "flloffEnd" -at double -min -50 -max 50 $tailControlMain[0];
+	connectAttr ($tailControlMain[0]+".fallOffEnd") ($tailControl[0]+".fallOffEnd");
+	setAttr ($tailControlMain[0]+".fallOffEnd") 1;
+		
+		for ($a = 1; $a < $jntCap2; $a++)
+		{
+		/// Create Exponetial $a Values // 
+		float $aValue2 = ($a*6);
+		float $bValue1 = ($a*$aValue2);
+		float $bValue2 = ("0.000"+$jntCap2);
+		float $bValue = $bValue1*$bValue2;
+		
+		/// Create Nodes ///
+		createNode -n ($jntName+"blendValues_extraFalloff_"+$a) blendColors;
+		createNode -n ($jntName+"multDiv_extraFalloff_"+$a) multiplyDivide;
+		
+		connectAttr ($jntName+"multDiv_output_"+$a+".outputY") ($jntName+"multDiv_extraFalloff_"+$a+".input2Y");
+		connectAttr ($jntName+"multDiv_output_"+$a+".outputZ") ($jntName+"multDiv_extraFalloff_"+$a+".input2Z");
+		
+		connectAttr  ($jntName+"multDiv_extraFalloff_"+$a+".outputY") ($jntName+"blendValues_extraFalloff_"+$a+".color2B");
+		connectAttr  ($jntName+"multDiv_extraFalloff_"+$a+".outputZ") ($jntName+"blendValues_extraFalloff_"+$a+".color2G");
+		
+		addAttr -keyable true -longName "blenderForce" -shortName "frce" -at double ($jntName+"blendValues_extraFalloff_"+$a);
+		connectAttr  ($jntName+"blendValues_extraFalloff_"+$a+".blenderForce") ($jntName+"blendValues_extraFalloff_"+$a+".blender");
+		setAttr ($jntName+"blendValues_extraFalloff_"+$a+".blenderForce") $bValue;
+	    connectAttr ($tailControl[0]+".fallOffEnd") ($jntName+"multDiv_extraFalloff_"+$a+".input1Y");
+		connectAttr ($tailControl[0]+".fallOffEnd") ($jntName+"multDiv_extraFalloff_"+$a+".input1Z");
+		
+		// Connect to BlenderValues //
+		connectAttr ($jntName+"multDiv_output_"+$a+".outputY")  ($jntName+"blendValues_extraFalloff_"+$a+".color1B");
+		connectAttr ($jntName+"multDiv_output_"+$a+".outputZ")  ($jntName+"blendValues_extraFalloff_"+$a+".color1G");
+		// Connect to Joints //
+		connectAttr ($jntName+"blendValues_extraFalloff_"+$a+".outputB") ($jntName+"_cntrl_0"+$a+".rotateY");
+		connectAttr ($jntName+"blendValues_extraFalloff_"+$a+".outputG") ($jntName+"_cntrl_0"+$a+".rotateZ");
+		connectAttr ($jntName+"multDiv_output_"+$a+".outputX") ($jntName+"_cntrl_0"+$a+".rotateX");
+		}
+	}
+else
+	{
+		for ($a = 1; $a < $jntCap2; $a++)
+		{
+		connectAttr ($jntName+"multDiv_output_"+$a+".outputX") ($jntName+"_cntrl_0"+$a+".rotateX");
+	    connectAttr ($jntName+"multDiv_output_"+$a+".outputY") ($jntName+"_cntrl_0"+$a+".rotateY");
+	    connectAttr ($jntName+"multDiv_output_"+$a+".outputZ") ($jntName+"_cntrl_0"+$a+".rotateZ");
+	    }
+	}
+	
+// Create Tapering
+/////////////////////////////////////////////////////////////
+
+if ($taperValue == 1)
+    {
+    addAttr -keyable true -longName "meshTaperX" -shortName "mshTprX" -at double $tailControl[0];
+	addAttr -keyable true -longName "meshTaperY" -shortName "mshTprY" -at double $tailControl[0];
+	addAttr -keyable true -longName "meshTaperZ" -shortName "mshTprZ" -at double $tailControl[0];
+	addAttr -keyable true -longName "meshTaperX" -shortName "mshTprX" -at double $tailControlMain[0];
+	addAttr -keyable true -longName "meshTaperY" -shortName "mshTprY" -at double $tailControlMain[0];
+	addAttr -keyable true -longName "meshTaperZ" -shortName "mshTprZ" -at double $tailControlMain[0];
+	connectAttr  ($tailControlMain[0]+".meshTaperX") ($tailControl[0]+".meshTaperX");
+	connectAttr  ($tailControlMain[0]+".meshTaperY") ($tailControl[0]+".meshTaperY");
+	connectAttr  ($tailControlMain[0]+".meshTaperZ") ($tailControl[0]+".meshTaperZ");
+	// Create X
+    createNode -n ($jntName+"meshTaperMultDivX_01") multiplyDivide;
+    connectAttr ($tailControl[0]+".meshTaperX") ($jntName+"meshTaperMultDivX_01"+".input1X");
+    setAttr ($jntName+"meshTaperMultDivX_01"+".input2X") 20;
+    setAttr ($jntName+"meshTaperMultDivX_01"+".operation") 2;
+    setAttr ($tailControlMain[0]+".meshTaperX") 20;
+	// Create Y
+    createNode -n ($jntName+"meshTaperMultDivY_01") multiplyDivide;
+    connectAttr ($tailControl[0]+".meshTaperY") ($jntName+"meshTaperMultDivY_01"+".input1X");
+    setAttr ($jntName+"meshTaperMultDivY_01"+".input2X") 20;
+    setAttr ($jntName+"meshTaperMultDivY_01"+".operation") 2;
+    setAttr ($tailControlMain[0]+".meshTaperY") 20;
+	// Create Z
+    createNode -n ($jntName+"meshTaperMultDivZ_01") multiplyDivide;
+    connectAttr ($tailControl[0]+".meshTaperZ") ($jntName+"meshTaperMultDivZ_01"+".input1X");
+    setAttr ($jntName+"meshTaperMultDivZ_01"+".input2X") 20;
+    setAttr ($jntName+"meshTaperMultDivZ_01"+".operation") 2;
+    setAttr ($tailControlMain[0]+".meshTaperZ") 20;
+    /////// Taper //////
+    for ($a = $jntCap2; $a > 1; $a--)
+        {
+        // Create Nodes & Set Attributes //
+        createNode -n ($jntName+"_plusMinusTaperX_0"+$a) blendColors;
+        setAttr ($jntName+"_plusMinusTaperX_0"+$a+".color1") 1 1 1;
+        float $aScale = (($a*-.05)+4);
+        setAttr ($jntName+"_plusMinusTaperX_0"+$a+".color2") $a $a $a;
+        connectAttr ($jntName+"_plusMinusTaperX_0"+$a+".outputR") ($jntName+"_cntrl_0"+$a+".scaleX");
+        connectAttr ($jntName+"meshTaperMultDivX_01"+".outputX") ($jntName+"_plusMinusTaperX_0"+$a+".blender");
+        }
+	for ($a = $jntCap2; $a > 1; $a--)
+        {
+        // Create Nodes & Set Attributes //
+        createNode -n ($jntName+"_plusMinusTaperY_0"+$a) blendColors;
+        setAttr ($jntName+"_plusMinusTaperY_0"+$a+".color1") 1 1 1;
+        float $aScale = (($a*-.05)+4);
+        setAttr ($jntName+"_plusMinusTaperY_0"+$a+".color2") $a $a $a;
+        connectAttr ($jntName+"_plusMinusTaperY_0"+$a+".outputG") ($jntName+"_cntrl_0"+$a+".scaleY");
+        connectAttr ($jntName+"meshTaperMultDivY_01"+".outputX") ($jntName+"_plusMinusTaperY_0"+$a+".blender");
+        }
+    for ($a = $jntCap2; $a > 1; $a--)
+        {
+        // Create Nodes & Set Attributes //
+        createNode -n ($jntName+"_plusMinusTaperZ_0"+$a) blendColors;
+        setAttr ($jntName+"_plusMinusTaperZ_0"+$a+".color1") 1 1 1;
+        float $aScale = (($a*-.05)+4);
+        setAttr ($jntName+"_plusMinusTaperZ_0"+$a+".color2") $a $a $a;
+        connectAttr ($jntName+"_plusMinusTaperZ_0"+$a+".outputB") ($jntName+"_cntrl_0"+$a+".scaleZ");
+        connectAttr ($jntName+"meshTaperMultDivZ_01"+".outputX") ($jntName+"_plusMinusTaperZ_0"+$a+".blender");
+        }
+
+    ///// Set Max Scale ////// 
+
+    for ($a = $jntCap2; $a > 1; $a--)
+        {
+        // Set Max Scale Limits //
+        transformLimits -sx 0.1 1 -esx 1 0 ($jntName+"_cntrl_0"+$a);
+        transformLimits -sy 0.1 1 -esy 1 0 ($jntName+"_cntrl_0"+$a);
+        transformLimits -sz 0.1 1 -esz 1 0 ($jntName+"_cntrl_0"+$a);
+        }
+    
+    // Cleanup //
+    setAttr ($tailControlMain[0]+".meshTaperX") 20 ;
+	setAttr ($tailControlMain[0]+".meshTaperY") 20 ;
+	setAttr ($tailControlMain[0]+".meshTaperZ") 20 ;
+    }
+
+// Create Twist
+/////////////////////////////////////////////////////////////
+/*
+for ($a = 1; $a < $jntCap2; $a++)
+{
+connectAttr ($tailControlMain[0]".twist") ($jntName+"_cntrl_0"+$a+".rotateY");
+}
+*/
+
+
+// Create Instancing
+/////////////////////////////////////////////////////////////
+
+if ($instValue == 1)
+{
+// Add Display Attribute for Instanced Curves //
+addAttr -keyable true -longName "instanceCurveDisplay" -shortName "instCrvDsp" -at short -min 0 -max 1 $maCurve1[0];
+
+// Create Instance Curve Object //
+string $textCurve[];
+$textCurve = `textCurves -ch 0 -f "Palatino|" -t "i"`;
+string $textGroup[];
+$textGroup = `listRelatives -c $textCurve[0]`;
+string $textShapes[];
+$textShapes = `listRelatives -c $textGroup[0]`;
+string $textShape1[];
+$textShape1 = `listRelatives -s $textShapes[0]`;
+string $textShape1[];
+$textShape1 = `listRelatives -s $textShapes[1]`;
+select $textShapes;
+parent -w;
+string $iCurveS[];
+$iCurveS = `parent -r -s $textShape1[0] $textShapes[0]`;
+delete $textShapes[1] $textCurve[0];
+string $iCurve[];
+$iCurve = `listRelatives -p $iCurveS[0]`;
+string $iCurveSh[];
+$iCurveSh = `listRelatives -s $iCurve[0]`;
+select $iCurve[0];
+CenterPivot;
+move -rpr 0 0 0;
+rotate -r -os 0 90 0 ;
+scale -r 1.541675 1.541675 1.541675 ;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $iCurve[0]; 
+setAttr ($iCurveSh[0]+".overrideEnabled") 1;
+setAttr ($iCurveSh[0]+".overrideColor") 13;
+setAttr ($iCurveSh[1]+".overrideEnabled") 1;
+setAttr ($iCurveSh[1]+".overrideColor") 13;
+
+connectAttr ($maCurve1[0]+".instanceCurveDisplay") ($iCurveSh[0]+".visibility");
+connectAttr ($maCurve1[0]+".instanceCurveDisplay") ($iCurveSh[1]+".visibility");
+setAttr ($maCurve1[0]+".instanceCurveDisplay") 1;
+
+
+/// Create Curve
+string $iText[];
+$iText = `duplicate -n ("textI"+$jntName) $iCurve[0]`;
+string $iTextShapes[];
+$iTextShapes = `listRelatives -s $iText[0]`;
+setAttr ($iText[0]+".rotateY") -90;
+setAttr ($iText[0]+".translate") 5.95 .375 0;
+setAttr ($iText[0]+".scale") .683 .683 .683;
+
+
+string $textC1[];
+$textC1 = `textCurves -ch 0 -f "Arial" -t "Parent to (  )"`;
+string $textC1Groups[];
+$textC1Groups = `listRelatives -c $textC1[0]`;
+string $textC1Curves[];
+$textC1Curves = `listRelatives -c $textC1Groups`;
+parent -w $textC1Curves;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $textC1Curves $iText[0]; 
+string $textC1Shapes[];
+$textC1Shapes = `listRelatives -s $textC1Curves`;
+string $arrowCurve1 = `curve -d 1 -p -0.423829 0.81926 0 -p -0.793089 0.45 0 -p -0.423829 0.0807396 0 -p -0.423829 0.26537 0 -p -0.239199 0.26537 0 -p -0.239199 0.63463 0 -p -0.423829 0.63463 0 -p -0.423829 0.81926 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7`;
+string $arrowShape1[];
+$arrowShape1 = `listRelatives -s $arrowCurve1`;
+string $textC1CurveA[];
+$textC1CurveA = `parent -r -s $iTextShapes $arrowShape1[0] $textC1Shapes $textC1Curves[0]`;
+string $textCurve1[];
+$textCurve1 = `duplicate -n helperLabel1 $textC1CurveA[0]`;
+delete $textC1Curves $textC1[0] $arrowCurve1 $iText[0];
+
+
+/// Cleanup
+setAttr ($textCurve1[0]+".rotateY") 137.155;
+setAttr ($textCurve1[0]+".translate") -.687 -.45 -.637;
+setAttr ($textCurve1[0]+".scale") .735 .735 .735;
+setAttr ($textCurve1[0]+".overrideEnabled") 1;
+setAttr ($textCurve1[0]+".overrideColor") 17;
+move -r 0 0.45 0 ($textCurve1[0]+".scalePivot") ($textCurve1[0]+".rotatePivot");
+
+connectAttr ($maCurve1[0]+".instanceCurveDisplay") ($textCurve1[0]+".visibility");
+
+// Set Instance Curve Group String //
+string $iCurveG = `group $iCurve[0]`;
+string $intGrp = `group -em -n ("instObjsGroup_"+$jntName+"01")`;
+
+    for ($a = 1; $a < $jntCap; $a++)
+        {
+        // Create Instance Curve Object //
+        instance -n ("instObj_"+$jntName+"0"+$a) $iCurveG;
+        setAttr ("instObj_"+$jntName+"0"+$a+".translateX") $a;
+        setAttr ("instObj_"+$jntName+"0"+$a+".overrideEnabled") 1;
+        parent ("instObj_"+$jntName+"0"+$a) ("bn_"+$jntName+"0"+$a) ;
+		connectAttr ($jntName+"_cntrl_0"+$a+".scale") ("oversoul_"+$jntName+"0"+$a+".scale");
+        }
+        
+///// Cleanup //////
+parent $textCurve1[0] $intGrp;
+parent $iCurveG $intGrp;
+parent $intGrp $maCurve1[0];
+}
+
+
+// Final Cleanup
+/////////////////////////////////////////////////////////////
+
+//// Master Controller Parenting //////
+parent $lengthOffset $maCurve1[0];
+parent ("grp_"+$jntName+"controls") $maCurve1[0];
+parent ("group_bn_"+$jntName+"01") $maCurve1[0];
+parent $rootJnt $maCurve1[0];
+
+//// Renaming //////
+rename $maCurve1[0] ($jntName+"masterController");
+rename $tailControlMain[0] ($jntName+"tailController");
+rename $lengthCC[0] ($jntName+"lengthController");
+
+//// Completion /////
+$printName = $jntNamePre;
+print ("The Tentacle Rig of "+$printName+" has just be created.");
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+global proc tentacle()
+{
+// Window Check
+if 
+(`window -exists mainWindow` == 1)
+    {
+    deleteUI mainWindow;
+    }
+    
+// Create Window
+window -w 300 -h 425 -title "Tentacle" -mxb off mainWindow;
+string $form = `formLayout -numberOfDivisions 100`;
+
+// TITLE
+string $title1 = `shelfButton  -si "tentacleTitle.png" -st "iconOnly"  -image1 "tentacleTitle.png"`;
+
+// BUTTONS
+string $slider1 = 
+`
+intSliderGrp -label "Joint Density" -field true
+    -minValue 5 -maxValue 25
+    -fieldMinValue 5 -fieldMaxValue 100
+    -w 370
+    -value 12
+    densitySlider
+`;
+string $slider3 = 
+`
+intSliderGrp -label "Max Curl" -field true
+    -minValue -100 -maxValue 100
+    -fieldMinValue 5 -fieldMaxValue 100
+    -w 370
+    -value 40
+    curlSlider
+`;
+// Text Field
+string $textField1 =
+`
+textFieldGrp
+        -label "Naming:"
+        -text  "Choose a unique name"
+        textFieldName
+`;
+string $instChkbx1 =
+`
+iconTextCheckBox -style "iconAndTextVertical"
+        -image1 "flowPathObj.png" 
+        -label "Instancing"
+        -width 75
+        -height 75
+        instCheck
+`;
+string $taperChkbx1 =
+`
+iconTextCheckBox -style "iconAndTextVertical"
+        -image1 "polyPyramid.png" 
+        -label "Tapering"
+        -width 75
+        -height 75
+        taperCheck
+`;
+string $tetherChkbx1 =
+`
+iconTextCheckBox -style "iconAndTextVertical"
+        -image1 "create.png" 
+        -label "Cntl Tether"
+        -width 75
+        -height 75
+        tetherCheck
+`;
+string $spacerChkbx1 =
+`
+iconTextCheckBox -style "iconAndTextVertical"
+        -image1 "doubleHorizArrow.png" 
+        -label "Extra Falloff"
+        -width 75
+        -height 75
+        extraCheck
+`;
+string $textTitle1 = 
+`
+text -label "Extra Options"
+`;
+string $editB = `button -label "Edit" -width 150 -height 75 -command editTentacle editButton`;
+string $executeB = `button -label "Execute" -width 150 -height 75 -command makeTentacle executeButton`;
+
+// Separator
+string $sep1 = `separator -height 40 -style "in"`;
+string $sep2 = `separator -height 40 -style "in"`;
+string $sep3 = `separator -height 40 -style "in"`;
+
+// Attach Text
+formLayout -edit
+////// Title ////////
+-attachNone $title1 "top"
+-attachNone $title1 "left"
+-attachNone $title1 "bottom"
+-attachNone $title1 "right"
+-attachForm $textTitle1 "top" 217
+-attachForm $textTitle1 "left" 120
+-attachNone $textTitle1 "bottom"
+-attachNone $textTitle1 "right"
+////// Slider ////////
+-attachForm $slider1 "top" 150
+-attachForm $slider1 "left" -70
+-attachNone $slider1 "bottom"
+-attachNone $slider1 "right"
+-attachForm $slider3 "top" 175
+-attachForm $slider3 "left" -70
+-attachNone $slider3 "bottom"
+-attachNone $slider3 "right"
+////// Text Fields ////////
+-attachForm $textField1 "top" 120
+-attachForm $textField1 "left" -90
+-attachNone $textField1 "bottom"
+-attachNone $textField1 "right"
+////// Checkboxes ////////
+-attachForm $instChkbx1 "top" 255
+-attachForm $instChkbx1 "left" 0
+-attachNone $instChkbx1 "bottom"
+-attachNone $instChkbx1 "right"
+-attachForm $taperChkbx1 "top" 255
+-attachForm $taperChkbx1 "left" 75
+-attachNone $taperChkbx1 "bottom"
+-attachNone $taperChkbx1 "right"
+-attachForm $tetherChkbx1 "top" 255
+-attachForm $tetherChkbx1 "left" 150
+-attachNone $tetherChkbx1 "bottom"
+-attachNone $tetherChkbx1 "right"
+-attachForm $spacerChkbx1 "top" 255
+-attachForm $spacerChkbx1 "left" 225
+-attachNone $spacerChkbx1 "bottom"
+-attachNone $spacerChkbx1 "right"
+////// Command Buttons ////////
+-attachForm $executeB "top" 350
+-attachForm $executeB "left" 150
+-attachNone $executeB "bottom"
+-attachNone $executeB "right"
+-attachForm $editB "top" 350
+-attachForm $editB "left" 0
+-attachNone $editB "bottom"
+-attachNone $editB "right"
+////// Separators ////////
+-attachForm $sep1 "top" 185
+-attachForm $sep1 "left" 0
+-attachNone $sep1 "bottom"
+-attachForm $sep1 "right" 0
+-attachForm $sep2 "top" 320
+-attachForm $sep2 "left" 0
+-attachNone $sep2 "bottom"
+-attachForm $sep2 "right" 0
+-attachForm $sep3 "top" 225
+-attachForm $sep3 "left" 0
+-attachNone $sep3 "bottom"
+-attachForm $sep3 "right" 0
+$form;
+showWindow mainWindow;
+window -edit -w 300 -h 425 mainWindow;
+}
