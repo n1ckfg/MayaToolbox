@@ -595,6 +595,6 @@ def doit():
   totalTime = cmds.timerX(st=startTime)
   print("Voxelizer finished: "+str(round(totalTime, 2))+ " seconds ("+str(round(totalTime/60, 2)) + " minutes)")
 
-promptSetup()
+#promptSetup()
 
 ### End Voxelizer 1.0 ###

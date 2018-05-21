@@ -129,5 +129,5 @@ def SVGtoArray(SVG):
             print SVG.arrCmd[i], SVG.arrLength[i], i, j, SVG.arrPos[jj]
     return curvePosArray
     
-main_CurvefromSVG(3)
+#main_CurvefromSVG(3)
 #tokens = getSVGpath('/Users/camtton/Desktop/drawing.svg')
