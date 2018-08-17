@@ -1428,7 +1428,7 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
         s(target[i])
         mel.eval("AttachBrushToCurves;")
         crv = getNewObjects(oldObjects)[1]
-        #crv.setAttr("sampleDensity", reducePolys)
+        crv.setAttr("sampleDensity", reducePolys)
         if (bake==True):
             oldObjects = getAllObjects()
             s(crv)
@@ -1494,7 +1494,7 @@ def bakePaintEffects(target=None, reducePolys=0.1, maxPolys=0):
     ch()
     if (reducePolys < 1.0):
         for obj in target:
-            #obj.setAttr("sampleDensity", reducePolys)
+            obj.setAttr("sampleDensity", reducePolys)
             ch()
         #mc.polyReduce(percentage=10)
         #ch()
