@@ -14,7 +14,8 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
     if not target:
         target = s()
 
-    paintBrushSelector(brush)
+    if (brush != None):
+        paintBrushSelector(brush)
 
     for i in range(0,len(target)):
         oldObjects = getAllObjects()
@@ -31,10 +32,6 @@ def paintCurve(target=None, brush=None, bake=True, reducePolys=0.1, maxPolys=0):
             s(obj)
             ch()
             d(crv)
-            #ch()
-            #ch()
-            #mc.polyReduce(percentage=10)
-            #ch()
             returns.append(obj)
         else:
             returns.append(crv)
@@ -89,14 +86,14 @@ def bakePaintEffects(target=None, reducePolys=0.1, maxPolys=0):
         for obj in target:
             obj.setAttr("sampleDensity", reducePolys)
             ch()
-        #mc.polyReduce(percentage=10)
-        #ch()
     mc.polyQuad()
     ch()
 
 # ~ ~ ~ ~ ~ ~
 
 def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, maxPolys=0, animateFrames=True):
+    paintBrushSelector(brush)
+    #~
     globalScale = (10,10,10)
     if not inputDir:
         inputDir=openFileDialog("json")
@@ -122,7 +119,8 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
             for stroke in strokes:
                 if (len(stroke) > 1):
                     drawPoints(stroke, uniqueName=False)
-                    paintStroke = paintCurve(brush=brush, bake=bake, reducePolys=reducePolys, maxPolys=maxPolys)
+                    #paintStroke = paintCurve(brush=brush, bake=bake, reducePolys=reducePolys, maxPolys=maxPolys)
+                    paintStroke = paintCurve(brush=None, bake=bake, reducePolys=reducePolys, maxPolys=maxPolys)
                     frameList.append(paintStroke)
 
             # TODO Fix for variable length frames, needs JSON to have frame_number field per frame.
@@ -145,23 +143,7 @@ def latkToPaintEffects(inputDir=None, brush=None, bake=True, reducePolys=0.5, ma
                         else:
                             mc.setAttr(frameListObj[0] + ".v", 0, keyable=True)
                         mc.setKeyframe(frameListObj, time=m)
-
-            # Old mesh show/hide method from Blender
-            '''
-            for i in range(0, len(frameList)):
-                totalCounter += 1
-                print(frameList[i].name + " | " + str(totalCounter) + " of " + totalStrokes + " total")
-                if (_animateFrames==True):
-                    hideFrame(frameList[i], 0, True)
-                    for j in range(start, end):
-                        if (j == layer.frames[c].frame_number):
-                            hideFrame(frameList[i], j, False)
-                            keyTransform(frameList[i], j)
-                        elif (c < len(layer.frames)-1 and j > layer.frames[c].frame_number and j < layer.frames[c+1].frame_number):
-                            hideFrame(frameList[i], j, False)
-                        elif (c != len(layer.frames)-1):
-                            hideFrame(frameList[i], j, True)
-            '''
+    #~
     print("*** FINISHED ***")
 
 def latk():
