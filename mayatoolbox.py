@@ -1057,8 +1057,7 @@ def buildFromLocators():
 def writeK2P():
     startTime = int(mc.playbackOptions(query=True, minTime=True))
     stopTime = int(mc.playbackOptions(query=True, maxTime=True))
-    filePath = "/Users/nick/Desktop/"
-    fileName = "doc.xml"
+    fileName = saveFileDialog("xml")
 
     openniNames = ["head", "neck", "torso", "l_shoulder", "l_elbow", "l_hand", "r_shoulder", "r_elbow", "r_hand", "l_hip", "l_knee", "l_foot", "r_hip", "r_knee", "r_foot"]
     cmuNames = ["Head", "Neck1", "Spine", "LeftArm", "LeftForeArm", "LeftFingerBase", "RightArm", "RightForeArm", "RightFingerBase", "LeftUpLeg", "LeftLeg", "LeftToeBase", "RightUpLeg", "RightLeg", "RightToeBase"]
@@ -1113,11 +1112,9 @@ def writeK2P():
             except:
                 print "Couldn't get joint position."
 
-    xml_file = open(filePath + fileName, "w")
-    xml_file.write(doc.toprettyxml())
-    xml_file.close()
-
-    print doc.toprettyxml()
+    with open(fileName, "w") as f:
+        f.write(doc.toprettyxml())
+        f.closed
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -1488,11 +1485,11 @@ def bakePaintEffects(target=None, reducePolys=0.1, maxPolys=0):
     if not target:
         target = s()
     mel.eval("doPaintEffectsToPoly(1,1,1,1," + str(maxPolys) + ");")
-    #ch()
+    ch()
     if (reducePolys < 1.0):
         for obj in target:
             obj.setAttr("sampleDensity", reducePolys)
-            #ch()
+            ch()
     mc.polyQuad()
     ch()
 
