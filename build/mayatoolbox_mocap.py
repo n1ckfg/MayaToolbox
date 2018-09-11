@@ -69,6 +69,7 @@ def writeK2P():
     fileName = saveFileDialog("xml")
 
     openniNames = ["head", "neck", "torso", "l_shoulder", "l_elbow", "l_hand", "r_shoulder", "r_elbow", "r_hand", "l_hip", "l_knee", "l_foot", "r_hip", "r_knee", "r_foot"]
+    openniNames_jnt = ["head_jnt", "neck_jnt", "torso_jnt", "l_shoulder_jnt", "l_elbow_jnt", "l_hand_jnt", "r_shoulder_jnt", "r_elbow_jnt", "r_hand_jnt", "l_hip_jnt", "l_knee_jnt", "l_foot_jnt", "r_hip_jnt", "r_knee_jnt", "r_foot_jnt"]
     cmuNames = ["Head", "Neck1", "Spine", "LeftArm", "LeftForeArm", "LeftFingerBase", "RightArm", "RightForeArm", "RightFingerBase", "LeftUpLeg", "LeftLeg", "LeftToeBase", "RightUpLeg", "RightLeg", "RightToeBase"]
     mobuNames = ["Head", "Neck", "Spine", "LeftArm", "LeftForeArm", "LeftHand", "RightArm", "RightForeArm", "RightHand", "LeftUpLeg", "LeftLeg", "LeftFoot", "RightUpLeg", "RightLeg", "RightFoot"]
 
@@ -108,16 +109,16 @@ def writeK2P():
             try:
                 theJointName = str(joints[j])
                 for k in range(0,len(openniNames)):
-                    if(theJointName==cmuNames[k] or theJointName==mobuNames[k]):
+                    if (theJointName==cmuNames[k] or theJointName==mobuNames[k] or theJointName==openniNames_jnt[k]):
                         theJointName=openniNames[k]
+                    if (theJointName==openniNames[k]):
+                        k_node = doc.createElement(theJointName)
+                        joint_node.appendChild(k_node)
 
-                k_node = doc.createElement(theJointName)
-                joint_node.appendChild(k_node)
-
-                p = py.xform(joints[j], q=True, t=True, ws=True)
-                k_node.setAttribute("x", str(-1 * p[0]))
-                k_node.setAttribute("y", str(-1 * p[1]))
-                k_node.setAttribute("z", str(p[2]))
+                        p = py.xform(joints[j], q=True, t=True, ws=True)
+                        k_node.setAttribute("x", str(-1 * p[0]))
+                        k_node.setAttribute("y", str(-1 * p[1]))
+                        k_node.setAttribute("z", str(p[2]))
             except:
                 print "Couldn't get joint position."
 
@@ -132,7 +133,7 @@ import xml.dom.minidom as xd
 def readK2P():
     fileName = openFileDialog("xml")
     joints = ["l_foot","l_knee","l_hip","r_foot","r_knee","r_hip","l_hand","l_elbow","l_shoulder","r_hand","r_elbow","r_shoulder","torso","neck","head"]
-    globalScale = (10, -10, 10)
+    globalScale = (1, -1, 1)
 
     xmlFile = xd.parse(fileName)
     print("loaded: " + fileName)
