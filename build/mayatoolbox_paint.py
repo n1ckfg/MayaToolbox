@@ -150,7 +150,7 @@ def latk():
     rm()
     latkToPaintEffects(inputDir="C:/Users/nick/Documents/GitHub/LightningArtist/latkUnreal/Content/Latk/layer_test.json", brush="neon")
 
-def getQuillParentColor(target=None):
+def getQuillParentColor(target=None, colAttr="rgba"):
     if not target:
         target = ss()
     try:
@@ -159,18 +159,18 @@ def getQuillParentColor(target=None):
             targetParent = py.listRelatives(parent=True)[0]
         except:
             targetParent = py.listRelatives(parent=True)
-        rgba = py.getAttr(targetParent + ".rgba")
-        color = (rgba[0], rgba[1], rgba[2], rgba[3])
+        col = py.getAttr(targetParent + "." + colAttr)
+        color = (col[0], col[1], col[2], col[3])
         return color
     except:
         return (0,0,0,1)
     
-def getAllQuillParentColors():
+def getAllQuillParentColors(colAttr="rgba"):
     colors = []
     curves = listAllCurves()
     for curve in curves:
         ss(curve)
-        color = getQuillParentColor(curve)
+        color = getQuillParentColor(curve, colAttr)
         colors.append(color)
     return colors
 
