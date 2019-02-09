@@ -1,0 +1,3 @@
+[submodule "build/latk.py"]
+	path = build/latk.py
+	url = https://github.com/LightningArtist/latk.py
